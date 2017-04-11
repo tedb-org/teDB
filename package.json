@@ -1,0 +1,31 @@
+{
+  "name": "tedb",
+  "version": "0.0.1",
+  "description": "TypeScript Embedded Database",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tsturzl/teDB.git"
+  },
+  "keywords": [
+    "typescript",
+    "embedded",
+    "database",
+    "embedded",
+    "db",
+    "db",
+    "database",
+    "electron",
+    "node",
+    "webkit"
+  ],
+  "author": "Travis Sturzl",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tsturzl/teDB/issues"
+  },
+  "homepage": "https://github.com/tsturzl/teDB#readme"
+}
