@@ -27,5 +27,12 @@
   "bugs": {
     "url": "https://github.com/tsturzl/teDB/issues"
   },
-  "homepage": "https://github.com/tsturzl/teDB#readme"
+  "homepage": "https://github.com/tsturzl/teDB#readme",
+  "dependencies": {
+    "@types/hashids": "^1.0.28",
+    "@types/lodash": "^4.14.62",
+    "binary-search-tree": "^0.2.6",
+    "hashids": "^1.1.1",
+    "lodash": "^4.17.4"
+  }
 }
