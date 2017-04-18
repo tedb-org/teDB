@@ -8,8 +8,6 @@
         "removeComments": false,
         "noImplicitAny": false,
         "compileOnSave": true,
-        "typeRoots" : ["src/@types/"],
-        "types": ["hashids", "lodash"],
         "outFile": "dist/tedb.js"
     },
     "exclude": [
