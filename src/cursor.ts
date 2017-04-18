@@ -81,16 +81,16 @@ export default class Cursor {
             joined
                 .then((idsArr: string[][]) => {
                     // Use a Set to dedupe
-                    const ids: Set<string> = idsArr
+                    const idSet: Set<string> = idsArr
                         .reduce((a, b) => a.concat(b), [])
                         .reduce((set: Set<string>, id): Set<string> => set.add(id), new Set());
 
-                    const arr = Array.from(ids.values());
+                    const ids = Array.from(idSet.values());
 
                     if (this.count) {
-                        return arr.length;
+                        return ids.length;
                     } else {
-                        return this.datastore.getDocs(arr);
+                        return this.datastore.getDocs(ids);
                     }
                 })
                 .then(resolve)
