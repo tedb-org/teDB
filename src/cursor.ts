@@ -83,10 +83,7 @@ export default class Cursor {
                     // Use a Set to dedupe
                     const ids: Set<string> = idsArr
                         .reduce((a, b) => a.concat(b), [])
-                        .reduce((set: Set<string>, id): Set<string> => {
-                            set.add(id);
-                            return set;
-                        }, new Set());
+                        .reduce((set: Set<string>, id): Set<string> => set.add(id), new Set());
 
                     const arr = Array.from(ids.values());
 
