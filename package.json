@@ -1,40 +1,40 @@
 {
-    "name": "tedb",
-    "version": "0.0.1",
-    "description": "TypeScript Embedded Database",
-    "main": "./dist/tedb.js",
-    "types": "./dist/tedb.d.ts",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/tsturzl/teDB.git"
-    },
-    "keywords": [
-        "typescript",
-        "embedded",
-        "database",
-        "embedded",
-        "db",
-        "db",
-        "database",
-        "electron",
-        "node",
-        "webkit"
-    ],
-    "author": "Travis Sturzl",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/tsturzl/teDB/issues"
-    },
-    "homepage": "https://github.com/tsturzl/teDB#readme",
-    "dependencies": {
-        "@types/hashids": "^1.0.28",
-        "@types/lodash": "^4.14.62",
-        "binary-search-tree": "^0.2.6",
-        "binary-type-tree": "0.0.1",
-        "hashids": "^1.1.1",
-        "lodash": "^4.17.4"
-    }
+  "name": "tedb",
+  "version": "0.0.1",
+  "description": "TypeScript Embedded Database",
+  "main": "./dist/tedb.js",
+  "types": "./dist/tedb.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tsturzl/teDB.git"
+  },
+  "keywords": [
+    "typescript",
+    "embedded",
+    "database",
+    "embedded",
+    "db",
+    "db",
+    "database",
+    "electron",
+    "node",
+    "webkit"
+  ],
+  "author": "Travis Sturzl",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tsturzl/teDB/issues"
+  },
+  "homepage": "https://github.com/tsturzl/teDB#readme",
+  "dependencies": {
+    "@types/hashids": "^1.0.28",
+    "@types/lodash": "^4.14.62",
+    "binary-search-tree": "^0.2.6",
+    "binary-type-tree": "0.0.2",
+    "hashids": "^1.1.1",
+    "lodash": "^4.17.4"
+  }
 }
