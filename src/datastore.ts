@@ -80,13 +80,38 @@ export default class Datastore {
      * @param query - query document/s to update
      * @param operation - update operation, either a new doc or modifies portions of a document(eg. `$set`)
      */
-    public update(query: any, operation: any): Promise<number> {}
+    public update(query: any, operation: any): Promise<number> {
+        return new Promise((resolve, reject) => {});
+    }
 
     /**
      * Removes document/s by query
      * @param query
      */
-    public remove(query: any): Promise<number> {}
+    public remove(query: any): Promise<number> {
+        return new Promise((resolve, reject) => {
+            const promises: Array<Promise<string[]>> = [];
+
+            for (const field in query) {
+                if (query.hasOwnProperty(field)) {
+                    promises.push(this.search(field, query[field]));
+                }
+            }
+
+            Promise.all(promises)
+                .then((idsArr: string[][]) => {
+                    // Use a Set to dedupe
+                    const idSet: Set<string> = idsArr
+                        .reduce((a, b) => a.concat(b), [])
+                        .reduce((set: Set<string>, id): Set<string> => set.add(id), new Set());
+
+                    const ids = Array.from(idSet.values());
+
+                    // this.getDocs()
+                })
+                .catch(reject);
+        });
+    }
 
     /**
      * Ensure an index on the datastore
