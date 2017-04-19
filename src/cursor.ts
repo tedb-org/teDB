@@ -9,9 +9,9 @@ import Datastore from "./datastore";
 export default class Cursor {
     /** Reference to Datastore object */
     private datastore: Datastore;
-    /** query passed from `Datastore.find` */
+    /** Query passed from `Datastore.find` or `count` */
     private query: any;
-    /** options for `exec` */
+    /** Options for `exec` */
     private options: {
         sort: any,
         skip: number,

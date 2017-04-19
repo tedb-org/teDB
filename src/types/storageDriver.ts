@@ -25,8 +25,12 @@ export interface IStorageDriver {
      */
     removeItem(key: string): Promise<null>;
     /**
-     * Iterate every key-value pair, returns non-undefined to break iteration
-     * @param iteratorCallback - Function(value: any, key: string, interatorNumber: number)
+     * Iterate every key-value pair,
+     * IterationCallback should return truthy to break iteration(resulting in promise resolution)
+     * IterationCallback should throw exceptions if error occurs, this will be caught by the promise and propogate up
+     * the promise chain and handled accordingly. TODO: Add Error types for StorageDrivers
+     *
+     * @param iteratorCallback - Function to iterate key values pairs, return truthy to break iteration
      */
     iterate(iteratorCallback: (value: any, key: string, iteratorNumber: number) => any): Promise<any>;
     /**

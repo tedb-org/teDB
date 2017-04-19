@@ -8,6 +8,8 @@
         "removeComments": false,
         "noImplicitAny": false,
         "compileOnSave": true,
+        "typeRoots": ["node_modules"],
+        "types": ["binary-type-tree"],
         "outFile": "dist/tedb.js"
     },
     "exclude": [

@@ -4,7 +4,7 @@
 import * as _ from "lodash";
 import Datastore from "./datastore";
 import { IRange } from "./types/range";
-import * as ALVTree from "binary-search-tree/lib/avltree.js";
+import * as BTT from "binary-type-tree";
 
 export default class Index {
     /** Field Name for Index */

@@ -116,7 +116,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/bb24cc7/src/types/storageDriver.ts#L39">types/storageDriver.ts:39</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/types/storageDriver.ts#L43">types/storageDriver.ts:43</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -138,7 +138,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/bb24cc7/src/types/storageDriver.ts#L15">types/storageDriver.ts:15</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/types/storageDriver.ts#L15">types/storageDriver.ts:15</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -168,12 +168,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/bb24cc7/src/types/storageDriver.ts#L31">types/storageDriver.ts:31</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/types/storageDriver.ts#L35">types/storageDriver.ts:35</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Iterate every key-value pair, returns non-undefined to break iteration</p>
+									<p>Iterate every key-value pair,
+										IterationCallback should return truthy to break iteration(resulting in promise resolution)
+										IterationCallback should throw exceptions if error occurs, this will be caught by the promise and propogate up
+									the promise chain and handled accordingly. TODO: Add Error types for StorageDrivers</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -181,7 +184,7 @@
 								<li>
 									<h5>iteratorCallback: <span class="tsd-signature-type">function</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>Function(value: any, key: string, interatorNumber: number)</p>
+										<p>Function to iterate key values pairs, return truthy to break iteration</p>
 									</div>
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter-siganture">
@@ -223,7 +226,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/bb24cc7/src/types/storageDriver.ts#L35">types/storageDriver.ts:35</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/types/storageDriver.ts#L39">types/storageDriver.ts:39</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -245,7 +248,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/bb24cc7/src/types/storageDriver.ts#L26">types/storageDriver.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/types/storageDriver.ts#L26">types/storageDriver.ts:26</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -275,7 +278,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/bb24cc7/src/types/storageDriver.ts#L21">types/storageDriver.ts:21</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/types/storageDriver.ts#L21">types/storageDriver.ts:21</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
