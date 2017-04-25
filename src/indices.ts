@@ -19,7 +19,7 @@ export default class Index {
      * @param datastore - reference to Datastore
      * @param options - Options for Index, `{fieldName: string}`
      */
-    constructor(datastore: Datastore, options: {fieldName: any}) {
+    constructor(datastore: Datastore, options: {fieldName: string}) {
         this.avl = new BTT.AVLTree({});
         this.fieldName = options.fieldName;
         this.datastore = datastore;
@@ -35,7 +35,7 @@ export default class Index {
                 return; // TODO: should throw an error, need to make Error types
             }
 
-            const key: any = _.get(doc, this.fieldName);
+            const key: BTT.ASNDBS = _.get<any, BTT.ASNDBS>(doc, this.fieldName);
             this.avl.insert(key, doc._id);
 
             resolve(doc);
@@ -52,7 +52,7 @@ export default class Index {
                 return; // TODO: should throw an error, need to make Error types
             }
 
-            const key: any = _.get(doc, this.fieldName);
+            const key: BTT.ASNDBS = _.get<any, BTT.ASNDBS>(doc, this.fieldName);
 
             this.avl.delete(key, doc._id);
 
