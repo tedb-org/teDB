@@ -10,7 +10,7 @@ export default class Index {
     /** Field Name for Index */
     protected fieldName: string;
     /** ALV Tree for indexing */
-    private tree: any;
+    private avl: BTT.AVLTree;
     /** Reference to Datastore */
     private datastore: Datastore;
 
@@ -19,8 +19,8 @@ export default class Index {
      * @param datastore - reference to Datastore
      * @param options - Options for Index, `{fieldName: string}`
      */
-    constructor(datastore: Datastore, options: {fieldName: string}) {
-        this.tree = new ALVTree();
+    constructor(datastore: Datastore, options: {fieldName: any}) {
+        this.avl = new BTT.AVLTree({});
         this.fieldName = options.fieldName;
         this.datastore = datastore;
     }
@@ -35,8 +35,8 @@ export default class Index {
                 return; // TODO: should throw an error, need to make Error types
             }
 
-            const key = _.get(doc, this.fieldName);
-            this.tree.insert(key, doc._id);
+            const key: any = _.get(doc, this.fieldName);
+            this.avl.insert(key, doc._id);
 
             resolve(doc);
         });
@@ -52,9 +52,9 @@ export default class Index {
                 return; // TODO: should throw an error, need to make Error types
             }
 
-            const key = _.get(doc, this.fieldName);
+            const key: any = _.get(doc, this.fieldName);
 
-            this.tree.delete(key, doc._id);
+            this.avl.delete(key, doc._id);
 
             resolve();
         });
@@ -66,7 +66,7 @@ export default class Index {
      */
     public search(key: any): Promise<any> {
         return new Promise((resolve) => {
-            resolve(this.tree.search(key));
+            resolve(this.avl.tree.search(key));
         });
     }
 
@@ -76,7 +76,7 @@ export default class Index {
      */
     public searchRange(range: IRange): Promise<any> {
         return new Promise((resolve) => {
-            resolve(this.tree.searchBounds(range));
+            resolve(this.avl.tree.query(range));
         });
     }
 }
