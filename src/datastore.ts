@@ -13,20 +13,6 @@ import { getUUID, decode } from "./utlis/id_haser";
  * Creates a new Datastore using a specified storageDriver
  */
 export default class Datastore {
-    /**
-     * Create Unique ID that contains timestamp
-     */
-    private static createId(): string {
-        return getUUID();
-    }
-
-    /**
-     * Get Date from ID
-     * @param id - the `_id` of the document to get date of
-     */
-    private static getIdDate(id: string): Date {
-        return new Date(decode(id)[0]);
-    }
 
     /** A HashMap of all the indices keyed by the fieldName. <fieldName, Index> */
     private indices: Map<string, Index>;
@@ -319,5 +305,20 @@ export default class Datastore {
                 })
                 .catch(reject);
         });
+    }
+
+    /**
+     * Create Unique ID that contains timestamp
+     */
+    private createId(): string {
+        return getUUID();
+    }
+
+    /**
+     * Get Date from ID
+     * @param id - the `_id` of the document to get date of
+     */
+    private getIdDate(id: string): Date {
+        return new Date(decode(id)[0]);
     }
 }
