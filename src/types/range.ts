@@ -1,8 +1,4 @@
 /**
- * Created by tsturzl on 4/15/17.
- */
-
-/**
  * Boundaries for lookup
  */
 export interface IRange {

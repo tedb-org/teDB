@@ -5,20 +5,33 @@ import Index from "./indices";
 import { IStorageDriver } from "./types/storageDriver";
 import { IRange } from "./types/range";
 import Cursor from "./cursor";
-import Hashids from "hashids";
-import * as _ from "lodash";
+import { getPath } from "./utlis/get_path";
+import { getUUID, decode } from "./utlis/id_haser";
 
 /**
  * Datastore class
  * Creates a new Datastore using a specified storageDriver
  */
 export default class Datastore {
+    /**
+     * Create Unique ID that contains timestamp
+     */
+    private static createId(): string {
+        return getUUID();
+    }
+
+    /**
+     * Get Date from ID
+     * @param id - the `_id` of the document to get date of
+     */
+    private static getIdDate(id: string): Date {
+        return new Date(decode(id)[0]);
+    }
+
     /** A HashMap of all the indices keyed by the fieldName. <fieldName, Index> */
     private indices: Map<string, Index>;
     /** StorageDriver that is used for this Datastore */
     private storage: IStorageDriver;
-    /** Hasher for generating unique IDs */
-    private hasher: Hashids;
     /** whether or not to generate IDs automatically */
     private generateId: boolean;
 
@@ -30,8 +43,6 @@ export default class Datastore {
         this.generateId = config.generateId || true;
 
         this.indices = new Map();
-
-        this.hasher = new Hashids("TeDB-IDs");
     }
 
     /**
@@ -231,7 +242,7 @@ export default class Datastore {
                     .then(resolve)
                     .catch(reject);
             } else {
-                throw Error("Logical operators expect an Array");
+                return reject(new Error("Logical operators expect an Array"));
             }
         });
     }
@@ -286,7 +297,7 @@ export default class Datastore {
             const gte: number = value.$gte || null;
             const ne: any = value.$ne || null;
             this.storage.iterate((v, k) => {
-                const field = _.get(v, fieldName);
+                const field = getPath(v, fieldName);
                 if (field) {
                     const flag =
                         (
@@ -308,24 +319,5 @@ export default class Datastore {
                 })
                 .catch(reject);
         });
-    }
-
-    /**
-     * Create Unique ID that contains timestamp
-     */
-    private createId(): string {
-        const rand = (): number => Math.floor(Math.random() * 0o777777777777777777777);
-
-        const timestamp = Date.now();
-
-        return this.hasher.encode([timestamp, rand(), rand(), rand(), rand()]);
-    }
-
-    /**
-     * Get Date from ID
-     * @param id - the `_id` of the document to get date of
-     */
-    private getIdDate(id: string): Date {
-        return new Date(this.hasher.decode(id)[0]);
     }
 }

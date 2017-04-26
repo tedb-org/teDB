@@ -1,7 +1,7 @@
 /**
  * Created by tsturzl on 4/11/17.
  */
-import * as _ from "lodash";
+import { getPath } from "./utlis/get_path";
 import Datastore from "./datastore";
 import { IRange } from "./types/range";
 import * as BTT from "binary-type-tree";
@@ -30,12 +30,16 @@ export default class Index {
      * @param doc - document to insert into Index
      */
     public insert(doc: any): Promise<any> {
-        return new Promise<any>((resolve) => {
+        return new Promise<any>((resolve, reject) => {
+            // TODO: need to make Error types
             if (!doc.hasOwnProperty("_id")) {
-                return; // TODO: should throw an error, need to make Error types
+                return reject(new Error("Document is missing _id field"));
+            }
+            if (typeof !doc._id !== "string") {
+                return reject(new Error("_id field needs to be type `string`"));
             }
 
-            const key: BTT.ASNDBS = _.get<any, BTT.ASNDBS>(doc, this.fieldName);
+            const key: BTT.ASNDBS = getPath(doc, this.fieldName);
             this.avl.insert(key, doc._id);
 
             resolve(doc);
@@ -52,7 +56,7 @@ export default class Index {
                 return; // TODO: should throw an error, need to make Error types
             }
 
-            const key: BTT.ASNDBS = _.get<any, BTT.ASNDBS>(doc, this.fieldName);
+            const key: BTT.ASNDBS = getPath(doc, this.fieldName);
 
             this.avl.delete(key, doc._id);
 

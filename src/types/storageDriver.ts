@@ -1,8 +1,4 @@
 /**
- * Created by tsturzl on 4/15/17.
- */
-
-/**
  * Pluggable Storage Drivers
  * You can create plugins for TeDB to provide different mediums of storage. Below you'll find methods that TeDB will
  * expect in your plugin. Storage plugins implement a simple key-value store.

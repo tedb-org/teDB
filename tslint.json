@@ -5,7 +5,8 @@
     ],
     "jsRules": {},
     "rules": {
-        "ordered-imports": false
+        "ordered-imports": false,
+        "no-bitwise": false
     },
     "rulesDirectory": []
 }
