@@ -90,24 +90,46 @@ export default class Datastore {
      */
     public remove(query: any): Promise<number> {
         return new Promise((resolve, reject) => {
-            const promises: Array<Promise<string[]>> = [];
+            const fields: string[] = [];
 
             for (const field in query) {
                 if (query.hasOwnProperty(field)) {
-                    promises.push(this.search(field, query[field]));
+                    fields.push(field);
                 }
             }
 
-            Promise.all(promises)
-                .then((idsArr: string[][]) => {
-                    // Use a Set to dedupe
-                    const idSet: Set<string> = idsArr
-                        .reduce((a, b) => a.concat(b), [])
-                        .reduce((set: Set<string>, id): Set<string> => set.add(id), new Set());
+            this.find(query)
+                .exec()
+                .then((docs: any[]) => {
+                    // Array of promises for index remove
+                    const promises: Array<Promise<any[]>> = [];
 
-                    const ids = Array.from(idSet.values());
+                    fields.forEach((field) => {
+                        const index = this.indices.get(field);
+                        if (index) {
+                            docs.forEach((doc) => {
+                                promises.push(index.remove(doc));
+                            });
+                        }
+                    });
 
-                    // this.getDocs()
+                    return Promise.all(promises);
+                })
+                .then((docs: any[]) => {
+                    const promises: Array<Promise<null>> = [];
+
+                    docs.forEach((doc) => {
+                        const id = doc._id;
+                        if (id && typeof id === "string") {
+                            promises.push(this.storage.removeItem(id));
+                        }
+                    });
+
+                    Promise.all(promises)
+                        .then(() => {
+                            resolve(docs.length);
+                        })
+                        .catch(reject);
                 })
                 .catch(reject);
         });
@@ -145,12 +167,82 @@ export default class Datastore {
     }
 
     /**
-     * Search for IDs, chooses best strategy, preferring to search indices if they exist for the given field.
+     * Search for IDs, chooses best strategy. Handles logical operators($or, $and)
      * Returns array of IDs
      * @param fieldName
      * @param value
      */
     public search(fieldName: string, value: any): Promise<string[]> {
+        return new Promise((resolve, reject) => {
+            if (fieldName === "$or" && value instanceof Array) {
+                const promises: Array<Promise<string[]>> = [];
+
+                value.forEach((query) => {
+                    for (const field in query) {
+                        if (typeof field === "string" && query.hasOwnProperty(field)) {
+                            promises.push(this.searchField(field, query[field]));
+                        }
+                    }
+                });
+
+                Promise.all(promises)
+                    .then((idsArr: string[][]) => {
+                        const idSet: Set<string> = idsArr
+                            .reduce((a, b) => a.concat(b), [])
+                            .reduce((set: Set<string>, id): Set<string> => set.add(id), new Set());
+
+                        return Array.from(idSet.values());
+                    })
+                    .then(resolve)
+                    .catch(reject);
+
+            } else if (fieldName === "$and" && value instanceof Array) {
+                // Combine query results with set intersection
+                // this means all queries must match for the document's _id to return
+                const promises: Array<Promise<string[]>> = [];
+
+                value.forEach((query) => {
+                    for (const field in query) {
+                        if (typeof field === "string" && query.hasOwnProperty(field)) {
+                            promises.push(this.searchField(field, query[field]));
+                        }
+                    }
+                });
+
+                Promise.all(promises)
+                    // Convert Array of Arrays into Array of Sets
+                    .then((idsArr: string[][]) => {
+                        return idsArr.map((ids) =>
+                            ids.reduce((set: Set<string>, id): Set<string> => set.add(id), new Set()));
+                    })
+                    // Intersect all Sets into a single result Set
+                    .then((idSets: Array<Set<string>>) => {
+                        // Having the results accumulated into a Set means to duplication is possible
+                        const resultSet: Set<string> = idSets
+                            .reduce((a, b) => new Set([...a].filter((x) => b.has(x))), idSets.pop());
+
+                        return Array.from(resultSet.values());
+                    })
+                    .then(resolve)
+                    .catch(reject);
+
+            } else if (fieldName !== "$or" && fieldName !== "$and") {
+                this.searchField(fieldName, value)
+                    .then(resolve)
+                    .catch(reject);
+            } else {
+                throw Error("Logical operators expect an Array");
+            }
+        });
+    }
+
+    /**
+     * Search for IDs, chooses best strategy, preferring to search indices if they exist for the given field.
+     * Returns array of IDs
+     * @param fieldName
+     * @param value
+     */
+    private searchField(fieldName: string, value: any): Promise<string[]> {
         return this.indices.has(fieldName) ?
             this.searchIndices(fieldName, value) :
             this.searchCollection(fieldName, value);

@@ -46,7 +46,7 @@ export default class Index {
      * Remove document from Index
      * @param doc
      */
-    public remove(doc: any): Promise<null> {
+    public remove(doc: any): Promise<any> {
         return new Promise<null>((resolve) => {
             if (!doc.hasOwnProperty("_id")) {
                 return; // TODO: should throw an error, need to make Error types
@@ -56,7 +56,7 @@ export default class Index {
 
             this.avl.delete(key, doc._id);
 
-            resolve();
+            resolve(doc);
         });
     }
 
