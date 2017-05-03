@@ -30,6 +30,6 @@
   },
   "homepage": "https://github.com/tsturzl/teDB#readme",
   "dependencies": {
-    "binary-type-tree": "^1.0.0"
+    "binary-type-tree": "^1.0.4"
   }
 }
