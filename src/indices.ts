@@ -4,6 +4,7 @@
 import { getPath } from "./utlis/get_path";
 import Datastore from "./datastore";
 import { IRange } from "./types/range";
+import { compareArray } from "./utlis/compareArray";
 import * as BTT from "binary-type-tree";
 
 export default class Index {
@@ -13,6 +14,8 @@ export default class Index {
     private avl: BTT.AVLTree;
     /** Reference to Datastore */
     private datastore: Datastore;
+    /** Is the index holding an array */
+    private isArray: boolean;
 
     /**
      * Constructor
@@ -21,6 +24,8 @@ export default class Index {
      */
     constructor(datastore: Datastore, options: {fieldName: string}) {
         this.avl = new BTT.AVLTree({});
+        this.isArray = false;
+
         this.fieldName = options.fieldName;
         this.datastore = datastore;
     }
@@ -40,6 +45,12 @@ export default class Index {
             }
 
             const key: BTT.ASNDBS = getPath(doc, this.fieldName);
+
+            if (key.constructor.name === "Array" && !this.isArray) {
+                this.avl.compareKeys = compareArray;
+                this.isArray = true;
+            }
+
             this.avl.insert(key, doc._id);
 
             resolve(doc);
