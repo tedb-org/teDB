@@ -3,7 +3,8 @@ import Base64 from "./base64";
 /**
  * Tuple of 4 Uint8Arrays representing 4 serialized Long Unsigned Integers
  */
-export type ByteBuffer = [Uint8Array, Uint8Array, Uint8Array, Uint8Array];
+//export type ByteBuffer = [Uint8Array, Uint8Array, Uint8Array, Uint8Array];
+export type ByteBuffer = Uint8Array[];
 
 const B64 = new Base64();
 
@@ -41,7 +42,7 @@ export const encode = (buffer: ByteBuffer): string => {
  * @returns {string}
  */
 export const getUUID = (): string => {
-    const dateBytes = NumberToByteArray(Date.now());
+    const dateBytes: Uint8Array = NumberToByteArray(Date.now());
     return encode([dateBytes, radomByteArray(), radomByteArray(), radomByteArray()]);
 };
 

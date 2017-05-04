@@ -3,9 +3,11 @@ export default class Base64 {
     private ALPHA: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
     public decode(s: string): string {
-        let pads = 0,
-            i, b10, imax = s.length,
-            x = [];
+        let pads: number = 0;
+        let i;
+        let b10;
+        let imax: number = s ? s.length : 0;
+        const x = [];
 
         s = String(s);
 
@@ -41,10 +43,10 @@ export default class Base64 {
     }
 
     public encode(s: string): string {
-        s = String(s);
-
-        let i, b10, x = [],
-            imax = s.length - s.length % 3;
+        let i;
+        let b10;
+        const x = [];
+        const imax: number = s ? s.length - s.length % 3 : 0;
 
         if (s.length === 0) {
             return s;

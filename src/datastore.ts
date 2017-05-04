@@ -6,7 +6,7 @@ import { IStorageDriver } from "./types/storageDriver";
 import { IRange } from "./types/range";
 import Cursor from "./cursor";
 import { getPath } from "./utlis/get_path";
-import { getUUID, decode } from "./utlis/id_haser";
+import { getUUID, decode } from "./utlis/id_hasher";
 
 /**
  * Datastore class
@@ -35,20 +35,20 @@ export default class Datastore {
      * Insert a single document
      * @param doc - document to insert
      */
-    public insert(doc: any): Promise<any> {
-        return new Promise((resolve, reject) => {
+    public insert(doc: any): Promise<never> {
+        return new Promise((resolve, reject): any => {
             if (this.generateId) {
                 doc._id = this.createId();
             }
 
-            const indexPromises = [];
+            const indexPromises: Array<Promise<never>> = [];
 
             for (const index of this.indices.values()) {
                 indexPromises.push(index.insert(doc));
             }
 
             Promise.all(indexPromises)
-                .then(() => {
+                .then((): any => {
                     return this.storage.setItem(doc._id, doc);
                 })
                 .then(resolve)
@@ -78,7 +78,9 @@ export default class Datastore {
      * @param operation - update operation, either a new doc or modifies portions of a document(eg. `$set`)
      */
     public update(query: any, operation: any): Promise<number> {
-        return new Promise((resolve, reject) => {});
+        return new Promise((resolve, reject): any => {
+            resolve("not done yet");
+        });
     }
 
     /**
@@ -86,7 +88,7 @@ export default class Datastore {
      * @param query
      */
     public remove(query: any): Promise<number> {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject): any => {
             const fields: string[] = [];
 
             for (const field in query) {
@@ -101,10 +103,10 @@ export default class Datastore {
                     // Array of promises for index remove
                     const promises: Array<Promise<any[]>> = [];
 
-                    fields.forEach((field) => {
-                        const index = this.indices.get(field);
+                    fields.forEach((field): void => {
+                        const index: Index | undefined = this.indices.get(field);
                         if (index) {
-                            docs.forEach((doc) => {
+                            docs.forEach((doc): void => {
                                 promises.push(index.remove(doc));
                             });
                         }
@@ -115,15 +117,15 @@ export default class Datastore {
                 .then((docs: any[]) => {
                     const promises: Array<Promise<null>> = [];
 
-                    docs.forEach((doc) => {
-                        const id = doc._id;
+                    docs.forEach((doc): void => {
+                        const id: string = doc._id;
                         if (id && typeof id === "string") {
                             promises.push(this.storage.removeItem(id));
                         }
                     });
 
                     Promise.all(promises)
-                        .then(() => {
+                        .then((): any => {
                             resolve(docs.length);
                         })
                         .catch(reject);
@@ -137,7 +139,7 @@ export default class Datastore {
      * @param options - {fieldName: string}
      */
     public ensureIndex(options: {fieldName: string}): Promise<null> {
-        return new Promise<null>((resolve) => {
+        return new Promise<null>((resolve): any => {
             this.indices.set(options.fieldName, new Index(this, options));
             resolve();
         });
@@ -148,12 +150,12 @@ export default class Datastore {
      * @param ids - ID or Array of IDs
      */
     public getDocs(ids: string | string[]): Promise<any[]> {
-        return new Promise((resolve, reject) => {
-            const idsArr: string[] = (typeof ids === "string") ? [].concat(ids) : ids;
+        return new Promise((resolve, reject): any => {
+            const idsArr: string[] = (typeof ids === "string") ? [ids] : ids;
 
             const promises: Array<Promise<any>> = [];
 
-            idsArr.forEach((id: string) => {
+            idsArr.forEach((id): void => {
                 promises.push(this.storage.getItem(id));
             });
 
@@ -170,11 +172,11 @@ export default class Datastore {
      * @param value
      */
     public search(fieldName: string, value: any): Promise<string[]> {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject): any => {
             if (fieldName === "$or" && value instanceof Array) {
                 const promises: Array<Promise<string[]>> = [];
 
-                value.forEach((query) => {
+                value.forEach((query): void => {
                     for (const field in query) {
                         if (typeof field === "string" && query.hasOwnProperty(field)) {
                             promises.push(this.searchField(field, query[field]));
@@ -183,7 +185,7 @@ export default class Datastore {
                 });
 
                 Promise.all(promises)
-                    .then((idsArr: string[][]) => {
+                    .then((idsArr: string[][]): string[] => {
                         const idSet: Set<string> = idsArr
                             .reduce((a, b) => a.concat(b), [])
                             .reduce((set: Set<string>, id): Set<string> => set.add(id), new Set());
@@ -198,7 +200,7 @@ export default class Datastore {
                 // this means all queries must match for the document's _id to return
                 const promises: Array<Promise<string[]>> = [];
 
-                value.forEach((query) => {
+                value.forEach((query): void => {
                     for (const field in query) {
                         if (typeof field === "string" && query.hasOwnProperty(field)) {
                             promises.push(this.searchField(field, query[field]));
@@ -208,12 +210,12 @@ export default class Datastore {
 
                 Promise.all(promises)
                     // Convert Array of Arrays into Array of Sets
-                    .then((idsArr: string[][]) => {
+                    .then((idsArr: string[][]): Array<Set<string>> => {
                         return idsArr.map((ids) =>
                             ids.reduce((set: Set<string>, id): Set<string> => set.add(id), new Set()));
                     })
                     // Intersect all Sets into a single result Set
-                    .then((idSets: Array<Set<string>>) => {
+                    .then((idSets: Array<Set<string>>): string[] => {
                         // Having the results accumulated into a Set means to duplication is possible
                         const resultSet: Set<string> = idSets
                             .reduce((a, b) => new Set([...a].filter((x) => b.has(x))), idSets.pop());
@@ -252,11 +254,11 @@ export default class Datastore {
      * @param value - value to search by
      */
     private searchIndices(fieldName: string, value: any): Promise<string[]> {
-        return new Promise((resolve) => {
-            const index = this.indices.get(fieldName);
+        return new Promise((resolve): any => {
+            const index: Index | undefined = this.indices.get(fieldName);
 
             if (!index) {
-                return resolve(null);
+                return resolve(undefined);
             }
 
             if (typeof value === "object") {
@@ -275,7 +277,7 @@ export default class Datastore {
      * @param value - value to search by
      */
     private searchCollection(fieldName: string, value: any): Promise<string[]> {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject): any => {
             const ids: string[] = [];
             const lt: number = value.$lt || null;
             const lte: number = value.$lte || null;
@@ -283,9 +285,9 @@ export default class Datastore {
             const gte: number = value.$gte || null;
             const ne: any = value.$ne || null;
             this.storage.iterate((v, k) => {
-                const field = getPath(v, fieldName);
+                const field: any = getPath(v, fieldName);
                 if (field) {
-                    const flag =
+                    const flag: boolean =
                         (
                             (lt && field < lt) &&
                             (lte && field <= lte) &&

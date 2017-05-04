@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "system",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "declaration": true,
+        "importHelpers": true,
+        "removeComments": false,
+        "noImplicitAny": true,
+        "noEmitOnError": true,
+        "strictNullChecks": true
+    }
+}

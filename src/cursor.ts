@@ -66,7 +66,7 @@ export default class Cursor {
     /**
      * Execute the Cursor
      */
-    public exec(): Promise<any[] | number> {
+    public exec(): Promise<any[] | number | Promise<any[]>> {
         return new Promise((resolve, reject) => {
             const promises: Array<Promise<string[]>> = [];
 
@@ -76,10 +76,10 @@ export default class Cursor {
                 }
             }
 
-            const joined: Promise<any[] | number> = Promise.all(promises);
+            const joined: Promise<any[] | number | Promise<any[]>> = Promise.all(promises);
 
             joined
-                .then((idsArr: string[][]) => {
+                .then((idsArr: string[][]): number | Promise<any[]> => {
                     // Use a Set to dedupe
                     const idSet: Set<string> = idsArr
                         .reduce((a, b) => a.concat(b), [])

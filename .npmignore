@@ -1,0 +1,11 @@
+.gitignore
+spec
+node_modules
+tslint.json
+.npmignore
+.git
+*.DS_Store
+.idea
+src
+coverage
+.travis.yml
