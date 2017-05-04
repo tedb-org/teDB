@@ -67,7 +67,7 @@ export default class Cursor {
      * Execute the Cursor
      */
     public exec(): Promise<any[] | number | Promise<any[]>> {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject): any => {
             const promises: Array<Promise<string[]>> = [];
 
             for (const field in this.query) {
@@ -76,10 +76,10 @@ export default class Cursor {
                 }
             }
 
-            const joined: Promise<any[] | number | Promise<any[]>> = Promise.all(promises);
+            const joined: any = Promise.all(promises); // confusing type issues*
 
             joined
-                .then((idsArr: string[][]): number | Promise<any[]> => {
+                .then((idsArr: string[][]): number | Promise<any[]>  => {
                     // Use a Set to dedupe
                     const idSet: Set<string> = idsArr
                         .reduce((a, b) => a.concat(b), [])

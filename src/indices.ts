@@ -46,9 +46,13 @@ export default class Index {
 
             const key: BTT.ASNDBS = getPath(doc, this.fieldName);
 
-            if (key.constructor.name === "Array" && !this.isArray) {
-                this.avl.compareKeys = compareArray;
-                this.isArray = true;
+            if (key) {
+                if (key.constructor.name === "Array" && !this.isArray) {
+                    this.avl.compareKeys = compareArray;
+                    this.isArray = true;
+                }
+            } else {
+                return reject(new Error("Key was not retrieved from document"));
             }
 
             this.avl.insert(key, doc._id);

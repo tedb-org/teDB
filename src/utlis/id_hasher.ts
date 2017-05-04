@@ -3,8 +3,7 @@ import Base64 from "./base64";
 /**
  * Tuple of 4 Uint8Arrays representing 4 serialized Long Unsigned Integers
  */
-//export type ByteBuffer = [Uint8Array, Uint8Array, Uint8Array, Uint8Array];
-export type ByteBuffer = Uint8Array[];
+export type ByteBuffer = [Uint8Array, Uint8Array, Uint8Array, Uint8Array];
 
 const B64 = new Base64();
 

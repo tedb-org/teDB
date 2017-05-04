@@ -320,7 +320,7 @@ export default class Datastore {
      * Get Date from ID
      * @param id - the `_id` of the document to get date of
      */
-    private getIdDate(id: string): Date {
-        return new Date(decode(id)[0]);
-    }
+    /*private getIdDate(id: string): Date {
+        return new Date(decode(id)[0]);  // cannot decode
+    }*/
 }
