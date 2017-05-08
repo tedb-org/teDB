@@ -1,0 +1,24 @@
+{
+  "extends": "../configs/base.json",
+  "compilerOptions": {
+      "allowSyntheticDefaultImports": true,
+      "rootDir": "../",
+      "typeRoots": [
+          "node_modules/@types",
+          "node_modules"
+      ],
+      "types": [
+          "binary-type-tree",
+          "jest"
+      ],
+      "lib": ["es6"]
+  },
+  "include": [
+      "spec",
+      "src"
+  ],
+  "exclude": [
+      "dist",
+      "node_modules"
+  ]
+}

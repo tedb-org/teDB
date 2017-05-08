@@ -41,7 +41,7 @@ export const encode = (buffer: ByteBuffer): string => {
  * @returns {string}
  */
 export const getUUID = (): string => {
-    const dateBytes = NumberToByteArray(Date.now());
+    const dateBytes: Uint8Array = NumberToByteArray(Date.now());
     return encode([dateBytes, radomByteArray(), radomByteArray(), radomByteArray()]);
 };
 

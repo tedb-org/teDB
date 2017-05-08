@@ -1,20 +1,24 @@
 {
+    "extends": "./configs/base.json",
     "compilerOptions": {
-        "target": "es6",
-        "module": "system",
-        "moduleResolution": "node",
-        "sourceMap": true,
-        "declaration": true,
-        "removeComments": false,
-        "noImplicitAny": false,
-        "compileOnSave": true,
-        "typeRoots": ["node_modules"],
-        "types": ["binary-type-tree"],
-        "outFile": "dist/tedb.js"
+        "baseUrl": ".",
+        "typeRoots": [
+            "node_modules/@types",
+            "node_modules"
+        ],
+        "types": [
+            "binary-type-tree",
+            "jest"
+        ],
+        "outFile": "dist/tedb.js",
+        "lib": ["es6"]
     },
+    "include": [
+        "src"
+    ],
     "exclude": [
         "dist",
         "node_modules",
-        "spec/**/*"
+        "spec"
     ]
 }
