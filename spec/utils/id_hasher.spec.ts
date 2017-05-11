@@ -1,8 +1,19 @@
-import { decode, encode, getUUID, ByteBuffer } from "../../src/utlis";
+import { decode, getUUID, ByteBuffer, getDate } from "../../src/utlis";
 
-test("a", () => {
+describe("testing the id_hasher", () => {
     const id: string = getUUID();
-    const date: any = new Date(Number(decode(id)[0].reverse().join("")));
 
-    expect(23).toBe(23);
+    test("decode", () => {
+        const buffer: ByteBuffer = decode(id);
+
+        expect(buffer).toHaveLength(4);
+        buffer.map((arr) => expect(arr).toBeInstanceOf(Uint8Array));
+        buffer.map((arr) => arr.forEach((num) => expect(num.constructor).toBe(Number)));
+    });
+
+    test("getting Date from id", () => {
+        const now = getDate(id);
+
+        expect(now).toBeInstanceOf(Date);
+    });
 });

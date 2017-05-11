@@ -6,7 +6,7 @@ import { IStorageDriver } from "./types/storageDriver";
 import { IRange } from "./types/range";
 import Cursor from "./cursor";
 import { getPath } from "./utlis/get_path";
-import { getUUID, decode } from "./utlis/id_hasher";
+import { getUUID, decode, getDate } from "./utlis/id_hasher";
 
 /**
  * Datastore class
@@ -320,7 +320,7 @@ export default class Datastore {
      * Get Date from ID
      * @param id - the `_id` of the document to get date of
      */
-    /*private getIdDate(id: string): Date {
-        return new Date(decode(id)[0]);  // cannot decode
-    }*/
+    private getIdDate(id: string): Date {
+        return getDate(id);
+    }
 }
