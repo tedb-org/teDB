@@ -14,9 +14,7 @@
         "node_modules/@types"
     ],
     "testResultsProcessor": "<rootDir>/node_modules/ts-jest/coverageprocessor.js",
-    "testMatch": [
-        "**/spec/**/*.spec.ts"
-    ],
+    "testRegex": "(/^spec/.*|\\.(test|spec))\\.(ts)$",
     "moduleFileExtensions": [
         "ts",
         "js"
