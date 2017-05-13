@@ -3,11 +3,18 @@
  */
 import { getPath } from "./utlis/get_path";
 import Datastore from "./datastore";
-import { IRange } from "./types/range";
+import { IRange, IindexOptions } from "./types";
 import { compareArray } from "./utlis/compareArray";
 import * as BTT from "binary-type-tree";
 
-export default class Index {
+export interface IIndex {
+    insert(doc: any): Promise<any>;
+    remove(doc: any): Promise<any>;
+    search(key: BTT.ASNDBS): Promise<BTT.SNDBSA>;
+    searchRange(range: IRange): Promise<BTT.SNDBSA>;
+}
+
+export default class Index implements IIndex {
     /** Field Name for Index */
     protected fieldName: string;
     /** ALV Tree for indexing */
@@ -22,8 +29,16 @@ export default class Index {
      * @param datastore - reference to Datastore
      * @param options - Options for Index, `{fieldName: string}`
      */
-    constructor(datastore: Datastore, options: {fieldName: string}) {
-        this.avl = new BTT.AVLTree({});
+    constructor(datastore: Datastore, options: IindexOptions) {
+        this.avl = options.unique ? new BTT.AVLTree({unique: true}) : new BTT.AVLTree({});
+
+        if (options.compareKeys) {
+            this.avl.compareKeys = options.compareKeys;
+        }
+        if (options.checkKeyEquality) {
+            this.avl.checkKeyEquality = options.checkKeyEquality;
+        }
+
         this.isArray = false;
 
         this.fieldName = options.fieldName;
@@ -83,7 +98,7 @@ export default class Index {
      * Search Index for key
      * @param key - key to search by
      */
-    public search(key: any): Promise<any> {
+    public search(key: BTT.ASNDBS): Promise<BTT.SNDBSA> {
         return new Promise((resolve) => {
             resolve(this.avl.tree.search(key));
         });
@@ -93,7 +108,7 @@ export default class Index {
      * Search Index within bounds
      * @param range - An IRange to search within bounds
      */
-    public searchRange(range: IRange): Promise<any> {
+    public searchRange(range: IRange): Promise<BTT.SNDBSA> {
         return new Promise((resolve) => {
             resolve(this.avl.tree.query(range));
         });
