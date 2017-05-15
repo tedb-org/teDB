@@ -2,17 +2,28 @@
  * Created by tsturzl on 4/11/17.
  */
 import Index from "./indices";
-import { IStorageDriver } from "./types/storageDriver";
-import { IRange } from "./types/range";
+import { IindexOptions, IStorageDriver, IRange } from "./types";
 import Cursor from "./cursor";
 import { getPath } from "./utlis/get_path";
-import { getUUID, decode, getDate } from "./utlis/id_hasher";
+import { getUUID, getDate } from "./utlis/id_hasher";
+
+export interface IDatastore {
+    insert(doc: any): Promise<never>;
+    find(query: any): Cursor;
+    count(query: any): Cursor;
+    update(query: any, operation: any): Promise<number>;
+    remove(query: any): Promise<number>;
+    ensureIndex(options: IindexOptions): Promise<null>;
+    removeIndex(options: IindexOptions): Promise<null>;
+    getDocs(ids: string | string[]): Promise<any[]>;
+    search(fieldName: string, value: any): Promise<string[]>;
+}
 
 /**
  * Datastore class
  * Creates a new Datastore using a specified storageDriver
  */
-export default class Datastore {
+export default class Datastore implements IDatastore {
 
     /** A HashMap of all the indices keyed by the fieldName. <fieldName, Index> */
     private indices: Map<string, Index>;
@@ -89,13 +100,6 @@ export default class Datastore {
      */
     public remove(query: any): Promise<number> {
         return new Promise((resolve, reject): any => {
-            const fields: string[] = [];
-
-            for (const field in query) {
-                if (query.hasOwnProperty(field)) {
-                    fields.push(field);
-                }
-            }
 
             this.find(query)
                 .exec()
@@ -103,14 +107,11 @@ export default class Datastore {
                     // Array of promises for index remove
                     const promises: Array<Promise<any[]>> = [];
 
-                    fields.forEach((field): void => {
-                        const index: Index | undefined = this.indices.get(field);
-                        if (index) {
-                            docs.forEach((doc): void => {
-                                promises.push(index.remove(doc));
-                            });
+                    for (let i = docs.length - 1; i >= 0; i--) {
+                        for (const index of this.indices.values()) {
+                            promises.push(index.remove(docs[i]));
                         }
-                    });
+                    }
 
                     return Promise.all(promises);
                 })
@@ -138,9 +139,23 @@ export default class Datastore {
      * Ensure an index on the datastore
      * @param options - {fieldName: string}
      */
-    public ensureIndex(options: {fieldName: string}): Promise<null> {
+    public ensureIndex(options: IindexOptions): Promise<null> {
         return new Promise<null>((resolve): any => {
             this.indices.set(options.fieldName, new Index(this, options));
+            resolve();
+        });
+    }
+
+    /**
+     * Remove index will delete the index from the Map which also
+     * holds the Btree of the indices.
+     * @param options
+     * @returns {Promise<null>}
+     */
+    public removeIndex(options: IindexOptions): Promise<null> {
+        return new Promise<null>((resolve): any => {
+            const index: Index | undefined = this.indices.get(options.fieldName);
+            this.indices.delete(options.fieldName);
             resolve();
         });
     }
