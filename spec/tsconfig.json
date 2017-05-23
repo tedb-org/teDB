@@ -2,7 +2,7 @@
   "extends": "../configs/base.json",
   "compilerOptions": {
       "allowSyntheticDefaultImports": true,
-      "rootDir": "../",
+      "baseUrl": "../",
       "typeRoots": [
           "node_modules/@types",
           "node_modules"
@@ -15,7 +15,8 @@
   },
   "include": [
       "spec",
-      "src"
+      "src",
+      "example"
   ],
   "exclude": [
       "dist",

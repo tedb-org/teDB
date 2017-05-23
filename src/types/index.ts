@@ -1,3 +1,2 @@
-export { IRange } from "./range";
 export { IStorageDriver } from "./storageDriver";
-export { IindexOptions } from "./params";
+export { IindexOptions, IRange, IupdateOptions } from "./interfaces";

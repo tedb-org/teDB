@@ -5,7 +5,7 @@
   "main": "dist/tedb.js",
   "types": "dist/tedb.d.ts",
   "scripts": {
-    "test": "jest --config=spec/jest.json",
+    "test": "jest --no-cache --config=./spec/jest.json",
     "build": "rm -rf ./dist/* && tsc",
     "docs": "typedoc --excludeExternals true --exclude '**/*+(spec|index).ts --out docs"
   },
@@ -32,12 +32,11 @@
   },
   "homepage": "https://github.com/tsturzl/teDB#readme",
   "dependencies": {
-    "binary-type-tree": "^1.0.4"
+    "binary-type-tree": "^1.0.5"
   },
   "devDependencies": {
-    "@types/jest": "^19.2.2",
-    "jest": "^19.0.2",
-    "ts-jest": "^19.0.14",
+    "@types/jest": "^19.2.3",
+    "jest": "^20.0.3",
     "typescript": "^2.3.2"
   }
 }

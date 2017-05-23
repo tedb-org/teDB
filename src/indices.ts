@@ -11,7 +11,7 @@ export interface IIndex {
     insert(doc: any): Promise<any>;
     updateKey(key: BTT.ASNDBS, newKey: BTT.ASNDBS): Promise<any>;
     remove(doc: any): Promise<any>;
-    toJSON(): string;
+    toJSON(): Promise<string>;
     search(key: BTT.ASNDBS): Promise<BTT.SNDBSA>;
     searchRange(range: IRange): Promise<BTT.SNDBSA>;
 }
@@ -52,7 +52,7 @@ export default class Index implements IIndex {
      * @param doc - document to insert into Index
      */
     public insert(doc: any): Promise<any> {
-        return new Promise<any>((resolve, reject): void => {
+        return new Promise<any>((resolve, reject) => {
             // TODO: need to make Error types
             if (!doc.hasOwnProperty("_id")) {
                 return reject(new Error("Document is missing _id field"));
@@ -75,7 +75,7 @@ export default class Index implements IIndex {
             try {
                 this.avl.insert(key, doc._id);
             } catch (e) {
-                reject(e);
+                return reject(e);
             }
 
             resolve(doc);
@@ -89,14 +89,14 @@ export default class Index implements IIndex {
      * @returns {Promise<null>}
      */
     public updateKey(key: BTT.ASNDBS, newKey: BTT.ASNDBS): Promise<null> {
-        return new Promise<null>((resolve, reject): void => {
+        return new Promise<null>((resolve, reject) => {
             if (this.avl.tree.search(key).length === 0) {
                 return reject(new Error("This key does not exist"));
             }
             try {
                 this.avl.updateKey(key, newKey);
             } catch (e) {
-                reject(e);
+                return reject(e);
             }
             resolve();
         });
@@ -107,7 +107,7 @@ export default class Index implements IIndex {
      * @param doc
      */
     public remove(doc: any): Promise<any> {
-        return new Promise<any>((resolve, reject): void|undefined => {
+        return new Promise<any>((resolve, reject) => {
             if (!doc.hasOwnProperty("_id")) {
                 return; // TODO: should throw an error, need to make Error types
             }
@@ -117,7 +117,7 @@ export default class Index implements IIndex {
             try {
                 this.avl.delete(key, doc._id);
             } catch (e) {
-                reject(e);
+                return reject(e);
             }
 
             resolve(doc);
@@ -128,8 +128,10 @@ export default class Index implements IIndex {
      * Return the tree as JSON { key, value } pairs.
      * @returns {any}
      */
-    public toJSON(): string {
-        return this.avl.toJSON();
+    public toJSON(): Promise<string> {
+        return new Promise<string>((resolve) => {
+            resolve(this.avl.toJSON());
+        });
     }
 
     /**
@@ -137,7 +139,7 @@ export default class Index implements IIndex {
      * @param key - key to search by
      */
     public search(key: BTT.ASNDBS): Promise<BTT.SNDBSA> {
-        return new Promise<BTT.SNDBSA>((resolve): void => {
+        return new Promise<BTT.SNDBSA>((resolve) => {
             resolve(this.avl.tree.search(key));
         });
     }
@@ -147,7 +149,7 @@ export default class Index implements IIndex {
      * @param range - An IRange to search within bounds
      */
     public searchRange(range: IRange): Promise<BTT.SNDBSA> {
-        return new Promise<BTT.SNDBSA>((resolve): void => {
+        return new Promise<BTT.SNDBSA>((resolve) => {
             resolve(this.avl.tree.query(range));
         });
     }

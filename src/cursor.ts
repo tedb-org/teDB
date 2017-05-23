@@ -67,7 +67,7 @@ export default class Cursor {
      * Execute the Cursor
      */
     public exec(): Promise<any[] | number> {
-        return new Promise((resolve, reject): any => {
+        return new Promise<any[] | number>((resolve, reject) => {
             const promises: Array<Promise<string[]>> = [];
 
             for (const field in this.query) {

@@ -3,17 +3,17 @@
     "globals": {
         "__TS_CONFIG__": "<rootDir>/spec/tsconfig.json"
     },
-    "collectCoverageFrom": [
-        "src/**/*.ts"
-    ],
     "transform": {
-        "\\.(ts)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+        "\\.(ts)$": "<rootDir>/spec/preprocessor.js"
     },
     "moduleDirectories": [
         "node_modules",
         "node_modules/@types"
     ],
-    "testResultsProcessor": "<rootDir>/node_modules/ts-jest/coverageprocessor.js",
+    "collectCoverageFrom": [
+        "src/**/*.ts"
+    ],
+    "unmockedModulePathPatterns": ["/node_modules/"],
     "testRegex": "(/^spec/.*|\\.(test|spec))\\.(ts)$",
     "moduleFileExtensions": [
         "ts",
