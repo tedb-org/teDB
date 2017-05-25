@@ -9,7 +9,8 @@
       ],
       "types": [
           "binary-type-tree",
-          "jest"
+          "jest",
+          "node"
       ],
       "lib": ["es6"]
   },

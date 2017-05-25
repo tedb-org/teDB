@@ -44,7 +44,8 @@ export default class Datastore implements IDatastore {
     }
 
     /**
-     * Insert a single document
+     * Insert a single document and insert any indices of document into
+     * its respective binary tree.
      * @param doc - document to insert
      */
     public insert(doc: any): Promise<any> {

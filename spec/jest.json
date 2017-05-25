@@ -3,8 +3,11 @@
     "globals": {
         "__TS_CONFIG__": "<rootDir>/spec/tsconfig.json"
     },
+    "transformIgnorePatterns": [
+        "<rootDir>/node_modules/(?!binary-type-tree)"
+    ],
     "transform": {
-        "\\.(ts)$": "<rootDir>/spec/preprocessor.js"
+        "^.+\\.(ts|js)$": "<rootDir>/spec/preprocessor.js"
     },
     "moduleDirectories": [
         "node_modules",
