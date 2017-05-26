@@ -57,13 +57,13 @@ export default class Index implements IIndex {
             if (!doc.hasOwnProperty("_id")) {
                 return reject(new Error("Document is missing _id field"));
             }
-            if (typeof !doc._id !== "string") {
+            if (typeof doc._id !== "string") {
                 return reject(new Error("_id field needs to be type `string`"));
             }
 
             const key: BTT.ASNDBS = getPath(doc, this.fieldName);
 
-            if (key) {
+            if (key !== undefined && key !== null) {
                 if (key.constructor.name === "Array" && !this.isArray) {
                     this.avl.compareKeys = compareArray;
                     this.isArray = true;
@@ -130,7 +130,7 @@ export default class Index implements IIndex {
      */
     public toJSON(): Promise<string> {
         return new Promise<string>((resolve) => {
-            resolve(this.avl.toJSON());
+            resolve(this.avl.tree.toJSON<BTT.AVLNode>());
         });
     }
 

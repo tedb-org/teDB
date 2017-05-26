@@ -2,7 +2,7 @@
  *  Written on Mac,
  *  Sierra -v 10.12.5
  *  Node -v 7.10.0
- *  This is the mock storage driver for TeDB. This will read/write
+ *  This is the mock storage driver for TeDB/node. This will read/write
  *  to the /teDB/spec/example/db directory using Nodejs fs library.
  *  Check the /teDB/spec/example/exampleStorageDriver.ts file for
  *  full explanation.
@@ -13,9 +13,11 @@ import ErrnoException = NodeJS.ErrnoException;
 
 export class MockStorageDriver implements IStorageDriver {
     private filePath: string;
+    private allKeys: string[];
 
     constructor(filePath: string) {
         this.filePath = filePath;
+        this.allKeys = [];
     }
 
     /**
@@ -34,7 +36,7 @@ export class MockStorageDriver implements IStorageDriver {
                 for (let i = parsedData.length - 2; i >= 0; i--) {
                     try {
                         const doc = JSON.parse(parsedData[i]);
-                        if (doc.id === key) {
+                        if (doc._id === key) {
                             resolve(doc);
                         }
                     } catch (e) {
@@ -64,6 +66,7 @@ export class MockStorageDriver implements IStorageDriver {
                 if (err) {
                     reject(err);
                 }
+                this.allKeys.push(key);
                 resolve(value);
             });
         });
@@ -82,24 +85,31 @@ export class MockStorageDriver implements IStorageDriver {
                     return reject(err);
                 }
                 const parsedData = data.split("\n");
-                for (let i = parsedData.length - 2; i >= 0; i--) {
+                parsedData.pop();
+                for (let i = parsedData.length - 1; i >= 0; i--) {
                     try {
                         const doc = JSON.parse(parsedData[i]);
-                        if (doc.id === key) {
+                        if (doc._id === key) {
                             parsedData.splice(i, 1);
                         }
                     } catch (e) {
                         reject(e);
                     }
                 }
-                parsedData.pop();
                 fs.unlinkSync(`${cwd}/spec/example/db/${this.filePath}.db`);
                 for (let i = 0; i <= parsedData.length; i++) {
                     try {
-                        const json = JSON.stringify(JSON.parse(parsedData[i])) + "\n";
-                        fs.appendFileSync(`${cwd}/spec/example/db/${this.filePath}.db`, json);
+                        if (parsedData[i] !== undefined) {
+                            const json = JSON.stringify(JSON.parse(parsedData[i])) + "\n";
+                            fs.appendFileSync(`${cwd}/spec/example/db/${this.filePath}.db`, json);
+                        }
                     } catch (e) {
                         reject(e);
+                    }
+                }
+                for (let i = this.allKeys.length - 1; i >= 0; i--) {
+                    if (this.allKeys[i].indexOf(key) === 0) {
+                        this.allKeys.splice(i, 1);
                     }
                 }
                 resolve(null);
@@ -118,7 +128,14 @@ export class MockStorageDriver implements IStorageDriver {
      */
     public storeIndex(key: string, index: string): Promise<null> {
         return new Promise<null>((resolve, reject) => {
-            resolve();
+            const cwd = process.cwd();
+            const fileName = `BTTindex_${this.filePath}_${key}.db`;
+            fs.writeFile(`${cwd}/spec/example/db/${fileName}`, index, (err: ErrnoException) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve();
+            });
         });
     }
     /**
@@ -126,9 +143,22 @@ export class MockStorageDriver implements IStorageDriver {
      * a string that will find the correct file. Then read the contents
      * and return the the stores JSON
      */
-    public fetchIndex(key: string): Promise<string> {
-        return new Promise<string>((resolve, reject) => {
-            resolve();
+    public fetchIndex(key: string): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            const cwd = process.cwd();
+            const fileName = `BTTindex_${this.filePath}_${key}.db`;
+            let index: any;
+            fs.readFile(`${cwd}/spec/example/db/${fileName}`, "utf8", (err: ErrnoException, data) => {
+                if (err) {
+                    reject(err);
+                }
+                try {
+                    index = JSON.parse(data);
+                } catch (e) {
+                    reject(e);
+                }
+                resolve(index);
+            });
         });
     }
     /**
@@ -143,8 +173,8 @@ export class MockStorageDriver implements IStorageDriver {
      * ?
      */
     public keys(): Promise<string[]> {
-        return new Promise<string[]>((resolve, reject) => {
-            resolve();
+        return new Promise<string[]>((resolve) => {
+            resolve(this.allKeys);
         });
     }
     /**
@@ -153,12 +183,24 @@ export class MockStorageDriver implements IStorageDriver {
     public clear(): Promise<null> {
         return new Promise<null>((resolve, reject) => {
             const cwd = process.cwd();
-            try {
-                fs.unlinkSync(`${cwd}/spec/example/db/${this.filePath}.db`);
-            } catch (e) {
-                reject(e);
-            }
-            resolve(null);
+            fs.unlink(`${cwd}/spec/example/db/${this.filePath}.db`, (error: ErrnoException) => {
+                if (error) {
+                    return reject(error);
+                }
+                fs.readdir(`${cwd}/spec/example/db`, (err: ErrnoException, files: string[]) => {
+                    files.map((file) => {
+                        const splitFile: string[] = file.split("_");
+                        if (splitFile[1] === this.filePath) {
+                            fs.unlink(`${cwd}/spec/example/db/${file}`, (er: ErrnoException) => {
+                                if (er) {
+                                    return reject(er);
+                                }
+                            });
+                        }
+                    });
+                });
+            });
+            this.allKeys = [];
         });
     }
 }

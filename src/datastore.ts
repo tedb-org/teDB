@@ -16,6 +16,7 @@ export interface IDatastore {
     remove(query: any): Promise<number>;
     ensureIndex(options: IindexOptions): Promise<null>;
     removeIndex(options: IindexOptions): Promise<null>;
+    getIndices(): Promise<any>;
     getDocs(ids: string | string[]): Promise<any[]>;
     search(fieldName: string, value: any): Promise<string[]>;
 }
@@ -56,9 +57,9 @@ export default class Datastore implements IDatastore {
 
             const indexPromises: Array<Promise<never>> = [];
 
-            for (const index of this.indices.values()) {
-                indexPromises.push(index.insert(doc));
-            }
+            this.indices.forEach((v) => {
+                indexPromises.push(v.insert(doc));
+            });
 
             Promise.all(indexPromises)
                 .then((): any => {
@@ -143,9 +144,13 @@ export default class Datastore implements IDatastore {
      * @param options - {fieldName: string}
      */
     public ensureIndex(options: IindexOptions): Promise<null> {
-        return new Promise<null>((resolve) => {
-            this.indices.set(options.fieldName, new Index(this, options));
-            resolve();
+        return new Promise<null>((resolve, reject) => {
+            try {
+                this.indices.set(options.fieldName, new Index(this, options));
+            } catch (e) {
+                reject(e);
+            }
+            resolve(null);
         });
     }
 
@@ -156,9 +161,19 @@ export default class Datastore implements IDatastore {
      * @returns {Promise<null>}
      */
     public removeIndex(options: IindexOptions): Promise<null> {
-        return new Promise<null>((resolve) => {
-            this.indices.delete(options.fieldName);
+        return new Promise<null>((resolve, reject) => {
+            try {
+                this.indices.delete(options.fieldName);
+            } catch (e) {
+                reject(e);
+            }
             resolve();
+        });
+    }
+
+    public getIndices(): Promise<any> {
+        return new Promise<any>((resolve) => {
+            resolve(this.indices);
         });
     }
 

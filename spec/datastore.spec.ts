@@ -23,7 +23,7 @@ beforeAll(() => {
     files.map((file) => fs.unlinkSync(`${cwd}/spec/example/db/${file}`)); // rm later
     mv.map((file) => {
         const data = fs.readFileSync(`${cwd}/spec/fixtures/db/${file}`);
-        fs.writeFileSync(`${cwd}/spec/example/db/${file}`, "utf8", data);
+        fs.writeFileSync(`${cwd}/spec/example/db/${file}`, data);
     });
 });
 
@@ -41,16 +41,76 @@ describe("testing the datastore", () => {
             data[i] = JSON.parse(data[i]);
         }
         data.pop();
-        db.ensureIndex({fieldName: "name", unique: true});
+        db.ensureIndex({fieldName: "name", unique: true})
+            .then((res) => {
+                // console.log("successful ensure Index 1");
+            })
+            .catch((err) => {
+                // console.log("fail ensure index 1");
+            });
+        db.ensureIndex({fieldName: "age", unique: true})
+          .then((res) => {
+              // console.log("success ensure index 2");
+          })
+          .catch((err) => {
+              // console.log("fail ensure index 2");
+          });
+
         for (let i = 0; i <= data.length; i++) {
-            db.insert(data[i]);
+            if (data[i] !== undefined) {
+                db.insert(data[i])
+                    .then((res) => {
+                        // console.log("insert Success");
+                    })
+                    .catch((err) => {
+                        // console.log(data[i])
+                        // console.log(err);
+                        // console.log("fail insert");
+                    });
+            }
         }
-        console.log(db);
         // need to write a method to get the json for all indexed items.
         // then proceed to use the storage driver method to store each
         // JSON string into its own file.
+        db.getIndices()
+            .then((res) => {
+                res.forEach((v, k) => {
+                    const fieldName = v.fieldName;
+                    v.toJSON()
+                        .then((json) => {
+                            return a.storeIndex(fieldName, json);
+                        })
+                        .then((response) => {
+                            // console.log(response);
+                        })
+                        .catch((err) => {
+                            // console.log(err);
+                        });
+                });
+            });
+        a.fetchIndex("age")
+            .then((res) => {
+                res.map((item) => {
+                   // console.log(item);
+                });
+            })
+            .catch((err) => {
+                // console.log(err);
+            });
     });
 
+    test("hmm", () => {
+        const a = new MockStorageDriver("users");
+        a.clear()
+         .then((res) => {
+             console.log("Success");
+             console.log(res);
+         })
+         .catch((err) => {
+             console.log("error");
+             console.log(err);
+         });
+    });
 });
 
 afterAll(() => {
