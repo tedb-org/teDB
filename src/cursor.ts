@@ -2,21 +2,31 @@
  * Created by tsturzl on 4/11/17.
  */
 import Datastore from "./datastore";
+import { isEmpty } from "./utlis";
+
+export interface ICursor {
+    sort(sort: any): this;
+    skip(skip: number): this;
+    limit(limit: number): this;
+    exec(): Promise<any[] | number>;
+}
+
+interface Ioptions {
+    sort?: any;
+    skip?: number;
+    limit?: number;
+}
 
 /**
  * Database Cursor
  */
-export default class Cursor {
+export default class Cursor implements ICursor {
     /** Reference to Datastore object */
     private datastore: Datastore;
     /** Query passed from `Datastore.find` or `count` */
     private query: any;
     /** Options for `exec` */
-    private options: {
-        sort: any,
-        skip: number,
-        limit: number,
-    };
+    private options: Ioptions;
 
     /** Is this a count operation? */
     private count: boolean;
@@ -31,6 +41,7 @@ export default class Cursor {
         this.datastore = datastore;
         this.query = query;
         this.count = count || false;
+        this.options = {};
     }
 
     /**
@@ -39,7 +50,6 @@ export default class Cursor {
      */
     public sort(sort: any): this {
         this.options.sort = sort;
-
         return this;
     }
 
@@ -68,15 +78,19 @@ export default class Cursor {
      */
     public exec(): Promise<any[] | number> {
         return new Promise<any[] | number>((resolve, reject) => {
-            const promises: Array<Promise<string[]>> = [];
+            const promisesGetIds: Array<Promise<string[]>> = [];
 
-            for (const field in this.query) {
-                if (this.query.hasOwnProperty(field)) {
-                    promises.push(this.datastore.search(field, this.query[field]));
+            if (isEmpty(this.query)) {
+                promisesGetIds.push();
+            } else {
+                for (const field in this.query) {
+                    if (this.query.hasOwnProperty(field)) {
+                        promisesGetIds.push(this.datastore.search(field, this.query[field]));
+                    }
                 }
             }
 
-            const joined: any = Promise.all(promises); // confusing type issues*
+            const joined: any = Promise.all(promisesGetIds); // confusing type issues*
 
             joined
                 .then((idsArr: string[][]): number | Promise<any[]>  => {

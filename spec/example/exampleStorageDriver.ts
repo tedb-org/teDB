@@ -18,6 +18,10 @@ export class MockStorageDriver implements IStorageDriver {
     constructor(filePath: string) {
         this.filePath = filePath;
         this.allKeys = [];
+        const cwd = process.cwd();
+        if (!fs.existsSync(`${cwd}/spec/example/db/${this.filePath}`)) {
+            fs.mkdirSync(`${cwd}/spec/example/db/${this.filePath}`);
+        }
     }
 
     /**
@@ -28,22 +32,11 @@ export class MockStorageDriver implements IStorageDriver {
     public getItem(key: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             const cwd = process.cwd();
-            fs.readFile(`${cwd}/spec/example/db/${this.filePath}.db`, "utf8", (err: ErrnoException, data) => {
+            fs.readFile(`${cwd}/spec/example/db/${this.filePath}/${key}.db`, "utf8", (err: ErrnoException, data: string) => {
                 if (err) {
                     return reject(err);
                 }
-                const parsedData = data.split("\n");
-                for (let i = parsedData.length - 2; i >= 0; i--) {
-                    try {
-                        const doc = JSON.parse(parsedData[i]);
-                        if (doc._id === key) {
-                            resolve(doc);
-                        }
-                    } catch (e) {
-                        reject(e);
-                    }
-                }
-                resolve(null);
+                resolve(JSON.parse(data));
             });
         });
     }
@@ -57,12 +50,12 @@ export class MockStorageDriver implements IStorageDriver {
             const cwd = process.cwd();
             let data;
             try {
-                data = JSON.stringify(value) + "\n";
+                data = JSON.stringify(value);
             } catch (e) {
                 reject(e);
             }
 
-            fs.appendFile(`${cwd}/spec/example/db/${this.filePath}.db`, data, (err: ErrnoException) => {
+            fs.appendFile(`${cwd}/spec/example/db/${this.filePath}/${key}.db`, data, (err: ErrnoException) => {
                 if (err) {
                     reject(err);
                 }
@@ -80,39 +73,20 @@ export class MockStorageDriver implements IStorageDriver {
     public removeItem(key: string): Promise<null> {
         return new Promise<null>((resolve, reject) => {
             const cwd = process.cwd();
-            fs.readFile(`${cwd}/spec/example/db/${this.filePath}.db`, "utf8", (err: ErrnoException, data) => {
+            fs.unlink(`${cwd}/spec/example/db/${this.filePath}/${key}.db`, (err: ErrnoException) => {
                 if (err) {
                     return reject(err);
                 }
-                const parsedData = data.split("\n");
-                parsedData.pop();
-                for (let i = parsedData.length - 1; i >= 0; i--) {
-                    try {
-                        const doc = JSON.parse(parsedData[i]);
-                        if (doc._id === key) {
-                            parsedData.splice(i, 1);
+                try {
+                    for (let i = this.allKeys.length - 1; i >= 0; i--) {
+                        if (this.allKeys[i].indexOf(key) === 0) {
+                            this.allKeys.splice(i, 1);
                         }
-                    } catch (e) {
-                        reject(e);
                     }
+                } catch (e) {
+                    return reject(e);
                 }
-                fs.unlinkSync(`${cwd}/spec/example/db/${this.filePath}.db`);
-                for (let i = 0; i <= parsedData.length; i++) {
-                    try {
-                        if (parsedData[i] !== undefined) {
-                            const json = JSON.stringify(JSON.parse(parsedData[i])) + "\n";
-                            fs.appendFileSync(`${cwd}/spec/example/db/${this.filePath}.db`, json);
-                        }
-                    } catch (e) {
-                        reject(e);
-                    }
-                }
-                for (let i = this.allKeys.length - 1; i >= 0; i--) {
-                    if (this.allKeys[i].indexOf(key) === 0) {
-                        this.allKeys.splice(i, 1);
-                    }
-                }
-                resolve(null);
+                resolve();
             });
         });
     }
@@ -129,7 +103,7 @@ export class MockStorageDriver implements IStorageDriver {
     public storeIndex(key: string, index: string): Promise<null> {
         return new Promise<null>((resolve, reject) => {
             const cwd = process.cwd();
-            const fileName = `BTTindex_${this.filePath}_${key}.db`;
+            const fileName = `${this.filePath}/index_${key}.db`;
             fs.writeFile(`${cwd}/spec/example/db/${fileName}`, index, (err: ErrnoException) => {
                 if (err) {
                     reject(err);
@@ -146,7 +120,7 @@ export class MockStorageDriver implements IStorageDriver {
     public fetchIndex(key: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             const cwd = process.cwd();
-            const fileName = `BTTindex_${this.filePath}_${key}.db`;
+            const fileName = `${this.filePath}/index_${key}.db`;
             let index: any;
             fs.readFile(`${cwd}/spec/example/db/${fileName}`, "utf8", (err: ErrnoException, data) => {
                 if (err) {
@@ -183,24 +157,25 @@ export class MockStorageDriver implements IStorageDriver {
     public clear(): Promise<null> {
         return new Promise<null>((resolve, reject) => {
             const cwd = process.cwd();
-            fs.unlink(`${cwd}/spec/example/db/${this.filePath}.db`, (error: ErrnoException) => {
-                if (error) {
-                    return reject(error);
+            fs.readdir(`${cwd}/spec/example/db/${this.filePath}`, (err: ErrnoException, files) => {
+                if (err) {
+                    return reject(err);
                 }
-                fs.readdir(`${cwd}/spec/example/db`, (err: ErrnoException, files: string[]) => {
-                    files.map((file) => {
-                        const splitFile: string[] = file.split("_");
-                        if (splitFile[1] === this.filePath) {
-                            fs.unlink(`${cwd}/spec/example/db/${file}`, (er: ErrnoException) => {
-                                if (er) {
-                                    return reject(er);
-                                }
-                            });
-                        }
-                    });
+                for (let i = files.length - 1; i >= 0; i--) {
+                    try {
+                        fs.unlinkSync(`${cwd}/spec/example/db/${this.filePath}/${files[i]}`);
+                    } catch (e) {
+                        return reject(e);
+                    }
+                }
+                fs.rmdir(`${cwd}/spec/example/db/${this.filePath}`, (error: ErrnoException) => {
+                    if (error) {
+                        return reject(error);
+                    }
+                    this.allKeys = [];
+                    resolve();
                 });
             });
-            this.allKeys = [];
         });
     }
 }

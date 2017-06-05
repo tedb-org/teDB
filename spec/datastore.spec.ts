@@ -10,110 +10,199 @@
 
 import { Index, IIndex, Datastore, IDatastore, Cursor,
     IStorageDriver, IRange } from "../src";
+import { getDate } from "../src/utlis";
 import { MockStorageDriver } from "./example";
 import * as fs from "fs";
 import ErrnoException = NodeJS.ErrnoException;
 
 beforeAll(() => {
-    // Clear the /spec/example/db directory and load in the fixture directory
     console.log("start");
     const cwd = process.cwd();
-    const files = fs.readdirSync(`${cwd}/spec/example/db`); // rm later
-    const mv = fs.readdirSync(`${cwd}/spec/fixtures/db`);
-    files.map((file) => fs.unlinkSync(`${cwd}/spec/example/db/${file}`)); // rm later
-    mv.map((file) => {
-        const data = fs.readFileSync(`${cwd}/spec/fixtures/db/${file}`);
-        fs.writeFileSync(`${cwd}/spec/example/db/${file}`, data);
+    const db = fs.readdirSync(`${cwd}/spec/fixtures/db`);
+    const oldDB = fs.readdirSync(`${cwd}/spec/example/db`);
+    oldDB.map((dir) => {
+        const datastore = fs.readdirSync(`${cwd}/spec/example/db/${dir}`);
+        datastore.map((file) => {
+            fs.unlinkSync(`${cwd}/spec/example/db/${dir}/${file}`);
+        });
+    });
+    db.map((dir) => {
+        const datastores = fs.readdirSync(`${cwd}/spec/fixtures/db/${dir}`);
+        if (!fs.existsSync(`${cwd}/spec/example/db/${dir}`)) {
+            fs.mkdirSync(`${cwd}/spec/example/db/${dir}`);
+        }
+        datastores.map((file) => {
+            const data = fs.readFileSync(`${cwd}/spec/fixtures/db/${dir}/${file}`);
+            fs.writeFileSync(`${cwd}/spec/example/db/${dir}/${file}`, data);
+        });
     });
 });
 
 describe("testing the datastore", () => {
-    const cwd = process.cwd();
-    const files = fs.readdirSync(`${cwd}/spec/example/db`);
-    console.log(files);
+    // loads initial users db
+    const CWD = process.cwd();
+    const UserStorage = new MockStorageDriver("users");
+    const Users = new Datastore({storage: UserStorage, generateId: true});
 
-    test("stuff", () => {
-        const a = new MockStorageDriver("users");
-        const db = new Datastore({storage: a, generateId: true});
-        const file = fs.readFileSync(`${cwd}/spec/fixtures/db/users.db`, "utf8");
-        const data = file.split("\n");
-        for (let i = data.length - 2; i >= 0; i--) {
-            data[i] = JSON.parse(data[i]);
-        }
-        data.pop();
-        db.ensureIndex({fieldName: "name", unique: true})
-            .then((res) => {
-                // console.log("successful ensure Index 1");
-            })
-            .catch((err) => {
-                // console.log("fail ensure index 1");
-            });
-        db.ensureIndex({fieldName: "age", unique: true})
-          .then((res) => {
-              // console.log("success ensure index 2");
-          })
-          .catch((err) => {
-              // console.log("fail ensure index 2");
-          });
-
-        for (let i = 0; i <= data.length; i++) {
-            if (data[i] !== undefined) {
-                db.insert(data[i])
-                    .then((res) => {
-                        // console.log("insert Success");
-                    })
-                    .catch((err) => {
-                        // console.log(data[i])
-                        // console.log(err);
-                        // console.log("fail insert");
-                    });
+    test("loading users name index into the datastore from disk", () => {
+        expect.assertions(1);
+        let index: any[];
+        return UserStorage.fetchIndex("name")
+        .then((indexArray) => {
+            index = indexArray;
+            return Users.ensureIndex({fieldName: "name", unique: true});
+        })
+        .then(() => {
+            return Users.insertIndex("name", index);
+        })
+        .then(() => {
+            return Users.getIndices();
+        })
+        .then((indices) => {
+            const ind: Index = indices.get("name");
+            if (ind) {
+                return ind.toJSON();
+            } else {
+                throw new Error("No index for name");
             }
-        }
-        // need to write a method to get the json for all indexed items.
-        // then proceed to use the storage driver method to store each
-        // JSON string into its own file.
-        db.getIndices()
-            .then((res) => {
-                res.forEach((v, k) => {
-                    const fieldName = v.fieldName;
-                    v.toJSON()
-                        .then((json) => {
-                            return a.storeIndex(fieldName, json);
-                        })
-                        .then((response) => {
-                            // console.log(response);
-                        })
-                        .catch((err) => {
-                            // console.log(err);
-                        });
-                });
-            });
-        a.fetchIndex("age")
-            .then((res) => {
-                res.map((item) => {
-                   // console.log(item);
-                });
-            })
-            .catch((err) => {
-                // console.log(err);
-            });
+        })
+        .then((res) => {
+            const nameJSON: string = JSON.parse(res);
+            expect(nameJSON).toEqual(expect.arrayContaining([{ key: "Marcus", value: ["T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9"]}, { key: "Scott", value: ["UGVUQVJWd0JBQUE9R2JkWG9UUlErcDg9cUdSOU5CMnNwR0U9ZmpkUzVuZmhIWE09"]}, { key: "Gavin", value: ["UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9"]}, { key: "Smith", value: ["UCtUQVJWd0JBQUE9cHE1SmpnSE44eDQ9Rko2RmlJeHJrR1E9ZkN4cjROblB1WEU9"]}, { key: "Kevin", value: ["UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9"]}, { key: "Mark", value: ["UHVUQVJWd0JBQUE9ZkZTNFRzQ0YwRVE9QTBRaUpUWjFJQ0U9UlRsNVg3MHNPcFE9"]}, { key: "Francis", value: ["UE9UQVJWd0JBQUE9cmZ4Y2MxVzNlOFk9TXV4dmJ0WU5JUFk9d0FkMW1oSHY2SWs9"]}, { key: "Luke", value: ["UCtUQVJWd0JBQUE9TVMrYjRpWVUrTEk9cWpON01RWGlQWjA9c1NWQzBacFNqakE9"]}, { key: "Morgan", value: ["UCtUQVJWd0JBQUE9dnVrRm1xWmJDVTQ9aGR2VjN0Z1gvK009dVpUVzMrY3N4eDg9"]}]));
+        })
+        .catch((err) => console.log(err));
     });
 
-    test("hmm", () => {
-        const a = new MockStorageDriver("users");
-        a.clear()
-         .then((res) => {
-             console.log("Success");
-             console.log(res);
-         })
-         .catch((err) => {
-             console.log("error");
-             console.log(err);
-         });
+    test("loading users age index into the datastore from disk", () => {
+        expect.assertions(1);
+        let index: any[]; // will hold the array of objects of indices
+        return UserStorage.fetchIndex("age")
+        .then((indexArray) => {
+            index = indexArray;
+            return Users.ensureIndex({fieldName: "age", unique: true});
+        })
+        .then(() => {
+            return Users.insertIndex("age", index);
+        })
+        .then(() => {
+            return Users.getIndices();
+        })
+        .then((indices) => {
+            const ind: Index = indices.get("age");
+            if (ind) {
+                return ind.toJSON();
+            } else {
+                throw new Error("No index for age");
+            }
+        })
+        .then((res) => {
+            const ageJSON: string = JSON.parse(res);
+            expect(ageJSON).toEqual(expect.arrayContaining([{ key: 27, value: ["UHVUQVJWd0JBQUE9ZkZTNFRzQ0YwRVE9QTBRaUpUWjFJQ0U9UlRsNVg3MHNPcFE9"]}, { key: 35, value: ["UCtUQVJWd0JBQUE9cHE1SmpnSE44eDQ9Rko2RmlJeHJrR1E9ZkN4cjROblB1WEU9"]}, { key: 22, value: ["UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9"]}, { key: 39, value: ["UGVUQVJWd0JBQUE9R2JkWG9UUlErcDg9cUdSOU5CMnNwR0U9ZmpkUzVuZmhIWE09"]}, { key: 25, value: ["UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9"]}, { key: 28, value: ["UE9UQVJWd0JBQUE9cmZ4Y2MxVzNlOFk9TXV4dmJ0WU5JUFk9d0FkMW1oSHY2SWs9"]}, { key: 0, value: ["T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9"]}, { key: 26, value: ["UCtUQVJWd0JBQUE9dnVrRm1xWmJDVTQ9aGR2VjN0Z1gvK009dVpUVzMrY3N4eDg9"]}, { key: 1, value: ["UCtUQVJWd0JBQUE9TVMrYjRpWVUrTEk9cWpON01RWGlQWjA9c1NWQzBacFNqakE9"]}]));
+        })
+        .catch((err) => console.log(err));
     });
+
+    test("getting a user object and a friend", () => {
+        expect.assertions(6);
+        return Users.getIndices()
+        .then((indices) => {
+            const IndexName = indices.get("name");
+            if (IndexName) {
+                return IndexName.search("Scott");
+            } else {
+                throw new Error("No Index for name");
+            }
+        })
+        .then((id) => {
+            return UserStorage.getItem(id[0]);
+        })
+        .then((user) => {
+            expect(user.name).toEqual("Scott");
+            expect(user.age).toEqual(39);
+            expect(user.friends).toEqual(expect.arrayContaining(["UHVUQVJWd0JBQUE9ZkZTNFRzQ0YwRVE9QTBRaUpUWjFJQ0U9UlRsNVg3MHNPcFE9", "UCtUQVJWd0JBQUE9TVMrYjRpWVUrTEk9cWpON01RWGlQWjA9c1NWQzBacFNqakE9"]));
+            return UserStorage.getItem(user.friends[0]);
+        })
+        .then((user) => {
+            expect(user.name).toEqual("Mark");
+            expect(user.age).toEqual(27);
+            expect(user.friends).toEqual(expect.arrayContaining(["UCtUQVJWd0JBQUE9TVMrYjRpWVUrTEk9cWpON01RWGlQWjA9c1NWQzBacFNqakE9", "UGVUQVJWd0JBQUE9R2JkWG9UUlErcDg9cUdSOU5CMnNwR0U9ZmpkUzVuZmhIWE09"]));
+        })
+        .catch((err) => console.log(err));
+    });
+
+    test("retrieving generated _id Date of user", () => {
+        expect.assertions(2);
+        return Users.find({ name: "Francis"})
+            .exec()
+            .then((res) => {
+                const idDate = getDate(res[0]._id);
+                expect(idDate).toBeInstanceOf(Date);
+                expect(idDate).toEqual(new Date("2017-05-26T17:14:48.252Z"));
+            })
+            .catch((err) => console.log(err));
+    });
+
+    test("inserting a new user", () => {
+        expect.assertions(2);
+        return Users.insert({ name: "Joshua", age: 49})
+            .then((res) => {
+                expect(res.name).toEqual("Joshua");
+                expect(res.age).toEqual(49);
+            })
+            .catch((err) => console.log(err));
+    });
+
+    test("finding a user", () => {
+        expect.assertions(2);
+        return Users.find({name: "Joshua"})
+            .exec()
+            .then((res) => {
+                const joshua = res[0];
+                expect(joshua.name).toEqual("Joshua");
+                expect(joshua.age).toEqual(49);
+            })
+            .catch((err) => console.log(err));
+    });
+
+    test("removing a user", () => {
+        expect.assertions(1);
+        return Users.remove({name: "Joshua"})
+            .then((res) => {
+                expect(res).toBe(1);
+            })
+            .catch((err) => console.log(err));
+    });
+
+   /* test("clear the datastore users", () => {
+        expect.assertions(1);
+        return UserStorage.clear()
+            .then((res) => {
+                const exists = fs.existsSync(`${CWD}/spec/example/db/users`);
+                expect(exists).toBe(true);
+            })
+            .catch((err) => console.log(err));
+    });*/
+
+
+    /*test("finding 5 out of 10 users sorted by age", () => {
+        expect.assertions(1);
+        return Users.find({})
+            .exec()
+            .then((res) => {
+                console.log(res);
+                expect(res).toEqual(expect.arrayContaining(["hello"]))
+            })
+            .catch((err) => console.log(err));
+    });*/
+    /*describe("creating new datastore", () => {
+        const LangStorage = new MockStorageDriver("langs");
+        const Langs = new Datastore({storage: LangStorage, generateId: true});
+    });*/
 });
 
 afterAll(() => {
-    // removed all files from example/db at the end. of testing finished.
     console.log("end");
+    const cwd = process.cwd();
+    // const files = fs.readdirSync(`${cwd}/spec/example/db`);
+    // files.map((file) => fs.unlinkSync(`${cwd}/spec/example/db/${file}`));
 });

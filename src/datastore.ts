@@ -16,6 +16,7 @@ export interface IDatastore {
     remove(query: any): Promise<number>;
     ensureIndex(options: IindexOptions): Promise<null>;
     removeIndex(options: IindexOptions): Promise<null>;
+    insertIndex(key: string, index: any[]): Promise<null>;
     getIndices(): Promise<any>;
     getDocs(ids: string | string[]): Promise<any[]>;
     search(fieldName: string, value: any): Promise<string[]>;
@@ -104,7 +105,6 @@ export default class Datastore implements IDatastore {
      */
     public remove(query: any): Promise<number> {
         return new Promise((resolve, reject) => {
-
             this.find(query)
                 .exec()
                 .then((docs: any[]): Promise<any[][]> => {
@@ -112,26 +112,32 @@ export default class Datastore implements IDatastore {
                     const promises: Array<Promise<any[]>> = [];
 
                     for (let i = docs.length - 1; i >= 0; i--) {
-                        for (const index of this.indices.values()) {
-                            promises.push(index.remove(docs[i]));
-                        }
+                        this.indices.forEach((v) => {
+                            promises.push(v.remove(docs[i]));
+                        });
                     }
 
                     return Promise.all(promises);
                 })
                 .then((docs: any[]) => {
                     const promises: Array<Promise<null>> = [];
+                    const uniqueIds: string[] = [];
 
-                    docs.forEach((doc) => {
-                        const id: string = doc._id;
-                        if (id && typeof id === "string") {
-                            promises.push(this.storage.removeItem(id));
+                    for (let i = docs.length - 1; i >= 0; i--) {
+                        if (uniqueIds.indexOf(docs[i]._id) === -1) {
+                            uniqueIds.push(docs[i]._id);
                         }
-                    });
+                    }
+
+                    for (let i = uniqueIds.length - 1; i >= 0; i--) {
+                        if (uniqueIds[i] && typeof uniqueIds[i] === "string") {
+                            promises.push(this.storage.removeItem(uniqueIds[i]));
+                        }
+                    }
 
                     Promise.all(promises)
                         .then((): any => {
-                            resolve(docs.length);
+                            resolve(uniqueIds.length);
                         })
                         .catch(reject);
                 })
@@ -150,7 +156,7 @@ export default class Datastore implements IDatastore {
             } catch (e) {
                 reject(e);
             }
-            resolve(null);
+            resolve();
         });
     }
 
@@ -171,6 +177,35 @@ export default class Datastore implements IDatastore {
         });
     }
 
+    /**
+     * Insert a stored index into the index of this datastore
+     * @param key - the index fieldName
+     * @param index - the key value pair obj
+     * @returns {Promise<null>}
+     */
+    public insertIndex(key: string, index: any[]): Promise<null> {
+        return new Promise<null>((resolve, reject) => {
+            try {
+                const indices = this.indices.get(key);
+                if (indices !== undefined) {
+                    indices.insertMany(key, index)
+                           .then(resolve)
+                           .catch((err) => {
+                                reject(err);
+                           });
+                } else {
+                    reject(new Error("No Index for this key was created on this datastore."));
+                }
+            } catch (e) {
+                reject(e);
+            }
+        });
+    }
+
+    /**
+     * Retrieve the indices of this datastore.
+     * @returns {Promise<any>}
+     */
     public getIndices(): Promise<any> {
         return new Promise<any>((resolve) => {
             resolve(this.indices);
@@ -268,7 +303,7 @@ export default class Datastore implements IDatastore {
     }
 
     /**
-     * Get Date from ID
+     * Get Date from ID ... do we need this on the dataStore?
      * @param id - the `_id` of the document to get date of
      */
     public getIdDate(id: string): Date {

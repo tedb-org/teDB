@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/tsturzl/teDB#readme",
   "dependencies": {
-    "binary-type-tree": "^1.0.5"
+    "binary-type-tree": "^1.0.7"
   },
   "devDependencies": {
     "@types/jest": "^19.2.3",

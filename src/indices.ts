@@ -9,6 +9,7 @@ import * as BTT from "binary-type-tree";
 
 export interface IIndex {
     insert(doc: any): Promise<any>;
+    insertMany(key: BTT.ASNDBS, indices: any[]): Promise<null>;
     updateKey(key: BTT.ASNDBS, newKey: BTT.ASNDBS): Promise<any>;
     remove(doc: any): Promise<any>;
     toJSON(): Promise<string>;
@@ -82,6 +83,29 @@ export default class Index implements IIndex {
         });
     }
 
+    public insertMany(key: BTT.ASNDBS, indices: any[]): Promise<null> {
+        return new Promise<null>((resolve, reject) => {
+            if (key !== undefined && key !== null) {
+                if (key.constructor.name === "Array" && !this.isArray) {
+                    this.avl.compareKeys = compareArray;
+                    this.isArray = true;
+                }
+            } else {
+                return reject(new Error("Key was not retrieved"));
+            }
+
+            try {
+                for (const item of indices) {
+                    this.avl.insert(item.key, [item.value]);
+                }
+            } catch (e) {
+                return reject(e);
+            }
+
+            resolve();
+        });
+    }
+
     /**
      * Update a key of a tree
      * @param key
@@ -115,7 +139,7 @@ export default class Index implements IIndex {
             const key: BTT.ASNDBS = getPath(doc, this.fieldName);
 
             try {
-                this.avl.delete(key, doc._id);
+                this.avl.delete(key, [doc._id]);
             } catch (e) {
                 return reject(e);
             }
@@ -130,7 +154,7 @@ export default class Index implements IIndex {
      */
     public toJSON(): Promise<string> {
         return new Promise<string>((resolve) => {
-            resolve(this.avl.tree.toJSON<BTT.AVLNode>());
+            resolve(this.avl.tree.toJSON<BTT.AVLTree>());
         });
     }
 
