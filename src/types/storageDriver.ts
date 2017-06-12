@@ -21,6 +21,17 @@ export interface IStorageDriver {
      */
     removeItem(key: string): Promise<null>;
     /**
+     * Store the index into its own file
+     * @param key - the path to the element in the object
+     * @param index - the JSON index
+     */
+    storeIndex(key: string, index: string): Promise<any>;
+    /**
+     * Retrieve the JSON from the file to be loaded into the datastore indices
+     * @param key - the path to the element in the object
+     */
+    fetchIndex(key: string): Promise<string>;
+    /**
      * Iterate every key-value pair,
      * IterationCallback should return truthy to break iteration(resulting in promise resolution)
      * IterationCallback should throw exceptions if error occurs, this will be caught by the promise and propogate up
@@ -28,7 +39,7 @@ export interface IStorageDriver {
      *
      * @param iteratorCallback - Function to iterate key values pairs, return truthy to break iteration
      */
-    iterate(iteratorCallback: (value: any, key: string, iteratorNumber: number) => any): Promise<any>;
+    iterate(iteratorCallback: (key: string, value: any, iteratorNumber: number) => any): Promise<any>;
     /**
      * Retrieve all keys
      */

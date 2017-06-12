@@ -2,20 +2,22 @@
   "extends": "../configs/base.json",
   "compilerOptions": {
       "allowSyntheticDefaultImports": true,
-      "rootDir": "../",
+      "baseUrl": "../",
       "typeRoots": [
           "node_modules/@types",
           "node_modules"
       ],
       "types": [
           "binary-type-tree",
-          "jest"
+          "jest",
+          "node"
       ],
       "lib": ["es6"]
   },
   "include": [
       "spec",
-      "src"
+      "src",
+      "example"
   ],
   "exclude": [
       "dist",

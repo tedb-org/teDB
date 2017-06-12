@@ -9,7 +9,10 @@ import * as BTT from "binary-type-tree";
 
 export interface IIndex {
     insert(doc: any): Promise<any>;
+    insertMany(key: BTT.ASNDBS, indices: any[]): Promise<null>;
+    updateKey(key: BTT.ASNDBS, newKey: BTT.ASNDBS): Promise<any>;
     remove(doc: any): Promise<any>;
+    toJSON(): Promise<string>;
     search(key: BTT.ASNDBS): Promise<BTT.SNDBSA>;
     searchRange(range: IRange): Promise<BTT.SNDBSA>;
 }
@@ -55,13 +58,13 @@ export default class Index implements IIndex {
             if (!doc.hasOwnProperty("_id")) {
                 return reject(new Error("Document is missing _id field"));
             }
-            if (typeof !doc._id !== "string") {
+            if (typeof doc._id !== "string") {
                 return reject(new Error("_id field needs to be type `string`"));
             }
 
             const key: BTT.ASNDBS = getPath(doc, this.fieldName);
 
-            if (key) {
+            if (key !== undefined && key !== null) {
                 if (key.constructor.name === "Array" && !this.isArray) {
                     this.avl.compareKeys = compareArray;
                     this.isArray = true;
@@ -70,9 +73,56 @@ export default class Index implements IIndex {
                 return reject(new Error("Key was not retrieved from document"));
             }
 
-            this.avl.insert(key, doc._id);
+            try {
+                this.avl.insert(key, doc._id);
+            } catch (e) {
+                return reject(e);
+            }
 
             resolve(doc);
+        });
+    }
+
+    public insertMany(key: BTT.ASNDBS, indices: any[]): Promise<null> {
+        return new Promise<null>((resolve, reject) => {
+            if (key !== undefined && key !== null) {
+                if (key.constructor.name === "Array" && !this.isArray) {
+                    this.avl.compareKeys = compareArray;
+                    this.isArray = true;
+                }
+            } else {
+                return reject(new Error("Key was not retrieved"));
+            }
+
+            try {
+                for (const item of indices) {
+                    this.avl.insert(item.key, [item.value]);
+                }
+            } catch (e) {
+                return reject(e);
+            }
+
+            resolve();
+        });
+    }
+
+    /**
+     * Update a key of a tree
+     * @param key
+     * @param newKey
+     * @returns {Promise<null>}
+     */
+    public updateKey(key: BTT.ASNDBS, newKey: BTT.ASNDBS): Promise<null> {
+        return new Promise<null>((resolve, reject) => {
+            if (this.avl.tree.search(key).length === 0) {
+                return reject(new Error("This key does not exist"));
+            }
+            try {
+                this.avl.updateKey(key, newKey);
+            } catch (e) {
+                return reject(e);
+            }
+            resolve();
         });
     }
 
@@ -81,16 +131,30 @@ export default class Index implements IIndex {
      * @param doc
      */
     public remove(doc: any): Promise<any> {
-        return new Promise<null>((resolve) => {
+        return new Promise<any>((resolve, reject) => {
             if (!doc.hasOwnProperty("_id")) {
                 return; // TODO: should throw an error, need to make Error types
             }
 
             const key: BTT.ASNDBS = getPath(doc, this.fieldName);
 
-            this.avl.delete(key, doc._id);
+            try {
+                this.avl.delete(key, [doc._id]);
+            } catch (e) {
+                return reject(e);
+            }
 
             resolve(doc);
+        });
+    }
+
+    /**
+     * Return the tree as JSON { key, value } pairs.
+     * @returns {any}
+     */
+    public toJSON(): Promise<string> {
+        return new Promise<string>((resolve) => {
+            resolve(this.avl.tree.toJSON<BTT.AVLTree>());
         });
     }
 
@@ -99,7 +163,7 @@ export default class Index implements IIndex {
      * @param key - key to search by
      */
     public search(key: BTT.ASNDBS): Promise<BTT.SNDBSA> {
-        return new Promise((resolve) => {
+        return new Promise<BTT.SNDBSA>((resolve) => {
             resolve(this.avl.tree.search(key));
         });
     }
@@ -109,7 +173,7 @@ export default class Index implements IIndex {
      * @param range - An IRange to search within bounds
      */
     public searchRange(range: IRange): Promise<BTT.SNDBSA> {
-        return new Promise((resolve) => {
+        return new Promise<BTT.SNDBSA>((resolve) => {
             resolve(this.avl.tree.query(range));
         });
     }

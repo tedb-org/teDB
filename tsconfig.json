@@ -8,7 +8,8 @@
         ],
         "types": [
             "binary-type-tree",
-            "jest"
+            "jest",
+            "node"
         ],
         "outFile": "dist/tedb.js",
         "lib": ["es6"]

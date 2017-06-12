@@ -2,19 +2,22 @@
  * Created by tsturzl on 4/11/17.
  */
 import Index from "./indices";
-import { IindexOptions, IStorageDriver, IRange } from "./types";
+import { IindexOptions, IStorageDriver, IRange, IupdateOptions } from "./types";
 import Cursor from "./cursor";
 import { getPath } from "./utlis/get_path";
 import { getUUID, getDate } from "./utlis/id_hasher";
+import * as BTT from "binary-type-tree";
 
 export interface IDatastore {
     insert(doc: any): Promise<never>;
     find(query: any): Cursor;
     count(query: any): Cursor;
-    update(query: any, operation: any): Promise<number>;
+    update(query: any, operation: any, options: IupdateOptions): Promise<any>;
     remove(query: any): Promise<number>;
     ensureIndex(options: IindexOptions): Promise<null>;
     removeIndex(options: IindexOptions): Promise<null>;
+    insertIndex(key: string, index: any[]): Promise<null>;
+    getIndices(): Promise<any>;
     getDocs(ids: string | string[]): Promise<any[]>;
     search(fieldName: string, value: any): Promise<string[]>;
 }
@@ -43,20 +46,21 @@ export default class Datastore implements IDatastore {
     }
 
     /**
-     * Insert a single document
+     * Insert a single document and insert any indices of document into
+     * its respective binary tree.
      * @param doc - document to insert
      */
-    public insert(doc: any): Promise<never> {
-        return new Promise((resolve, reject): any => {
+    public insert(doc: any): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
             if (this.generateId) {
                 doc._id = this.createId();
             }
 
             const indexPromises: Array<Promise<never>> = [];
 
-            for (const index of this.indices.values()) {
-                indexPromises.push(index.insert(doc));
-            }
+            this.indices.forEach((v) => {
+                indexPromises.push(v.insert(doc));
+            });
 
             Promise.all(indexPromises)
                 .then((): any => {
@@ -87,10 +91,11 @@ export default class Datastore implements IDatastore {
      * Update document/s
      * @param query - query document/s to update
      * @param operation - update operation, either a new doc or modifies portions of a document(eg. `$set`)
+     * @param options - options f
      */
-    public update(query: any, operation: any): Promise<number> {
-        return new Promise((resolve, reject): any => {
-            resolve("not done yet");
+    public update(query: any, operation: any, options: IupdateOptions): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            resolve();
         });
     }
 
@@ -99,35 +104,40 @@ export default class Datastore implements IDatastore {
      * @param query
      */
     public remove(query: any): Promise<number> {
-        return new Promise((resolve, reject): any => {
-
+        return new Promise((resolve, reject) => {
             this.find(query)
                 .exec()
-                .then((docs: any[]) => {
+                .then((docs: any[]): Promise<any[][]> => {
                     // Array of promises for index remove
                     const promises: Array<Promise<any[]>> = [];
 
                     for (let i = docs.length - 1; i >= 0; i--) {
-                        for (const index of this.indices.values()) {
-                            promises.push(index.remove(docs[i]));
-                        }
+                        this.indices.forEach((v) => {
+                            promises.push(v.remove(docs[i]));
+                        });
                     }
 
                     return Promise.all(promises);
                 })
                 .then((docs: any[]) => {
                     const promises: Array<Promise<null>> = [];
+                    const uniqueIds: string[] = [];
 
-                    docs.forEach((doc): void => {
-                        const id: string = doc._id;
-                        if (id && typeof id === "string") {
-                            promises.push(this.storage.removeItem(id));
+                    for (let i = docs.length - 1; i >= 0; i--) {
+                        if (uniqueIds.indexOf(docs[i]._id) === -1) {
+                            uniqueIds.push(docs[i]._id);
                         }
-                    });
+                    }
+
+                    for (let i = uniqueIds.length - 1; i >= 0; i--) {
+                        if (uniqueIds[i] && typeof uniqueIds[i] === "string") {
+                            promises.push(this.storage.removeItem(uniqueIds[i]));
+                        }
+                    }
 
                     Promise.all(promises)
                         .then((): any => {
-                            resolve(docs.length);
+                            resolve(uniqueIds.length);
                         })
                         .catch(reject);
                 })
@@ -140,8 +150,12 @@ export default class Datastore implements IDatastore {
      * @param options - {fieldName: string}
      */
     public ensureIndex(options: IindexOptions): Promise<null> {
-        return new Promise<null>((resolve): any => {
-            this.indices.set(options.fieldName, new Index(this, options));
+        return new Promise<null>((resolve, reject) => {
+            try {
+                this.indices.set(options.fieldName, new Index(this, options));
+            } catch (e) {
+                reject(e);
+            }
             resolve();
         });
     }
@@ -153,10 +167,48 @@ export default class Datastore implements IDatastore {
      * @returns {Promise<null>}
      */
     public removeIndex(options: IindexOptions): Promise<null> {
-        return new Promise<null>((resolve): any => {
-            const index: Index | undefined = this.indices.get(options.fieldName);
-            this.indices.delete(options.fieldName);
+        return new Promise<null>((resolve, reject) => {
+            try {
+                this.indices.delete(options.fieldName);
+            } catch (e) {
+                reject(e);
+            }
             resolve();
+        });
+    }
+
+    /**
+     * Insert a stored index into the index of this datastore
+     * @param key - the index fieldName
+     * @param index - the key value pair obj
+     * @returns {Promise<null>}
+     */
+    public insertIndex(key: string, index: any[]): Promise<null> {
+        return new Promise<null>((resolve, reject) => {
+            try {
+                const indices = this.indices.get(key);
+                if (indices !== undefined) {
+                    indices.insertMany(key, index)
+                           .then(resolve)
+                           .catch((err) => {
+                                reject(err);
+                           });
+                } else {
+                    reject(new Error("No Index for this key was created on this datastore."));
+                }
+            } catch (e) {
+                reject(e);
+            }
+        });
+    }
+
+    /**
+     * Retrieve the indices of this datastore.
+     * @returns {Promise<any>}
+     */
+    public getIndices(): Promise<any> {
+        return new Promise<any>((resolve) => {
+            resolve(this.indices);
         });
     }
 
@@ -164,13 +216,13 @@ export default class Datastore implements IDatastore {
      * Get Document by ID/s
      * @param ids - ID or Array of IDs
      */
-    public getDocs(ids: string | string[]): Promise<any[]> {
-        return new Promise((resolve, reject): any => {
+    public getDocs(ids: string | string[]): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
             const idsArr: string[] = (typeof ids === "string") ? [ids] : ids;
 
             const promises: Array<Promise<any>> = [];
 
-            idsArr.forEach((id): void => {
+            idsArr.forEach((id) => {
                 promises.push(this.storage.getItem(id));
             });
 
@@ -187,7 +239,7 @@ export default class Datastore implements IDatastore {
      * @param value
      */
     public search(fieldName: string, value: any): Promise<string[]> {
-        return new Promise((resolve, reject): any => {
+        return new Promise((resolve, reject) => {
             if (fieldName === "$or" && value instanceof Array) {
                 const promises: Array<Promise<string[]>> = [];
 
@@ -251,6 +303,14 @@ export default class Datastore implements IDatastore {
     }
 
     /**
+     * Get Date from ID ... do we need this on the dataStore?
+     * @param id - the `_id` of the document to get date of
+     */
+    public getIdDate(id: string): Date {
+        return getDate(id);
+    }
+
+    /**
      * Search for IDs, chooses best strategy, preferring to search indices if they exist for the given field.
      * Returns array of IDs
      * @param fieldName
@@ -264,12 +324,16 @@ export default class Datastore implements IDatastore {
 
     /**
      * Search indices by field
+     * Example 1: dbName.searchIndices("fieldName", "1234");
+     * will return the value id of that key as an array of one element.
+     * Example 2: dbName.searchIndices("fieldName", { $gte: 1, $lte 10, $ne: 3 }
+     * will return an array of ids from the given range.
      * Returns array of IDs
      * @param fieldName - field to search
      * @param value - value to search by
      */
-    private searchIndices(fieldName: string, value: any): Promise<string[]> {
-        return new Promise((resolve): any => {
+    private searchIndices(fieldName: string, value: IRange): Promise<BTT.SNDBSA> {
+        return new Promise<BTT.SNDBSA>((resolve) => {
             const index: Index | undefined = this.indices.get(fieldName);
 
             if (!index) {
@@ -277,10 +341,9 @@ export default class Datastore implements IDatastore {
             }
 
             if (typeof value === "object") {
-                const range: IRange = value as IRange;
-                index.searchRange(range);
+                resolve(index.searchRange(value));
             } else {
-                index.search(value);
+                resolve(index.search(value));
             }
         });
     }
@@ -291,13 +354,13 @@ export default class Datastore implements IDatastore {
      * @param fieldName - field to search
      * @param value - value to search by
      */
-    private searchCollection(fieldName: string, value: any): Promise<string[]> {
+    private searchCollection(fieldName: string, value: IRange): Promise<string[]> {
         return new Promise((resolve, reject): any => {
             const ids: string[] = [];
-            const lt: number = value.$lt || null;
-            const lte: number = value.$lte || null;
-            const gt: number = value.$gt || null;
-            const gte: number = value.$gte || null;
+            const lt: BTT.ASNDBS = value.$lt || null;
+            const lte: BTT.ASNDBS = value.$lte || null;
+            const gt: BTT.ASNDBS = value.$gt || null;
+            const gte: BTT.ASNDBS = value.$gte || null;
             const ne: any = value.$ne || null;
             this.storage.iterate((v, k) => {
                 const field: any = getPath(v, fieldName);
@@ -329,13 +392,5 @@ export default class Datastore implements IDatastore {
      */
     private createId(): string {
         return getUUID();
-    }
-
-    /**
-     * Get Date from ID
-     * @param id - the `_id` of the document to get date of
-     */
-    private getIdDate(id: string): Date {
-        return getDate(id);
     }
 }

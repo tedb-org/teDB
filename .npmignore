@@ -1,12 +1,12 @@
 # Created by .ignore support plugin (hsz.mobi)
 .gitignore
-spec
-node_modules
+spec/
+node_modules/
 tslint.json
 .npmignore
 .git
 *.DS_Store
-.idea
-src
-coverage
+.idea/
+src/
+coverage/
 .travis.yml

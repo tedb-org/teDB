@@ -21,10 +21,22 @@ const isEqual = (a: any[], b: any[]): boolean => {
 };
 
 export const compareArray = (a: any[], b: any[]): number => {
-    const aStr = a.toString();
-    const bStr = b.toString();
+    const array1 = a;
+    const array2 = b;
+    for (let i = a.length - 1; i >= 0; i--) {
+        if (a[i].constructor.name === "Date") {
+            array1[i] = a[i].getTime();
+        }
+    }
+    for (let i = b.length - 1; i >= 0; i--) {
+        if (b[i].constructor.name === "Date") {
+            array2[i] = b[i].getTime();
+        }
+    }
+    const aStr = array1.toString();
+    const bStr = array2.toString();
 
-    if (isEqual(a, b)) {
+    if (isEqual(array1, array2)) {
         return 0;
     } else if (aStr < bStr) {
         return -1;
