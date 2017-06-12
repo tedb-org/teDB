@@ -69,8 +69,7 @@ describe("testing the datastore", () => {
         .then((res) => {
             const nameJSON: string = JSON.parse(res);
             expect(nameJSON).toEqual(expect.arrayContaining([{ key: "Marcus", value: ["T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9"]}, { key: "Scott", value: ["UGVUQVJWd0JBQUE9R2JkWG9UUlErcDg9cUdSOU5CMnNwR0U9ZmpkUzVuZmhIWE09"]}, { key: "Gavin", value: ["UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9"]}, { key: "Smith", value: ["UCtUQVJWd0JBQUE9cHE1SmpnSE44eDQ9Rko2RmlJeHJrR1E9ZkN4cjROblB1WEU9"]}, { key: "Kevin", value: ["UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9"]}, { key: "Mark", value: ["UHVUQVJWd0JBQUE9ZkZTNFRzQ0YwRVE9QTBRaUpUWjFJQ0U9UlRsNVg3MHNPcFE9"]}, { key: "Francis", value: ["UE9UQVJWd0JBQUE9cmZ4Y2MxVzNlOFk9TXV4dmJ0WU5JUFk9d0FkMW1oSHY2SWs9"]}, { key: "Luke", value: ["UCtUQVJWd0JBQUE9TVMrYjRpWVUrTEk9cWpON01RWGlQWjA9c1NWQzBacFNqakE9"]}, { key: "Morgan", value: ["UCtUQVJWd0JBQUE9dnVrRm1xWmJDVTQ9aGR2VjN0Z1gvK009dVpUVzMrY3N4eDg9"]}]));
-        })
-        .catch((err) => console.log(err));
+        });
     });
 
     test("loading users age index into the datastore from disk", () => {
@@ -98,8 +97,7 @@ describe("testing the datastore", () => {
         .then((res) => {
             const ageJSON: string = JSON.parse(res);
             expect(ageJSON).toEqual(expect.arrayContaining([{ key: 27, value: ["UHVUQVJWd0JBQUE9ZkZTNFRzQ0YwRVE9QTBRaUpUWjFJQ0U9UlRsNVg3MHNPcFE9"]}, { key: 35, value: ["UCtUQVJWd0JBQUE9cHE1SmpnSE44eDQ9Rko2RmlJeHJrR1E9ZkN4cjROblB1WEU9"]}, { key: 22, value: ["UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9"]}, { key: 39, value: ["UGVUQVJWd0JBQUE9R2JkWG9UUlErcDg9cUdSOU5CMnNwR0U9ZmpkUzVuZmhIWE09"]}, { key: 25, value: ["UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9"]}, { key: 28, value: ["UE9UQVJWd0JBQUE9cmZ4Y2MxVzNlOFk9TXV4dmJ0WU5JUFk9d0FkMW1oSHY2SWs9"]}, { key: 0, value: ["T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9"]}, { key: 26, value: ["UCtUQVJWd0JBQUE9dnVrRm1xWmJDVTQ9aGR2VjN0Z1gvK009dVpUVzMrY3N4eDg9"]}, { key: 1, value: ["UCtUQVJWd0JBQUE9TVMrYjRpWVUrTEk9cWpON01RWGlQWjA9c1NWQzBacFNqakE9"]}]));
-        })
-        .catch((err) => console.log(err));
+        });
     });
 
     test("getting a user object and a friend", () => {
@@ -126,8 +124,7 @@ describe("testing the datastore", () => {
             expect(user.name).toEqual("Mark");
             expect(user.age).toEqual(27);
             expect(user.friends).toEqual(expect.arrayContaining(["UCtUQVJWd0JBQUE9TVMrYjRpWVUrTEk9cWpON01RWGlQWjA9c1NWQzBacFNqakE9", "UGVUQVJWd0JBQUE9R2JkWG9UUlErcDg9cUdSOU5CMnNwR0U9ZmpkUzVuZmhIWE09"]));
-        })
-        .catch((err) => console.log(err));
+        });
     });
 
     test("retrieving generated _id Date of user", () => {
@@ -138,8 +135,7 @@ describe("testing the datastore", () => {
                 const idDate = getDate(res[0]._id);
                 expect(idDate).toBeInstanceOf(Date);
                 expect(idDate).toEqual(new Date("2017-05-26T17:14:48.252Z"));
-            })
-            .catch((err) => console.log(err));
+            });
     });
 
     test("inserting a new user", () => {
@@ -148,8 +144,7 @@ describe("testing the datastore", () => {
             .then((res) => {
                 expect(res.name).toEqual("Joshua");
                 expect(res.age).toEqual(49);
-            })
-            .catch((err) => console.log(err));
+            });
     });
 
     test("finding a user", () => {
@@ -160,8 +155,7 @@ describe("testing the datastore", () => {
                 const joshua = res[0];
                 expect(joshua.name).toEqual("Joshua");
                 expect(joshua.age).toEqual(49);
-            })
-            .catch((err) => console.log(err));
+            });
     });
 
     test("removing a user", () => {
@@ -169,36 +163,36 @@ describe("testing the datastore", () => {
         return Users.remove({name: "Joshua"})
             .then((res) => {
                 expect(res).toBe(1);
-            })
-            .catch((err) => console.log(err));
+            });
     });
 
-   /* test("clear the datastore users", () => {
+    /*test("finding 5 out of 10 users sorted by age", () => {
+     expect.assertions(1);
+     return Users.find({})
+        .exec()
+        .then((res) => {
+            console.log(res);
+            expect(res).toEqual(expect.arrayContaining(["hello"]));
+        });
+    });*/
+
+    /*
+     WORKS !!!! keep
+    test("clear the datastore users", () => {
         expect.assertions(1);
         return UserStorage.clear()
             .then((res) => {
                 const exists = fs.existsSync(`${CWD}/spec/example/db/users`);
-                expect(exists).toBe(true);
-            })
-            .catch((err) => console.log(err));
-    });*/
-
-
-    /*test("finding 5 out of 10 users sorted by age", () => {
-        expect.assertions(1);
-        return Users.find({})
-            .exec()
-            .then((res) => {
-                console.log(res);
-                expect(res).toEqual(expect.arrayContaining(["hello"]))
-            })
-            .catch((err) => console.log(err));
-    });*/
-    /*describe("creating new datastore", () => {
-        const LangStorage = new MockStorageDriver("langs");
-        const Langs = new Datastore({storage: LangStorage, generateId: true});
+                expect(exists).toBe(false);
+            });
     });*/
 });
+
+// new describe here with new datastore
+/*describe("creating new datastore", () => {
+ const LangStorage = new MockStorageDriver("langs");
+ const Langs = new Datastore({storage: LangStorage, generateId: true});
+ });*/
 
 afterAll(() => {
     console.log("end");
