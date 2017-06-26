@@ -238,7 +238,7 @@ export default class Datastore implements IDatastore {
      * @param fieldName
      * @param value
      */
-    public search(fieldName: string, value: any): Promise<string[]> {
+    public search(fieldName?: string, value?: any): Promise<string[]> {
         return new Promise((resolve, reject) => {
             if (fieldName === "$or" && value instanceof Array) {
                 const promises: Array<Promise<string[]>> = [];
@@ -292,8 +292,12 @@ export default class Datastore implements IDatastore {
                     .then(resolve)
                     .catch(reject);
 
-            } else if (fieldName !== "$or" && fieldName !== "$and") {
+            } else if (fieldName !== "$or" && fieldName !== "$and" && fieldName) {
                 this.searchField(fieldName, value)
+                    .then(resolve)
+                    .catch(reject);
+            } else if (!fieldName && !value) {
+               this.searchField()
                     .then(resolve)
                     .catch(reject);
             } else {
@@ -316,10 +320,14 @@ export default class Datastore implements IDatastore {
      * @param fieldName
      * @param value
      */
-    private searchField(fieldName: string, value: any): Promise<string[]> {
-        return this.indices.has(fieldName) ?
-            this.searchIndices(fieldName, value) :
-            this.searchCollection(fieldName, value);
+    private searchField(fieldName?: string, value?: any): Promise<string[]> {
+        if (fieldName && value) {
+            return this.indices.has(fieldName) ?
+                this.searchIndices(fieldName, value) :
+                this.searchCollection(fieldName, value);
+        } else {
+            return this.searchCollection();
+        }
     }
 
     /**
@@ -354,36 +362,51 @@ export default class Datastore implements IDatastore {
      * @param fieldName - field to search
      * @param value - value to search by
      */
-    private searchCollection(fieldName: string, value: IRange): Promise<string[]> {
+    private searchCollection(fieldName?: string, value?: IRange): Promise<string[]> {
         return new Promise((resolve, reject): any => {
             const ids: string[] = [];
-            const lt: BTT.ASNDBS = value.$lt || null;
-            const lte: BTT.ASNDBS = value.$lte || null;
-            const gt: BTT.ASNDBS = value.$gt || null;
-            const gte: BTT.ASNDBS = value.$gte || null;
-            const ne: any = value.$ne || null;
-            this.storage.iterate((v, k) => {
-                const field: any = getPath(v, fieldName);
-                if (field) {
-                    const flag: boolean =
-                        (
-                            (lt && field < lt) &&
-                            (lte && field <= lte) &&
-                            (gt && field > gt) &&
-                            (gte && field >= gte) &&
-                            (ne && field !== ne)
-                        ) ||
-                        (value && field === value);
+            if (fieldName && value) {
+                const lt: BTT.ASNDBS = value.$lt || null;
+                const lte: BTT.ASNDBS = value.$lte || null;
+                const gt: BTT.ASNDBS = value.$gt || null;
+                const gte: BTT.ASNDBS = value.$gte || null;
+                const ne: any = value.$ne || null;
+                this.storage.iterate((v, k) => {
+                    const field: any = getPath(v, fieldName);
+                    if (field) {
+                        if (lt === null && lte === null && gt === null &&
+                            gte === null && ne === null && k === value) {
+                            ids.push(k);
+                        } else {
+                            const flag: boolean =
+                                (
+                                    (lt && field < lt) &&
+                                    (lte && field <= lte) &&
+                                    (gt && field > gt) &&
+                                    (gte && field >= gte) &&
+                                    (ne && field !== ne)
+                                ) ||
+                                (value && field === value);
 
-                    if (flag) {
-                        ids.push(k);
+                            if (flag) {
+                                ids.push(k);
+                            }
+                        }
                     }
-                }
-            })
+                })
                 .then(() => {
                     resolve(ids);
                 })
                 .catch(reject);
+            } else {
+                this.storage.iterate((v, k) => {
+                    ids.push(k);
+                })
+                .then(() => {
+                    resolve(ids);
+                })
+                .catch(reject);
+            }
         });
     }
 

@@ -44,87 +44,95 @@ describe("testing the datastore", () => {
     const UserStorage = new MockStorageDriver("users");
     const Users = new Datastore({storage: UserStorage, generateId: true});
 
+   /* test("loading in first user", () => {
+        expect.assertions(1);
+        return Users.insert({name: "m", age: 24})
+            .then((res) => {
+                expect(res).toEqual(2);
+            });
+    });*/
+
     test("loading users name index into the datastore from disk", () => {
         expect.assertions(1);
         let index: any[];
         return UserStorage.fetchIndex("name")
-        .then((indexArray) => {
-            index = indexArray;
-            return Users.ensureIndex({fieldName: "name", unique: true});
-        })
-        .then(() => {
-            return Users.insertIndex("name", index);
-        })
-        .then(() => {
-            return Users.getIndices();
-        })
-        .then((indices) => {
-            const ind: Index = indices.get("name");
-            if (ind) {
-                return ind.toJSON();
-            } else {
-                throw new Error("No index for name");
-            }
-        })
-        .then((res) => {
-            const nameJSON: string = JSON.parse(res);
-            expect(nameJSON).toEqual(expect.arrayContaining([{ key: "Marcus", value: ["T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9"]}, { key: "Scott", value: ["UGVUQVJWd0JBQUE9R2JkWG9UUlErcDg9cUdSOU5CMnNwR0U9ZmpkUzVuZmhIWE09"]}, { key: "Gavin", value: ["UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9"]}, { key: "Smith", value: ["UCtUQVJWd0JBQUE9cHE1SmpnSE44eDQ9Rko2RmlJeHJrR1E9ZkN4cjROblB1WEU9"]}, { key: "Kevin", value: ["UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9"]}, { key: "Mark", value: ["UHVUQVJWd0JBQUE9ZkZTNFRzQ0YwRVE9QTBRaUpUWjFJQ0U9UlRsNVg3MHNPcFE9"]}, { key: "Francis", value: ["UE9UQVJWd0JBQUE9cmZ4Y2MxVzNlOFk9TXV4dmJ0WU5JUFk9d0FkMW1oSHY2SWs9"]}, { key: "Luke", value: ["UCtUQVJWd0JBQUE9TVMrYjRpWVUrTEk9cWpON01RWGlQWjA9c1NWQzBacFNqakE9"]}, { key: "Morgan", value: ["UCtUQVJWd0JBQUE9dnVrRm1xWmJDVTQ9aGR2VjN0Z1gvK009dVpUVzMrY3N4eDg9"]}]));
-        });
+            .then((indexArray) => {
+                index = indexArray;
+                return Users.ensureIndex({fieldName: "name", unique: true});
+            })
+            .then(() => {
+                return Users.insertIndex("name", index);
+            })
+            .then(() => {
+                return Users.getIndices();
+            })
+            .then((indices) => {
+                const ind: Index = indices.get("name");
+                if (ind) {
+                    return ind.toJSON();
+                } else {
+                    throw new Error("No index for name");
+                }
+            })
+            .then((res) => {
+                const nameJSON: string = JSON.parse(res);
+                expect(nameJSON).toEqual(expect.arrayContaining([{ key: "Marcus", value: ["T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9"]}, { key: "Scott", value: ["UGVUQVJWd0JBQUE9R2JkWG9UUlErcDg9cUdSOU5CMnNwR0U9ZmpkUzVuZmhIWE09"]}, { key: "Gavin", value: ["UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9"]}, { key: "Smith", value: ["UCtUQVJWd0JBQUE9cHE1SmpnSE44eDQ9Rko2RmlJeHJrR1E9ZkN4cjROblB1WEU9"]}, { key: "Kevin", value: ["UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9"]}, { key: "Mark", value: ["UHVUQVJWd0JBQUE9ZkZTNFRzQ0YwRVE9QTBRaUpUWjFJQ0U9UlRsNVg3MHNPcFE9"]}, { key: "Francis", value: ["UE9UQVJWd0JBQUE9cmZ4Y2MxVzNlOFk9TXV4dmJ0WU5JUFk9d0FkMW1oSHY2SWs9"]}, { key: "Luke", value: ["UCtUQVJWd0JBQUE9TVMrYjRpWVUrTEk9cWpON01RWGlQWjA9c1NWQzBacFNqakE9"]}, { key: "Morgan", value: ["UCtUQVJWd0JBQUE9dnVrRm1xWmJDVTQ9aGR2VjN0Z1gvK009dVpUVzMrY3N4eDg9"]}]));
+            });
     });
 
     test("loading users age index into the datastore from disk", () => {
         expect.assertions(1);
         let index: any[]; // will hold the array of objects of indices
         return UserStorage.fetchIndex("age")
-        .then((indexArray) => {
-            index = indexArray;
-            return Users.ensureIndex({fieldName: "age", unique: true});
-        })
-        .then(() => {
-            return Users.insertIndex("age", index);
-        })
-        .then(() => {
-            return Users.getIndices();
-        })
-        .then((indices) => {
-            const ind: Index = indices.get("age");
-            if (ind) {
-                return ind.toJSON();
-            } else {
-                throw new Error("No index for age");
-            }
-        })
-        .then((res) => {
-            const ageJSON: string = JSON.parse(res);
-            expect(ageJSON).toEqual(expect.arrayContaining([{ key: 27, value: ["UHVUQVJWd0JBQUE9ZkZTNFRzQ0YwRVE9QTBRaUpUWjFJQ0U9UlRsNVg3MHNPcFE9"]}, { key: 35, value: ["UCtUQVJWd0JBQUE9cHE1SmpnSE44eDQ9Rko2RmlJeHJrR1E9ZkN4cjROblB1WEU9"]}, { key: 22, value: ["UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9"]}, { key: 39, value: ["UGVUQVJWd0JBQUE9R2JkWG9UUlErcDg9cUdSOU5CMnNwR0U9ZmpkUzVuZmhIWE09"]}, { key: 25, value: ["UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9"]}, { key: 28, value: ["UE9UQVJWd0JBQUE9cmZ4Y2MxVzNlOFk9TXV4dmJ0WU5JUFk9d0FkMW1oSHY2SWs9"]}, { key: 0, value: ["T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9"]}, { key: 26, value: ["UCtUQVJWd0JBQUE9dnVrRm1xWmJDVTQ9aGR2VjN0Z1gvK009dVpUVzMrY3N4eDg9"]}, { key: 1, value: ["UCtUQVJWd0JBQUE9TVMrYjRpWVUrTEk9cWpON01RWGlQWjA9c1NWQzBacFNqakE9"]}]));
-        });
+            .then((indexArray) => {
+                index = indexArray;
+                return Users.ensureIndex({fieldName: "age", unique: true});
+            })
+            .then(() => {
+                return Users.insertIndex("age", index);
+            })
+            .then(() => {
+                return Users.getIndices();
+            })
+            .then((indices) => {
+                const ind: Index = indices.get("age");
+                if (ind) {
+                    return ind.toJSON();
+                } else {
+                    throw new Error("No index for age");
+                }
+            })
+            .then((res) => {
+                const ageJSON: string = JSON.parse(res);
+                expect(ageJSON).toEqual(expect.arrayContaining([{ key: 27, value: ["UHVUQVJWd0JBQUE9ZkZTNFRzQ0YwRVE9QTBRaUpUWjFJQ0U9UlRsNVg3MHNPcFE9"]}, { key: 35, value: ["UCtUQVJWd0JBQUE9cHE1SmpnSE44eDQ9Rko2RmlJeHJrR1E9ZkN4cjROblB1WEU9"]}, { key: 22, value: ["UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9"]}, { key: 39, value: ["UGVUQVJWd0JBQUE9R2JkWG9UUlErcDg9cUdSOU5CMnNwR0U9ZmpkUzVuZmhIWE09"]}, { key: 25, value: ["UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9"]}, { key: 28, value: ["UE9UQVJWd0JBQUE9cmZ4Y2MxVzNlOFk9TXV4dmJ0WU5JUFk9d0FkMW1oSHY2SWs9"]}, { key: 0, value: ["T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9"]}, { key: 26, value: ["UCtUQVJWd0JBQUE9dnVrRm1xWmJDVTQ9aGR2VjN0Z1gvK009dVpUVzMrY3N4eDg9"]}, { key: 1, value: ["UCtUQVJWd0JBQUE9TVMrYjRpWVUrTEk9cWpON01RWGlQWjA9c1NWQzBacFNqakE9"]}]));
+            });
     });
 
     test("getting a user object and a friend", () => {
         expect.assertions(6);
         return Users.getIndices()
-        .then((indices) => {
-            const IndexName = indices.get("name");
-            if (IndexName) {
-                return IndexName.search("Scott");
-            } else {
-                throw new Error("No Index for name");
-            }
-        })
-        .then((id) => {
-            return UserStorage.getItem(id[0]);
-        })
-        .then((user) => {
-            expect(user.name).toEqual("Scott");
-            expect(user.age).toEqual(39);
-            expect(user.friends).toEqual(expect.arrayContaining(["UHVUQVJWd0JBQUE9ZkZTNFRzQ0YwRVE9QTBRaUpUWjFJQ0U9UlRsNVg3MHNPcFE9", "UCtUQVJWd0JBQUE9TVMrYjRpWVUrTEk9cWpON01RWGlQWjA9c1NWQzBacFNqakE9"]));
-            return UserStorage.getItem(user.friends[0]);
-        })
-        .then((user) => {
-            expect(user.name).toEqual("Mark");
-            expect(user.age).toEqual(27);
-            expect(user.friends).toEqual(expect.arrayContaining(["UCtUQVJWd0JBQUE9TVMrYjRpWVUrTEk9cWpON01RWGlQWjA9c1NWQzBacFNqakE9", "UGVUQVJWd0JBQUE9R2JkWG9UUlErcDg9cUdSOU5CMnNwR0U9ZmpkUzVuZmhIWE09"]));
-        });
+            .then((indices) => {
+                const IndexName = indices.get("name");
+                if (IndexName) {
+                    return IndexName.search("Scott");
+                } else {
+                    throw new Error("No Index for name");
+                }
+            })
+            .then((id) => {
+                return UserStorage.getItem(id[0]);
+            })
+            .then((user) => {
+                expect(user.name).toEqual("Scott");
+                expect(user.age).toEqual(39);
+                expect(user.friends).toEqual(expect.arrayContaining(["UHVUQVJWd0JBQUE9ZkZTNFRzQ0YwRVE9QTBRaUpUWjFJQ0U9UlRsNVg3MHNPcFE9", "UCtUQVJWd0JBQUE9TVMrYjRpWVUrTEk9cWpON01RWGlQWjA9c1NWQzBacFNqakE9"]));
+                return UserStorage.getItem(user.friends[0]);
+            })
+            .then((user) => {
+                expect(user.name).toEqual("Mark");
+                expect(user.age).toEqual(27);
+                expect(user.friends).toEqual(expect.arrayContaining(["UCtUQVJWd0JBQUE9TVMrYjRpWVUrTEk9cWpON01RWGlQWjA9c1NWQzBacFNqakE9", "UGVUQVJWd0JBQUE9R2JkWG9UUlErcDg9cUdSOU5CMnNwR0U9ZmpkUzVuZmhIWE09"]));
+            });
     });
 
     test("retrieving generated _id Date of user", () => {
@@ -166,18 +174,33 @@ describe("testing the datastore", () => {
             });
     });
 
-    /*test("finding 5 out of 10 users sorted by age", () => {
-     expect.assertions(1);
-     return Users.find({})
-        .exec()
-        .then((res) => {
-            console.log(res);
-            expect(res).toEqual(expect.arrayContaining(["hello"]));
-        });
-    });*/
+    test("finding all users", () => {
+        expect.assertions(1);
+        return Users.find({})
+            .exec()
+            .then((res) => {
+                expect(res.length).toEqual(9);
+            });
+    });
 
-    /*
-     WORKS !!!! keep
+    test("finding all users age 22-28", () => {
+       expect.assertions(1);
+       return Users.find({age: {$gte: 22, $lte: 28}})
+            .exec()
+            .then((res) => {
+                expect(res.length).toEqual(5);
+            });
+    });
+
+    test("finding one user by ID", () => {
+        expect.assertions(1);
+        return Users.find({_id: "T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9"})
+            .exec()
+            .then((res) => {
+                expect(res).toEqual(expect.arrayContaining([{_id: "T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", age: 0, friends: ["UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9", "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9"], name: "Marcus"}]));
+            });
+    });
+
     test("clear the datastore users", () => {
         expect.assertions(1);
         return UserStorage.clear()
@@ -185,18 +208,28 @@ describe("testing the datastore", () => {
                 const exists = fs.existsSync(`${CWD}/spec/example/db/users`);
                 expect(exists).toBe(false);
             });
-    });*/
+    });
 });
 
 // new describe here with new datastore
 /*describe("creating new datastore", () => {
- const LangStorage = new MockStorageDriver("langs");
- const Langs = new Datastore({storage: LangStorage, generateId: true});
- });*/
+    const LangStorage = new MockStorageDriver("langs");
+    const Langs = new Datastore({storage: LangStorage, generateId: true});
+    test("hmm", () => {
+        expect.assertions(1);
+        return Langs.insert({name: "hmm"})
+            .then((res) => {
+                console.log(res);
+                expect(res).toEqual(3);
+            });
+    });
+});*/
 
 afterAll(() => {
     console.log("end");
     const cwd = process.cwd();
-    // const files = fs.readdirSync(`${cwd}/spec/example/db`);
-    // files.map((file) => fs.unlinkSync(`${cwd}/spec/example/db/${file}`));
+    // clear users
+    /*const files = fs.readdirSync(`${cwd}/spec/example/db/users`);
+    files.map((file) => fs.unlinkSync(`${cwd}/spec/example/db/users/${file}`));
+    fs.rmdirSync(`${cwd}/spec/example/db/users`);*/
 });

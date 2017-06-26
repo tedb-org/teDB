@@ -81,7 +81,7 @@ export default class Cursor implements ICursor {
             const promisesGetIds: Array<Promise<string[]>> = [];
 
             if (isEmpty(this.query)) {
-                promisesGetIds.push();
+                promisesGetIds.push(this.datastore.search());
             } else {
                 for (const field in this.query) {
                     if (this.query.hasOwnProperty(field)) {
