@@ -2,7 +2,7 @@
  * Created by tsturzl on 4/11/17.
  */
 import Datastore from "./datastore";
-import { isEmpty } from "./utlis";
+import { isEmpty, mergeSort, getSortType} from "./utlis";
 
 export interface ICursor {
     sort(sort: any): this;
@@ -11,7 +11,7 @@ export interface ICursor {
     exec(): Promise<any[] | number>;
 }
 
-interface Ioptions {
+export interface Ioptions {
     sort?: any;
     skip?: number;
     limit?: number;
@@ -104,7 +104,27 @@ export default class Cursor implements ICursor {
                     if (this.count) {
                         return ids.length;
                     } else {
-                        return this.datastore.getDocs(ids);
+                        return this.datastore.getDocs(this.options, ids)
+                            .then((res) => {
+                                if (this.options.sort) {
+                                    try {
+                                        const sortKey = Object.keys(this.options.sort)[0];
+                                        const sortValue = this.options.sort[sortKey];
+                                        const sortType = getSortType(res, sortKey);
+                                        if (sortType === "") {
+                                            // can't sort null or undefined
+                                            return res;
+                                        } else {
+                                            return mergeSort(res, sortKey, sortValue, sortType);
+                                        }
+                                    } catch (e) {
+                                        reject(e);
+                                    }
+                                } else {
+                                    return res;
+                                }
+                            })
+                            .catch((err) => reject(err));
                     }
                 })
                 .then(resolve)

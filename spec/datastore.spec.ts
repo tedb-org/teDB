@@ -42,15 +42,7 @@ describe("testing the datastore", () => {
     // loads initial users db
     const CWD = process.cwd();
     const UserStorage = new MockStorageDriver("users");
-    const Users = new Datastore({storage: UserStorage, generateId: true});
-
-   /* test("loading in first user", () => {
-        expect.assertions(1);
-        return Users.insert({name: "m", age: 24})
-            .then((res) => {
-                expect(res).toEqual(2);
-            });
-    });*/
+    const Users = new Datastore({storage: UserStorage});
 
     test("loading users name index into the datastore from disk", () => {
         expect.assertions(1);
@@ -201,10 +193,36 @@ describe("testing the datastore", () => {
             });
     });
 
+    test("the cursor no index", () => {
+        expect.assertions(2);
+        return Users.find({})
+            .sort({age: -1})
+            .skip(1)
+            .limit(2)
+            .exec()
+            .then((res) => {
+                expect(res).toEqual(expect.arrayContaining([ { _id: "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9", name: "Gavin", age: 25, friends: [ "T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", "UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9" ] }, { _id: "UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9", name: "Kevin", age: 22, friends: ["T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9"]}]));
+                expect(res.length).toEqual(2);
+            });
+    });
+
+    test("the cursor with index", () => {
+        expect.assertions(2);
+        return Users.find({age: {$gt: 1}})
+            .sort({age: 1})
+            .skip(1)
+            .limit(2)
+            .exec()
+            .then((res) => {
+                expect(res).toEqual(expect.arrayContaining([ { _id: "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9", name: "Gavin", age: 25, friends: [ "T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", "UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9" ] }, { _id: "UCtUQVJWd0JBQUE9dnVrRm1xWmJDVTQ9aGR2VjN0Z1gvK009dVpUVzMrY3N4eDg9", name: "Morgan", age: 26, friends: [ "UE9UQVJWd0JBQUE9cmZ4Y2MxVzNlOFk9TXV4dmJ0WU5JUFk9d0FkMW1oSHY2SWs9", "UCtUQVJWd0JBQUE9cHE1SmpnSE44eDQ9Rko2RmlJeHJrR1E9ZkN4cjROblB1WEU9"]}]));
+                expect(res.length).toEqual(2);
+            });
+    });
+
     test("clear the datastore users", () => {
         expect.assertions(1);
         return UserStorage.clear()
-            .then((res) => {
+            .then(() => {
                 const exists = fs.existsSync(`${CWD}/spec/example/db/users`);
                 expect(exists).toBe(false);
             });

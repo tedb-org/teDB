@@ -172,7 +172,7 @@ export class MockStorageDriver implements IStorageDriver {
         });
     }
     /**
-     * unlink file, if associated index files also unlink
+     * Clear collection
      */
     public clear(): Promise<null> {
         return new Promise<null>((resolve, reject) => {

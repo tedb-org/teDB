@@ -7,11 +7,12 @@ import Cursor from "./cursor";
 import Index from "./indices";
 
 import { IIndex } from "./indices";
+import { Ioptions } from "./cursor";
 import { IDatastore } from "./datastore";
 import { IStorageDriver, IRange } from "./types";
 
 export { Datastore, IDatastore};
-export { Cursor };
+export { Cursor, Ioptions };
 export { Index, IIndex };
 export { IStorageDriver };
 export { IRange };
