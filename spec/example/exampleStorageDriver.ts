@@ -136,11 +136,31 @@ export class MockStorageDriver implements IStorageDriver {
         });
     }
     /**
-     *
+     * Need to have a collection scan. Go over every file in the directory
+     * get the Id, pull the dock out an put into iteratorCallback for each file.
      */
-    public iterate(iteratorCallback: (key: string, value: any, iteratorNumber: number) => any): Promise<any> {
+    public iterate(iteratorCallback: (key: string, value: any, iteratorNumber?: number) => any): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            resolve();
+            const cwd = process.cwd();
+            fs.readdir(`${cwd}/spec/example/db/${this.filePath}`, (err: ErrnoException, files) => {
+                if (err) {
+                    return reject(err);
+                }
+                for (let i = files.length - 1; i >= 0; i--) {
+                    try {
+                        const data = fs.readFileSync(`${cwd}/spec/example/db/${this.filePath}/${files[i]}`).toString();
+                        if (data) {
+                            const doc = JSON.parse(data);
+                            if (doc.hasOwnProperty("_id")) {
+                                iteratorCallback(doc, doc._id);
+                            }
+                        }
+                    } catch (e) {
+                        return reject(e);
+                    }
+                }
+                resolve();
+            });
         });
     }
     /**
@@ -152,7 +172,7 @@ export class MockStorageDriver implements IStorageDriver {
         });
     }
     /**
-     * unlink file, if associated index files also unlink
+     * Clear collection
      */
     public clear(): Promise<null> {
         return new Promise<null>((resolve, reject) => {

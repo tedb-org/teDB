@@ -4,7 +4,7 @@
 import { getPath } from "./utlis/get_path";
 import Datastore from "./datastore";
 import { IRange, IindexOptions } from "./types";
-import { compareArray } from "./utlis/compareArray";
+import { compareArray } from "./utlis";
 import * as BTT from "binary-type-tree";
 
 export interface IIndex {

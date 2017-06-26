@@ -3,9 +3,8 @@
  */
 import Index from "./indices";
 import { IindexOptions, IStorageDriver, IRange, IupdateOptions } from "./types";
-import Cursor from "./cursor";
-import { getPath } from "./utlis/get_path";
-import { getUUID, getDate } from "./utlis/id_hasher";
+import { Cursor, Ioptions} from "../src";
+import { isEmpty, getPath, getUUID, getDate } from "./utlis";
 import * as BTT from "binary-type-tree";
 
 export interface IDatastore {
@@ -18,7 +17,7 @@ export interface IDatastore {
     removeIndex(options: IindexOptions): Promise<null>;
     insertIndex(key: string, index: any[]): Promise<null>;
     getIndices(): Promise<any>;
-    getDocs(ids: string | string[]): Promise<any[]>;
+    getDocs(options: Ioptions, ids: string | string[]): Promise<any[]>;
     search(fieldName: string, value: any): Promise<string[]>;
 }
 
@@ -38,9 +37,9 @@ export default class Datastore implements IDatastore {
     /**
      * @param config - config object `{storage: IStorageDriver, generateId?: boolean}`
      */
-    constructor(config: {storage: IStorageDriver, generateId?: boolean}) {
+    constructor(config: {storage: IStorageDriver}) {
         this.storage = config.storage;
-        this.generateId = config.generateId || true;
+        this.generateId = true;
 
         this.indices = new Map();
     }
@@ -52,9 +51,7 @@ export default class Datastore implements IDatastore {
      */
     public insert(doc: any): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            if (this.generateId) {
-                doc._id = this.createId();
-            }
+            doc._id = this.createId();
 
             const indexPromises: Array<Promise<never>> = [];
 
@@ -214,17 +211,27 @@ export default class Datastore implements IDatastore {
 
     /**
      * Get Document by ID/s
+     * @param options - sort limit skip options
      * @param ids - ID or Array of IDs
      */
-    public getDocs(ids: string | string[]): Promise<any> {
+    public getDocs(options: Ioptions, ids: string | string[]): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            const idsArr: string[] = (typeof ids === "string") ? [ids] : ids;
+            let idsArr: string[] = (typeof ids === "string") ? [ids] : ids;
 
             const promises: Array<Promise<any>> = [];
 
-            idsArr.forEach((id) => {
-                promises.push(this.storage.getItem(id));
-            });
+            if (isEmpty(options)) {
+                this.createIdsArray(promises, idsArr);
+            } else if (options.skip && options.limit) {
+                idsArr = idsArr.slice(options.skip, options.limit + 1);
+                this.createIdsArray(promises, idsArr);
+            } else if (options.skip && !options.limit) {
+                idsArr.splice(0, options.skip);
+                this.createIdsArray(promises, idsArr);
+            } else if (options.limit && !options.skip) {
+                idsArr.slice(0, options.limit);
+                this.createIdsArray(promises, idsArr);
+            }
 
             Promise.all(promises)
                 .then(resolve)
@@ -238,7 +245,7 @@ export default class Datastore implements IDatastore {
      * @param fieldName
      * @param value
      */
-    public search(fieldName: string, value: any): Promise<string[]> {
+    public search(fieldName?: string, value?: any): Promise<string[]> {
         return new Promise((resolve, reject) => {
             if (fieldName === "$or" && value instanceof Array) {
                 const promises: Array<Promise<string[]>> = [];
@@ -292,8 +299,12 @@ export default class Datastore implements IDatastore {
                     .then(resolve)
                     .catch(reject);
 
-            } else if (fieldName !== "$or" && fieldName !== "$and") {
+            } else if (fieldName !== "$or" && fieldName !== "$and" && fieldName) {
                 this.searchField(fieldName, value)
+                    .then(resolve)
+                    .catch(reject);
+            } else if (!fieldName && !value) {
+               this.searchField()
                     .then(resolve)
                     .catch(reject);
             } else {
@@ -316,10 +327,14 @@ export default class Datastore implements IDatastore {
      * @param fieldName
      * @param value
      */
-    private searchField(fieldName: string, value: any): Promise<string[]> {
-        return this.indices.has(fieldName) ?
-            this.searchIndices(fieldName, value) :
-            this.searchCollection(fieldName, value);
+    private searchField(fieldName?: string, value?: any): Promise<string[]> {
+        if (fieldName && value) {
+            return this.indices.has(fieldName) ?
+                this.searchIndices(fieldName, value) :
+                this.searchCollection(fieldName, value);
+        } else {
+            return this.searchCollection();
+        }
     }
 
     /**
@@ -354,36 +369,62 @@ export default class Datastore implements IDatastore {
      * @param fieldName - field to search
      * @param value - value to search by
      */
-    private searchCollection(fieldName: string, value: IRange): Promise<string[]> {
+    private searchCollection(fieldName?: string, value?: IRange): Promise<string[]> {
         return new Promise((resolve, reject): any => {
             const ids: string[] = [];
-            const lt: BTT.ASNDBS = value.$lt || null;
-            const lte: BTT.ASNDBS = value.$lte || null;
-            const gt: BTT.ASNDBS = value.$gt || null;
-            const gte: BTT.ASNDBS = value.$gte || null;
-            const ne: any = value.$ne || null;
-            this.storage.iterate((v, k) => {
-                const field: any = getPath(v, fieldName);
-                if (field) {
-                    const flag: boolean =
-                        (
-                            (lt && field < lt) &&
-                            (lte && field <= lte) &&
-                            (gt && field > gt) &&
-                            (gte && field >= gte) &&
-                            (ne && field !== ne)
-                        ) ||
-                        (value && field === value);
+            if (fieldName && value) {
+                const lt: BTT.ASNDBS = value.$lt || null;
+                const lte: BTT.ASNDBS = value.$lte || null;
+                const gt: BTT.ASNDBS = value.$gt || null;
+                const gte: BTT.ASNDBS = value.$gte || null;
+                const ne: any = value.$ne || null;
+                this.storage.iterate((v, k) => {
+                    const field: any = getPath(v, fieldName);
+                    if (field) {
+                        if (lt === null && lte === null && gt === null &&
+                            gte === null && ne === null && k === value) {
+                            ids.push(k);
+                        } else {
+                            const flag: boolean =
+                                (
+                                    (lt && field < lt) &&
+                                    (lte && field <= lte) &&
+                                    (gt && field > gt) &&
+                                    (gte && field >= gte) &&
+                                    (ne && field !== ne)
+                                ) ||
+                                (value && field === value);
 
-                    if (flag) {
-                        ids.push(k);
+                            if (flag) {
+                                ids.push(k);
+                            }
+                        }
                     }
-                }
-            })
+                })
                 .then(() => {
                     resolve(ids);
                 })
                 .catch(reject);
+            } else {
+                this.storage.iterate((v, k) => {
+                    ids.push(k);
+                })
+                .then(() => {
+                    resolve(ids);
+                })
+                .catch(reject);
+            }
+        });
+    }
+
+    /**
+     * Return fill provided promise array with promises from the storage driver
+     * @param promises
+     * @param ids
+     */
+    private createIdsArray(promises: Array<Promise<any>>, ids: string[]): void {
+        ids.forEach((id) => {
+            promises.push(this.storage.getItem(id));
         });
     }
 
