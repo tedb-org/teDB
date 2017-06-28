@@ -171,6 +171,7 @@ describe("testing the datastore", () => {
         return Users.find({})
             .exec()
             .then((res) => {
+                res = res as any[];
                 expect(res.length).toEqual(9);
             });
     });
@@ -180,7 +181,30 @@ describe("testing the datastore", () => {
        return Users.find({age: {$gte: 22, $lte: 28}})
             .exec()
             .then((res) => {
+                res = res as any[];
                 expect(res.length).toEqual(5);
+            });
+    });
+
+    test("finding $or", () => {
+        expect.assertions(2);
+        return Users.find({$or: [{name: "Marcus"}, {name: "Gavin"}]})
+            .exec()
+            .then((res) => {
+                res = res as any[];
+                expect(res.length).toEqual(2);
+                expect(res).toEqual((expect.arrayContaining([{ _id: "T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", name: "Marcus", age: 0, friends: [ "UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9", "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9" ] }, { _id: "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9", name: "Gavin", age: 25, friends: [ "T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", "UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9"]}])));
+            });
+    });
+
+    test("finding $and", () => {
+        expect.assertions(2);
+        return Users.find({$and: [{name: "Gavin"}, {age: 25}]})
+            .exec()
+            .then((res) => {
+                res = res as any[];
+                expect(res.length).toEqual(1);
+                expect(res).toEqual(expect.arrayContaining([{_id: "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9", age: 25, friends: ["T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", "UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9"], name: "Gavin"}]));
             });
     });
 
@@ -201,6 +225,7 @@ describe("testing the datastore", () => {
             .limit(2)
             .exec()
             .then((res) => {
+                res = res as any[];
                 expect(res).toEqual(expect.arrayContaining([ { _id: "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9", name: "Gavin", age: 25, friends: [ "T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", "UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9" ] }, { _id: "UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9", name: "Kevin", age: 22, friends: ["T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9"]}]));
                 expect(res.length).toEqual(2);
             });
@@ -214,6 +239,7 @@ describe("testing the datastore", () => {
             .limit(2)
             .exec()
             .then((res) => {
+                res = res as any[];
                 expect(res).toEqual(expect.arrayContaining([ { _id: "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9", name: "Gavin", age: 25, friends: [ "T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", "UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9" ] }, { _id: "UCtUQVJWd0JBQUE9dnVrRm1xWmJDVTQ9aGR2VjN0Z1gvK009dVpUVzMrY3N4eDg9", name: "Morgan", age: 26, friends: [ "UE9UQVJWd0JBQUE9cmZ4Y2MxVzNlOFk9TXV4dmJ0WU5JUFk9d0FkMW1oSHY2SWs9", "UCtUQVJWd0JBQUE9cHE1SmpnSE44eDQ9Rko2RmlJeHJrR1E9ZkN4cjROblB1WEU9"]}]));
                 expect(res.length).toEqual(2);
             });

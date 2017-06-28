@@ -58,7 +58,7 @@ const merge = (left: any[], right: any[], sortField: string, sort: number, type:
             }
         }
     } else {
-        throw new Error(`Sortable types are Date, String, and Number, this is not a sortable field, ${Object.prototype.toString.call(type)}`);
+        throw new Error(`Sortable types are [object Date], [object String], and [object Number], this is not a sortable field, ${Object.prototype.toString.call(type)}`);
     }
     return result.concat(left.slice(l)).concat(right.slice(r));
 };

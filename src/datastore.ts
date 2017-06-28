@@ -242,8 +242,8 @@ export default class Datastore implements IDatastore {
     /**
      * Search for IDs, chooses best strategy. Handles logical operators($or, $and)
      * Returns array of IDs
-     * @param fieldName
-     * @param value
+     * @param fieldName - element name or query start $or/$and
+     * @param value - string,number,date,null - or [{ field: value }, { field: value }]
      */
     public search(fieldName?: string, value?: any): Promise<string[]> {
         return new Promise((resolve, reject) => {
@@ -290,9 +290,9 @@ export default class Datastore implements IDatastore {
                     })
                     // Intersect all Sets into a single result Set
                     .then((idSets: Array<Set<string>>): string[] => {
-                        // Having the results accumulated into a Set means to duplication is possible
+                        // Having the results accumulated into a Set means duplication is not possible
                         const resultSet: Set<string> = idSets
-                            .reduce((a, b) => new Set([...a].filter((x) => b.has(x))), idSets.pop());
+                            .reduce((a, b) => new Set(Array.from(a).filter((x) => b.has(x))), idSets.pop());
 
                         return Array.from(resultSet.values());
                     })
