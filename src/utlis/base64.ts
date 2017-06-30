@@ -1,7 +1,21 @@
+/**
+ * Base 64 encoder/decoder
+ */
 export default class Base64 {
     private PADCHAR: string = "=";
     private ALPHA: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
+    /**
+     * Takes in a previously encoded string and returns the decoded result
+     *
+     * ~~~
+     * const B64 = new Base64();
+     * let coded = B64.encode("abc123"); // "YWJjMTIz"
+     * let decoded = B64.decode(coded); // "abc123"
+     * ~~~
+     * @param s
+     * @returns {string}
+     */
     public decode(s: string): string {
         let pads: number = 0;
         let i;
@@ -42,6 +56,16 @@ export default class Base64 {
         return x.join("");
     }
 
+    /**
+     * Encodes a string using Base 64 encoding
+     *
+     * ~~~
+     * const B64 = new Base64();
+     * let coded = B64.encode("abc123"); // "YWJjMTIz"
+     * ~~~
+     * @param s
+     * @returns {string}
+     */
     public encode(s: string): string {
         let i;
         let b10;

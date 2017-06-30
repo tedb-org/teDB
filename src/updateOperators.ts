@@ -24,6 +24,14 @@ const operate = (obj: any, is: any, value: any, type: string): any => {
 
 /**
  * Replace a value
+ *
+ * Example:
+ * ~~~
+ * let obj = {nested: {layer1: {}}};
+ * $set(obj, {"nexted.layer1.newSet": "value"})
+ *  .then((res) => console.log(res)) // {nested: {layer: {newSet: "value"}}}
+ *  .catch();
+ * ~~~
  * @param obj
  * @param set
  * @returns {Promise<T>}
@@ -46,6 +54,14 @@ export const $set = (obj: any, set: any): Promise<any> => {
 
 /**
  * Multiply a value
+ *
+ * Example:
+ * ~~~
+ * let obj = {nested: {num: 2}};
+ * $mul(obj, {"nested.num": 3})
+ *  .then((res) => console.log(res)) // {nested: {num: 6}}
+ *  .catch();
+ * ~~~
  * @param obj
  * @param mul
  * @returns {Promise<T>}
@@ -67,7 +83,15 @@ export const $mul = (obj: any, mul: any): Promise<any> => {
 };
 
 /**
- * Incriment a value or subtract from a value.
+ * Increment a value or subtract from a value.
+ *
+ * Example:
+ * ~~~
+ * let obj = {nested: {num: 1}};
+ * $inc(obj, {"nested.num": -1})
+ *  .then((res) => console.log(res)) // {nested: {num: 0}}
+ *  .catch();
+ * ~~~
  * @param obj
  * @param inc
  * @returns {Promise<T>}
@@ -90,6 +114,14 @@ export const $inc = (obj: any, inc: any): Promise<any> => {
 
 /**
  * Remove key/value
+ *
+ * Example:
+ * ~~~
+ * let obj = {nested: {v: "value}};
+ * $unset(obj, {"nested.v": ""})
+ *  .then((res) => console.log(res)) // {nested: {}}
+ *  .catch();
+ * ~~~
  * @param obj
  * @param unset
  * @returns {Promise<T>}
@@ -110,6 +142,20 @@ export const $unset = (obj: any, unset: any): Promise<any> => {
     });
 };
 
+/**
+ * Rename a key
+ *
+ * Example:
+ * ~~~
+ * let obj = {nested: {v: "value"}};
+ * $rename(obj, {"nested.v": "key"})
+ *  .then((res) => console.log(res)) // {nested: {key: "value"}}
+ *  .catch();
+ * ~~~
+ * @param obj
+ * @param rename
+ * @returns {Promise<T>}
+ */
 export const $rename = (obj: any, rename: any): Promise<any> => {
     return new Promise((resolve, reject) => {
         if (isEmpty(rename)) {

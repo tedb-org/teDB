@@ -39,18 +39,18 @@ export interface IStorageDriver {
     /**
      * Iterate every key-value pair,
      * IterationCallback should return truthy to break iteration(resulting in promise resolution)
-     * IterationCallback should throw exceptions if error occurs, this will be caught by the promise and propogate up
+     * IterationCallback should throw exceptions if error occurs, this will be caught by the promise and propagate up
      * the promise chain and handled accordingly. TODO: Add Error types for StorageDrivers
      *
      * @param iteratorCallback - Function to iterate key values pairs, return truthy to break iteration
      */
     iterate(iteratorCallback: (key: string, value: any, iteratorNumber: number) => any): Promise<any>;
     /**
-     * Retrieve all keys
+     * Retrieve all keys - _ids of all documents for this
      */
     keys(): Promise<string[]>;
     /**
-     * Clear the entire database
+     * Clear the entire datastore
      */
     clear(): Promise<null>;
 }

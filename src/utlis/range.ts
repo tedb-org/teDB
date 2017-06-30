@@ -1,3 +1,9 @@
+/**
+ * Returns a range of numerical values given numbers
+ * @param start
+ * @param end
+ * @returns {number[]}
+ */
 const numRange = ( start: number, end: number): number[] => {
     const total: number[] = [];
 
@@ -17,6 +23,12 @@ const numRange = ( start: number, end: number): number[] => {
     return total;
 };
 
+/**
+ * Returns a range of utf8 characters based on position in utf8 range
+ * @param start
+ * @param end
+ * @returns {string[]}
+ */
 const utf8Range = (start: string | number, end: string | number): string[] => {
     const all: string[] = [];
     const s: number = typeof start === "string" ? start.charCodeAt(0) : start;
@@ -38,6 +50,21 @@ const utf8Range = (start: string | number, end: string | number): string[] => {
     return all;
 };
 
+/**
+ * Uses utf8Range and numRange to return a range.
+ *
+ * Example
+ * ~~~
+ * let numbers: number[] = range(1, 5); // [1, 2, 3, 4, 5]
+ * let reverse: number[] = range(5, 1); // [5, 4, 3, 2, 1]
+ * let letters: string[] = range("a", "d"); // ["a", "b", "c", "d"]
+ * let reverseL: string[] = range("d", "a"); // ["d", "c", "b", "a"]
+ * ~~~
+ *
+ * @param start
+ * @param end
+ * @returns {number[]|string[]}
+ */
 export const range = (start: string | number, end: string | number): number[] | string[] => {
     let all: number[] | string[]  = [];
     if (typeof start === "string" && typeof end === "string") {

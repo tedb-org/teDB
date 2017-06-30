@@ -32,6 +32,12 @@ export interface IDatastore {
 
 /**
  * Datastore class
+ *
+ * Example:
+ * ~~~
+ * const UserStorage = new yourStorageClass("users");
+ * const Users = new Datastore({storage: UserStorage});
+ * ~~~
  * Creates a new Datastore using a specified storageDriver
  */
 export default class Datastore implements IDatastore {
@@ -56,7 +62,15 @@ export default class Datastore implements IDatastore {
     /**
      * Insert a single document and insert any indices of document into
      * its respective binary tree.
+     *
+     * ~~~
+     * Users.insert({name: "xyz", age: 30})
+     *      .then((doc) => console.log(doc)) // {_id: "...", name: "xyz", age: 30}
+     *      .catch((e) => console.log(e));
+     * ~~~
+     *
      * @param doc - document to insert
+     * @returns {Promise<any>}
      */
     public insert(doc: any): Promise<any> {
         return new Promise<any>((resolve, reject) => {
@@ -83,7 +97,25 @@ export default class Datastore implements IDatastore {
 
     /**
      * Find documents
+     *
+     * Examples:
+     * ~~~
+     * Users.find()
+     *  .sort({age: -1})
+     *  .skip(1)
+     *  .limit(10)
+     *  .exec()
+     *  .then((users) => console.log(users))
+     *  .catch((e) => console.log(e));
+     *
+     * Users.find({$or: [{name: "a"}, {name: "b"}]})
+     *  .then((docs) => console.log(docs.length)) // 2 if unique
+     *  .catch((e) => console.log(e));
+     *
+     * return Users.find({age: {$gt: 0, $lte: 27, $ne: 5}});
+     * ~~~
      * @param query
+     * @returns {Cursor}
      */
     public find(query: any = {}): Cursor {
         return new Cursor(this, query);
@@ -99,9 +131,32 @@ export default class Datastore implements IDatastore {
 
     /**
      * Update document/s
+     *
+     * Examples: -> lets say two users {name: "bob", age: 1},
+     *  {name: "slydel", age: 45, companies: {name: "Initech", alternate: "Intertrode"}}
+     * ~~~
+     * Users.update({name: "bob"},{$rename: {name: "first"}, $set: {job: "consultant"}},
+     *  {returnUpdatedDocs: true})
+     *  .then((docs) => console.log(docs[0]) // {_id: "...", first: "bob", age: 1, job: "consultant"}
+     *  .catch();
+     *
+     * Users.update({first: "bob"},{$unset: {"companies.alternate": ""}, $inc: {age: -44},
+     *  $mul: {age: 5}}, {returnUpdatedDocs: true})
+     *  .then((docs) => console.log(docs[0]) // {_id: "...", name: "bob", age: 5, companies: {name: "Initech"}}
+     *  .catch();
+     *
+     * Users.update({name: "Charles", age: 22}, {$inc: {age: 4}}, {upser: true, returnUpdatedDocs: true}})
+     *  .then((docs) => console.log(docs[0]) // {_id: "...", name: "Charles", age: 26}
+     *  .catch();
+     *
+     * Users.update({age: {$gt: 0}},{$unset: {age: "", name: ""}},{ multi: true, returnUpdatedDocs: true})
+     *  .then((docs) => console.log(docs)) // {_id: ".."}, {_id: ".."}, {_id: "..", companies: {name: "Initech"}}
+     *  .catch();
+     * ~~~
      * @param query - query document/s to update
      * @param operation - update operation, either a new doc or modifies portions of a document(eg. `$set`)
      * @param options - { fieldName, unique?, compareKeys?, checkKeyEquality? }
+     * @returns {Promise<any>}
      */
     public update(query: any, operation: any, options: IupdateOptions = {}): Promise<any> {
         return new Promise<any>((resolve, reject) => {
@@ -203,8 +258,9 @@ export default class Datastore implements IDatastore {
     }
 
     /**
-     * Removes document/s by query
+     * Removes document/s by query - uses find method to retrieve ids. multi always
      * @param query
+     * @returns {Promise<T>}
      */
     public remove(query: any = {}): Promise<number> {
         return new Promise((resolve, reject) => {
@@ -250,7 +306,13 @@ export default class Datastore implements IDatastore {
 
     /**
      * Ensure an index on the datastore
-     * @param options - {fieldName: string}
+     *
+     * Example:
+     * ~~~
+     * return Users.ensureIndex({fieldName: "username", unique: true});
+     * ~~~
+     * @param options
+     * @returns {Promise<null>}
      */
     public ensureIndex(options: IindexOptions): Promise<null> {
         return new Promise<null>((resolve, reject) => {
@@ -289,8 +351,8 @@ export default class Datastore implements IDatastore {
      * @param fieldName
      * @returns {Promise<null>}
      */
-    public saveIndex(fieldName: string): Promise<null> {
-        return new Promise<null>((resolve, reject) => {
+    public saveIndex(fieldName: string): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
             const index = this.indices.get(fieldName);
             if (index) {
                 index.toJSON()
@@ -333,6 +395,17 @@ export default class Datastore implements IDatastore {
 
     /**
      * Retrieve the indices of this datastore.
+     *
+     * Example:
+     * ~~~
+     * Users.getIndices()
+     *  .then((indices) => {
+     *      let usernameIndex = indices.get("username");
+     *      if(usernameIndex) {
+     *          return usernameIndex.toJSON(); // a method on index bTree
+     *      }
+     *  }); // no reject, will always resolve
+     * ~~~
      * @returns {Promise<any>}
      */
     public getIndices(): Promise<any> {
@@ -343,8 +416,10 @@ export default class Datastore implements IDatastore {
 
     /**
      * Get Document by ID/s
+     * Used internally
      * @param options - sort limit skip options
      * @param ids - ID or Array of IDs
+     * @returns {Promise<any>}
      */
     public getDocs(options: Ioptions, ids: string | string[]): Promise<any> {
         return new Promise<any>((resolve, reject) => {
@@ -374,8 +449,10 @@ export default class Datastore implements IDatastore {
     /**
      * Search for IDs, chooses best strategy. Handles logical operators($or, $and)
      * Returns array of IDs
+     * Used Internally
      * @param fieldName - element name or query start $or/$and
      * @param value - string,number,date,null - or [{ field: value }, { field: value }]
+     * @returns {Promise<T>}
      */
     public search(fieldName?: string, value?: any): Promise<string[]> {
         return new Promise((resolve, reject) => {
@@ -447,7 +524,14 @@ export default class Datastore implements IDatastore {
 
     /**
      * Get Date from ID ... do we need this on the dataStore?
+     *
+     * Example:
+     * ~~~
+     * let id = "UE9UQVJWd0JBQUE9cmZ4Y2MxVzNlOFk9TXV4dmJ0WU5JUFk9d0FkMW1oSHY2SWs9"; // an ID
+     * Users.getIdDate(id); // date object -> 2017-05-26T17:14:48.252Z
+     * ~~~
      * @param id - the `_id` of the document to get date of
+     * @returns {Date}
      */
     public getIdDate(id: string): Date {
         return getDate(id);
@@ -458,6 +542,7 @@ export default class Datastore implements IDatastore {
      * Returns array of IDs
      * @param fieldName
      * @param value
+     * @returns {any}
      */
     private searchField(fieldName?: string, value?: any): Promise<string[]> {
         if (fieldName && value) {
@@ -478,6 +563,7 @@ export default class Datastore implements IDatastore {
      * Returns array of IDs
      * @param fieldName - field to search
      * @param value - value to search by
+     * @returns {Promise<BTT.SNDBSA>}
      */
     private searchIndices(fieldName: string, value: IRange): Promise<BTT.SNDBSA> {
         return new Promise<BTT.SNDBSA>((resolve) => {
@@ -500,6 +586,7 @@ export default class Datastore implements IDatastore {
      * Returns array of IDs
      * @param fieldName - field to search
      * @param value - value to search by
+     * @returns {Promise<T>}
      */
     private searchCollection(fieldName?: string, value?: IRange): Promise<string[]> {
         return new Promise((resolve, reject): any => {
@@ -545,6 +632,16 @@ export default class Datastore implements IDatastore {
         });
     }
 
+    /**
+     * Actual method to update the documents and associated indices
+     * @param docs - an array of documents to be updated
+     * @param promises - reference to promise array to be resolved later
+     * @param indexPromises - reference to promise array to be resolved later
+     * @param operation - operation query from update method
+     * @param operators - array of operators passed by reference from the update method
+     * @param operationKeys - Each key from the query. could be less than operators array length
+     * @param reject - passed reference to reject from update method.
+     */
     private updateDocsIndices(docs: any[], promises: Array<Promise<any[]>>, indexPromises: Array<Promise<null>>, operation: any, operators: string[], operationKeys: string[], reject: any): any {
         docs.forEach((doc: any) => {  // each doc
             let mathed: number;
@@ -654,6 +751,7 @@ export default class Datastore implements IDatastore {
 
     /**
      * Create Unique ID that contains timestamp
+     * @returns {string}
      */
     private createId(): string {
         return getUUID();

@@ -7,7 +7,7 @@
   "scripts": {
     "test": "jest --no-cache --config=./spec/jest.json",
     "build": "rm -rf ./dist/* && tsc",
-    "docs": "typedoc --excludeExternals true --exclude '**/*+(spec|index).ts --out docs"
+    "docs": "typedoc --excludeExternals true --exclude '**/*+(spec|index).ts' --out docs"
   },
   "repository": {
     "type": "git",
