@@ -1,4 +1,21 @@
 /**
+ * Get value given the Path as "path.to.nested" string
+ * @param obj
+ * @param path
+ */
+export const getPath = (obj: any, path: string) => path.split(".").reduce((o, i) => o[i], obj);
+
+/**
+ * Remove duplicate objects from array comparing certain unique field.
+ * @param arr
+ * @param field
+ * @returns {any[]}
+ */
+export const rmDups = (arr: any[], field: string): any[] => {
+    return arr.filter((obj, pos, ray) => ray.map((mapObj) => mapObj[field]).indexOf(obj[field]) === pos);
+};
+
+/**
  * Are these empty? [], {}, "", null, undefined. returns true
  * @param obj
  * @returns {boolean}

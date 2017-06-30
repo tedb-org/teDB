@@ -1,7 +1,7 @@
 /**
  * Created by tsturzl on 4/11/17.
  */
-import { getPath } from "./utlis/get_path";
+import { getPath } from "./utlis";
 import Datastore from "./datastore";
 import { IRange, IindexOptions } from "./types";
 import { compareArray } from "./utlis";
@@ -70,7 +70,6 @@ export default class Index implements IIndex {
             }
 
             const key: BTT.ASNDBS = getPath(doc, this.fieldName);
-
             if (key !== undefined && key !== null) {
                 if (key.constructor.name === "Array" && !this.isArray) {
                     this.avl.compareKeys = compareArray;
@@ -124,6 +123,7 @@ export default class Index implements IIndex {
             if (this.avl.tree.search(key).length === 0) {
                 return reject(new Error("This key does not exist"));
             }
+
             try {
                 this.avl.updateKey(key, newKey);
             } catch (e) {

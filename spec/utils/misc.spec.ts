@@ -1,4 +1,4 @@
-import { isEmpty, getSortType, mergeSort } from "../../src/utlis";
+import { isEmpty, getSortType, mergeSort, getPath } from "../../src/utlis";
 
 describe("testing miscellaneous methods", () => {
 
@@ -69,4 +69,33 @@ describe("testing miscellaneous methods", () => {
         { name: "b", age: 5, date: new Date("1/4/2017") },
         { name: "c", age: 6, date: new Date("1/1/2017") } ]));
     });
+
+    test("getPath", () => {
+        const doc = {
+            name: "Charles Xavier",
+            age: 78,
+            occupation: "Professor",
+            students: [
+                "Wolverine",
+                "Blue Falcon",
+                "Chad",
+            ],
+            nested: {
+                name: "sneaky",
+            },
+        };
+
+        const key: string = getPath(doc, "name");
+        const numKey: number = getPath(doc, "age");
+        const missingKey: any = getPath(doc, "lost");
+        const students: string[] = getPath(doc, "students");
+        const nested: string = getPath(doc, "nested.name");
+
+        expect(key).toBe("Charles Xavier");
+        expect(numKey).toBe(78);
+        expect(missingKey).toBe(undefined);
+        expect(students).toEqual(expect.arrayContaining(["Wolverine", "Blue Falcon", "Chad"]));
+        expect(nested).toBe("sneaky");
+    });
+
 });
