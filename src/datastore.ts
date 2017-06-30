@@ -23,6 +23,7 @@ export interface IDatastore {
     remove(query: any): Promise<number>;
     ensureIndex(options: IindexOptions): Promise<null>;
     removeIndex(fieldName: string): Promise<null>;
+    saveIndex(fieldName: string): Promise<null>;
     insertIndex(key: string, index: any[]): Promise<null>;
     getIndices(): Promise<any>;
     getDocs(options: Ioptions, ids: string | string[]): Promise<any[]>;
@@ -122,18 +123,22 @@ export default class Datastore implements IDatastore {
                         res = res as any[];
                         if (res.length === 0) {
                             if (upsert) {
+                                query._id = this.createId();
+                                this.indices.forEach((v) => indexPromises.push(v.insert(query)));
+
                                 this.updateDocsIndices([query], promises, indexPromises, operation, operators, operationKeys, reject);
-                                promises.push(this.insert(query));
                             } else {
                                 return [];
                             }
                         } else {
                             // no return value, all are passed and used by reference.
                             this.updateDocsIndices(res, promises, indexPromises, operation, operators, operationKeys, reject);
-                            // If any index changes - error, reject and do not update and save.
-                            Promise.all(indexPromises)
-                                .catch(reject);
                         }
+
+                        // If any index changes - error, reject and do not update and save.
+                        Promise.all(indexPromises)
+                        .catch(reject);
+
                         // return promises
                         return Promise.all(promises);
                     })
@@ -162,16 +167,18 @@ export default class Datastore implements IDatastore {
                         res = res as any[];
                         if (res.length === 0) {
                             if (upsert) {
+                                query._id = this.createId();
+                                this.indices.forEach((v) => indexPromises.push(v.insert(query)));
+
                                 this.updateDocsIndices([query], promises, indexPromises, operation, operators, operationKeys, reject);
-                                promises.push(this.insert(query));
                             } else {
                                 return [];
                             }
                         } else {
                             this.updateDocsIndices(res, promises, indexPromises, operation, operators, operationKeys, reject);
-                            Promise.all(indexPromises)
-                                .catch(reject);
                         }
+                        Promise.all(indexPromises)
+                        .catch(reject);
                         return Promise.all(promises);
                     })
                     .then((docs: any[]) => rmDups(docs, "_id"))
@@ -258,7 +265,10 @@ export default class Datastore implements IDatastore {
 
     /**
      * Remove index will delete the index from the Map which also
-     * holds the Btree of the indices.
+     * holds the Btree of the indices. If you need to remove the
+     * index from the persisted version in from the storage driver,
+     * call the removeIndex from the storage driver from a different source.
+     * This method should not assume you saved the index.
      * @param fieldName - Field that needs index removed
      * @returns {Promise<null>}
      */
@@ -270,6 +280,29 @@ export default class Datastore implements IDatastore {
                 return reject(e);
             }
             resolve();
+        });
+    }
+
+    /**
+     * Save the index currently in memory to the persisted version if need be
+     * through the storage driver.
+     * @param fieldName
+     * @returns {Promise<null>}
+     */
+    public saveIndex(fieldName: string): Promise<null> {
+        return new Promise<null>((resolve, reject) => {
+            const index = this.indices.get(fieldName);
+            if (index) {
+                index.toJSON()
+                    .then((res) => {
+                        return this.storage.storeIndex(fieldName, res);
+                    })
+                    .then(resolve)
+                    .catch(reject);
+
+            } else {
+                return reject(new Error(`No index with name ${fieldName} for this datastore`));
+            }
         });
     }
 
@@ -504,13 +537,10 @@ export default class Datastore implements IDatastore {
                 })
                 .catch(reject);
             } else {
-                this.storage.iterate((v, k) => {
-                    ids.push(k);
-                })
-                .then(() => {
-                    resolve(ids);
-                })
-                .catch(reject);
+                // here return keys from storage driver
+                this.storage.keys()
+                    .then(resolve)
+                    .catch(reject);
             }
         });
     }

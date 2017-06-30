@@ -12,8 +12,8 @@ import * as fs from "fs";
 import ErrnoException = NodeJS.ErrnoException;
 
 export class MockStorageDriver implements IStorageDriver {
+    public allKeys: string[];
     private filePath: string;
-    private allKeys: string[];
 
     constructor(filePath: string) {
         this.filePath = filePath;
@@ -59,7 +59,9 @@ export class MockStorageDriver implements IStorageDriver {
                 if (err) {
                     reject(err);
                 }
-                this.allKeys.push(key);
+                if (this.allKeys.indexOf(key) === -1) {
+                    this.allKeys.push(key);
+                }
                 resolve(value);
             });
         });
@@ -78,11 +80,7 @@ export class MockStorageDriver implements IStorageDriver {
                     return reject(err);
                 }
                 try {
-                    for (let i = this.allKeys.length - 1; i >= 0; i--) {
-                        if (this.allKeys[i].indexOf(key) === 0) {
-                            this.allKeys.splice(i, 1);
-                        }
-                    }
+                    this.allKeys = this.allKeys.filter((cur) => cur !== key);
                 } catch (e) {
                     return reject(e);
                 }
@@ -128,10 +126,29 @@ export class MockStorageDriver implements IStorageDriver {
                 }
                 try {
                     index = JSON.parse(data);
+                    if (index.length > 0) {
+                        index.forEach((obj: any) => {
+                            if (this.allKeys.indexOf(obj.value) === -1) {
+                                this.allKeys.push(obj.value);
+                            }
+                        });
+                    }
                 } catch (e) {
                     reject(e);
                 }
                 resolve(index);
+            });
+        });
+    }
+    public removeIndex(key: string): Promise<null> {
+        return new Promise<any>((resolve, reject) => {
+            const cwd = process.cwd();
+            const fileName = `index_${key}.db`;
+            fs.unlink(`${cwd}/spec/example/db/${this.filePath}/${fileName}`, (err: ErrnoException) => {
+                if (err) {
+                    return reject(err);
+                }
+                resolve();
             });
         });
     }
@@ -164,7 +181,7 @@ export class MockStorageDriver implements IStorageDriver {
         });
     }
     /**
-     * ?
+     * Return all the keys = _ids of all documents.
      */
     public keys(): Promise<string[]> {
         return new Promise<string[]>((resolve) => {
