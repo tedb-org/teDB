@@ -32,6 +32,11 @@ export interface IStorageDriver {
      */
     fetchIndex(key: string): Promise<string>;
     /**
+     * Remove the saved JSON of a specific Index
+     * @param key
+     */
+    removeIndex(key: string): Promise<null>;
+    /**
      * Iterate every key-value pair,
      * IterationCallback should return truthy to break iteration(resulting in promise resolution)
      * IterationCallback should throw exceptions if error occurs, this will be caught by the promise and propogate up

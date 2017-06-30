@@ -16,7 +16,6 @@ import * as fs from "fs";
 import ErrnoException = NodeJS.ErrnoException;
 
 beforeAll(() => {
-    console.log("start");
     const cwd = process.cwd();
     const db = fs.readdirSync(`${cwd}/spec/fixtures/db`);
     const oldDB = fs.readdirSync(`${cwd}/spec/example/db`);
@@ -227,7 +226,7 @@ describe("testing the datastore", () => {
             .exec()
             .then((res) => {
                 res = res as any[];
-                expect(res).toEqual(expect.arrayContaining([ { _id: "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9", name: "Gavin", age: 25, friends: [ "T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", "UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9" ] }, { _id: "UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9", name: "Kevin", age: 22, friends: ["T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9"]}]));
+                expect(res).toEqual(expect.arrayContaining([{_id: "UGVUQVJWd0JBQUE9R2JkWG9UUlErcDg9cUdSOU5CMnNwR0U9ZmpkUzVuZmhIWE09", age: 39, friends: ["UHVUQVJWd0JBQUE9ZkZTNFRzQ0YwRVE9QTBRaUpUWjFJQ0U9UlRsNVg3MHNPcFE9", "UCtUQVJWd0JBQUE9TVMrYjRpWVUrTEk9cWpON01RWGlQWjA9c1NWQzBacFNqakE9"], name: "Scott"}, {_id: "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9", age: 25, friends: ["T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", "UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9"], name: "Gavin"}]));
                 expect(res.length).toEqual(2);
             });
         });
@@ -376,7 +375,43 @@ describe("testing the datastore", () => {
             });
         });
 
-        test("clear the datastore users", () => {
+        test("storing new Index", () => {
+            expect.assertions(7);
+            return States.saveIndex("name")
+                .then(() => {
+                    return StateStorage.fetchIndex("name");
+                })
+                .then((res) => {
+                    res = res as any[];
+                    expect(res.length).toEqual(6);
+                    expect(res[0].key).toEqual("Oklahoma");
+                    expect(res[1].key).toEqual("Texas");
+                    expect(res[2].key).toEqual("Massachusetts");
+                    expect(res[3].key).toEqual("Washington");
+                    expect(res[4].key).toEqual("South Carolina");
+                    expect(res[5].key).toEqual("California");
+                });
+        });
+
+        test("removing the persisted index & in memory", () => {
+            expect.assertions(2);
+            return States.removeIndex("name")
+                .then(() => {
+                    return States.getIndices();
+                })
+                .then((indices) => {
+                    if (indices) {
+                        expect(indices.get("name")).toEqual(undefined);
+                    }
+                    return StateStorage.removeIndex("name");
+                })
+                .then(() => {
+                    const exists = fs.existsSync(`${CWD}/spec/example/db/states/index_name.db`);
+                    expect(exists).toEqual(false);
+                });
+        });
+
+        test("clear the datastore states", () => {
             expect.assertions(1);
             return StateStorage.clear()
             .then(() => {
@@ -385,13 +420,4 @@ describe("testing the datastore", () => {
             });
         });
     });
-});
-
-afterAll(() => {
-    console.log("end");
-    const cwd = process.cwd();
-    // clear users
-    /*const files = fs.readdirSync(`${cwd}/spec/example/db/users`);
-    files.map((file) => fs.unlinkSync(`${cwd}/spec/example/db/users/${file}`));
-    fs.rmdirSync(`${cwd}/spec/example/db/users`);*/
 });
