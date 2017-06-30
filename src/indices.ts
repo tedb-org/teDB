@@ -1,11 +1,18 @@
 /**
  * Created by tsturzl on 4/11/17.
  */
-import { getPath } from "./utlis/get_path";
+import { getPath } from "./utlis";
 import Datastore from "./datastore";
 import { IRange, IindexOptions } from "./types";
 import { compareArray } from "./utlis";
 import * as BTT from "binary-type-tree";
+
+/**
+ * Array String Number, Date, Boolean, -> symbol was redacted.
+ * BTT.ASNDBS = Array<any[]|string|number|Date|boolean|null>|string|number|Date|boolean|null
+ * -> redacted symbol, Number, Date, Boolean, String, Array
+ * BTT.SNDBSA = Array<{}|any[]|string|number|Date|boolean|null>;
+ */
 
 export interface IIndex {
     insert(doc: any): Promise<any>;
@@ -63,7 +70,6 @@ export default class Index implements IIndex {
             }
 
             const key: BTT.ASNDBS = getPath(doc, this.fieldName);
-
             if (key !== undefined && key !== null) {
                 if (key.constructor.name === "Array" && !this.isArray) {
                     this.avl.compareKeys = compareArray;
@@ -117,6 +123,7 @@ export default class Index implements IIndex {
             if (this.avl.tree.search(key).length === 0) {
                 return reject(new Error("This key does not exist"));
             }
+
             try {
                 this.avl.updateKey(key, newKey);
             } catch (e) {

@@ -55,7 +55,7 @@ export class MockStorageDriver implements IStorageDriver {
                 reject(e);
             }
 
-            fs.appendFile(`${cwd}/spec/example/db/${this.filePath}/${key}.db`, data, (err: ErrnoException) => {
+            fs.writeFile(`${cwd}/spec/example/db/${this.filePath}/${key}.db`, data, (err: ErrnoException) => {
                 if (err) {
                     reject(err);
                 }

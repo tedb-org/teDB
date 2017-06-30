@@ -4,8 +4,16 @@
 import Index from "./indices";
 import { IindexOptions, IStorageDriver, IRange, IupdateOptions } from "./types";
 import { Cursor, Ioptions} from "../src";
-import { isEmpty, getPath, getUUID, getDate } from "./utlis";
+import { $set, $inc, $mul, $unset, $rename } from "./updateOperators";
+import { isEmpty, getPath, getUUID, getDate, rmDups } from "./utlis";
 import * as BTT from "binary-type-tree";
+
+/**
+ * Array String Number, Date, Boolean, -> symbol was redacted. : Used for keys
+ * BTT.ASNDBS = Array<any[]|string|number|Date|boolean|null>|string|number|Date|boolean|null
+ * -> redacted symbol, Number, Date, Boolean, String, Array : Used for values
+ * BTT.SNDBSA = Array<{}|any[]|string|number|Date|boolean|null>;
+ */
 
 export interface IDatastore {
     insert(doc: any): Promise<never>;
@@ -14,7 +22,7 @@ export interface IDatastore {
     update(query: any, operation: any, options: IupdateOptions): Promise<any>;
     remove(query: any): Promise<number>;
     ensureIndex(options: IindexOptions): Promise<null>;
-    removeIndex(options: IindexOptions): Promise<null>;
+    removeIndex(fieldName: string): Promise<null>;
     insertIndex(key: string, index: any[]): Promise<null>;
     getIndices(): Promise<any>;
     getDocs(options: Ioptions, ids: string | string[]): Promise<any[]>;
@@ -51,6 +59,10 @@ export default class Datastore implements IDatastore {
      */
     public insert(doc: any): Promise<any> {
         return new Promise<any>((resolve, reject) => {
+            if (isEmpty(doc)) {
+                return reject(new Error("Cannot insert empty document"));
+            }
+
             doc._id = this.createId();
 
             const indexPromises: Array<Promise<never>> = [];
@@ -72,7 +84,7 @@ export default class Datastore implements IDatastore {
      * Find documents
      * @param query
      */
-    public find(query: any): Cursor {
+    public find(query: any = {}): Cursor {
         return new Cursor(this, query);
     }
 
@@ -80,7 +92,7 @@ export default class Datastore implements IDatastore {
      * Count documents
      * @param query
      */
-    public count(query: any): Cursor {
+    public count(query: any = {}): Cursor {
         return new Cursor(this, query, true);
     }
 
@@ -88,11 +100,98 @@ export default class Datastore implements IDatastore {
      * Update document/s
      * @param query - query document/s to update
      * @param operation - update operation, either a new doc or modifies portions of a document(eg. `$set`)
-     * @param options - options f
+     * @param options - { fieldName, unique?, compareKeys?, checkKeyEquality? }
      */
-    public update(query: any, operation: any, options: IupdateOptions): Promise<any> {
+    public update(query: any, operation: any, options: IupdateOptions = {}): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            resolve();
+            if (isEmpty(operation)) {
+                return reject(new Error("No update without update operation"));
+            }
+            const promises: Array<Promise<any[]>> = [];
+            const indexPromises: Array<Promise<null>> = [];
+            const operators: string[] = ["$set", "$mul", "$inc", "$unset", "$rename"];
+            const multi: boolean = options.multi || false;
+            const upsert: boolean = options.upsert || false;
+            const returnUpdatedDocs: boolean = options.returnUpdatedDocs || false;
+            const operationKeys: string[] = Object.keys(operation);
+
+            if (multi) {
+                return this.find(query)
+                    .exec()
+                    .then((res): any => {
+                        res = res as any[];
+                        if (res.length === 0) {
+                            if (upsert) {
+                                this.updateDocsIndices([query], promises, indexPromises, operation, operators, operationKeys, reject);
+                                promises.push(this.insert(query));
+                            } else {
+                                return [];
+                            }
+                        } else {
+                            // no return value, all are passed and used by reference.
+                            this.updateDocsIndices(res, promises, indexPromises, operation, operators, operationKeys, reject);
+                            // If any index changes - error, reject and do not update and save.
+                            Promise.all(indexPromises)
+                                .catch(reject);
+                        }
+                        // return promises
+                        return Promise.all(promises);
+                    })
+                    .then((docs: any[]) => rmDups(docs, "_id"))
+                    .then((docs: any[]) => {
+                        const docPromises: Array<Promise<any[]>> = [];
+                        // save new docs to storage driver.
+                        docs.forEach((doc) => {
+                            docPromises.push(this.storage.setItem(doc._id, doc));
+                        });
+                        return Promise.all(docPromises);
+                    })
+                    .then((res) => {
+                        if (returnUpdatedDocs) {
+                            resolve(res);
+                        } else {
+                            resolve();
+                        }
+                    })
+                    .catch(reject);
+            } else {
+                return this.find(query)
+                    .limit(1)
+                    .exec()
+                    .then((res) => {
+                        res = res as any[];
+                        if (res.length === 0) {
+                            if (upsert) {
+                                this.updateDocsIndices([query], promises, indexPromises, operation, operators, operationKeys, reject);
+                                promises.push(this.insert(query));
+                            } else {
+                                return [];
+                            }
+                        } else {
+                            this.updateDocsIndices(res, promises, indexPromises, operation, operators, operationKeys, reject);
+                            Promise.all(indexPromises)
+                                .catch(reject);
+                        }
+                        return Promise.all(promises);
+                    })
+                    .then((docs: any[]) => rmDups(docs, "_id"))
+                    .then((docs: any[]) => {
+                        const docPromises: Array<Promise<any[]>> = [];
+                        // save new docs to storage driver.
+                        docs.forEach((doc) => {
+                            docPromises.push(this.storage.setItem(doc._id, doc));
+                        });
+                        return Promise.all(docPromises);
+                    })
+                    .then((res) => {
+                        if (returnUpdatedDocs) {
+                            resolve(res);
+                        } else {
+                            resolve();
+                        }
+                    })
+                    .catch(reject);
+            }
         });
     }
 
@@ -100,7 +199,7 @@ export default class Datastore implements IDatastore {
      * Removes document/s by query
      * @param query
      */
-    public remove(query: any): Promise<number> {
+    public remove(query: any = {}): Promise<number> {
         return new Promise((resolve, reject) => {
             this.find(query)
                 .exec()
@@ -151,7 +250,7 @@ export default class Datastore implements IDatastore {
             try {
                 this.indices.set(options.fieldName, new Index(this, options));
             } catch (e) {
-                reject(e);
+                return reject(e);
             }
             resolve();
         });
@@ -160,15 +259,15 @@ export default class Datastore implements IDatastore {
     /**
      * Remove index will delete the index from the Map which also
      * holds the Btree of the indices.
-     * @param options
+     * @param fieldName - Field that needs index removed
      * @returns {Promise<null>}
      */
-    public removeIndex(options: IindexOptions): Promise<null> {
+    public removeIndex(fieldName: string): Promise<null> {
         return new Promise<null>((resolve, reject) => {
             try {
-                this.indices.delete(options.fieldName);
+                this.indices.delete(fieldName);
             } catch (e) {
-                reject(e);
+                return reject(e);
             }
             resolve();
         });
@@ -188,13 +287,13 @@ export default class Datastore implements IDatastore {
                     indices.insertMany(key, index)
                            .then(resolve)
                            .catch((err) => {
-                                reject(err);
+                                return reject(err);
                            });
                 } else {
-                    reject(new Error("No Index for this key was created on this datastore."));
+                    return reject(new Error("No Index for this key was created on this datastore."));
                 }
             } catch (e) {
-                reject(e);
+                return reject(e);
             }
         });
     }
@@ -223,13 +322,13 @@ export default class Datastore implements IDatastore {
             if (isEmpty(options)) {
                 this.createIdsArray(promises, idsArr);
             } else if (options.skip && options.limit) {
-                idsArr = idsArr.slice(options.skip, options.limit + 1);
+                idsArr = idsArr.splice(options.skip, options.limit);
                 this.createIdsArray(promises, idsArr);
             } else if (options.skip && !options.limit) {
                 idsArr.splice(0, options.skip);
                 this.createIdsArray(promises, idsArr);
             } else if (options.limit && !options.skip) {
-                idsArr.slice(0, options.limit);
+                idsArr = idsArr.splice(0, options.limit);
                 this.createIdsArray(promises, idsArr);
             }
 
@@ -242,8 +341,8 @@ export default class Datastore implements IDatastore {
     /**
      * Search for IDs, chooses best strategy. Handles logical operators($or, $and)
      * Returns array of IDs
-     * @param fieldName
-     * @param value
+     * @param fieldName - element name or query start $or/$and
+     * @param value - string,number,date,null - or [{ field: value }, { field: value }]
      */
     public search(fieldName?: string, value?: any): Promise<string[]> {
         return new Promise((resolve, reject) => {
@@ -290,9 +389,9 @@ export default class Datastore implements IDatastore {
                     })
                     // Intersect all Sets into a single result Set
                     .then((idSets: Array<Set<string>>): string[] => {
-                        // Having the results accumulated into a Set means to duplication is possible
+                        // Having the results accumulated into a Set means duplication is not possible
                         const resultSet: Set<string> = idSets
-                            .reduce((a, b) => new Set([...a].filter((x) => b.has(x))), idSets.pop());
+                            .reduce((a, b) => new Set(Array.from(a).filter((x) => b.has(x))), idSets.pop());
 
                         return Array.from(resultSet.values());
                     })
@@ -373,11 +472,11 @@ export default class Datastore implements IDatastore {
         return new Promise((resolve, reject): any => {
             const ids: string[] = [];
             if (fieldName && value) {
-                const lt: BTT.ASNDBS = value.$lt || null;
-                const lte: BTT.ASNDBS = value.$lte || null;
-                const gt: BTT.ASNDBS = value.$gt || null;
-                const gte: BTT.ASNDBS = value.$gte || null;
-                const ne: any = value.$ne || null;
+                const lt: BTT.ASNDBS = (value.hasOwnProperty("$lt") && value.$lt !== undefined) ? value.$lt : null;
+                const lte: BTT.ASNDBS = (value.hasOwnProperty("$lte") && value.$lte !== undefined) ? value.$lte : null;
+                const gt: BTT.ASNDBS = (value.hasOwnProperty("$gt") && value.$gt !== undefined) ? value.$gt : null;
+                const gte: BTT.ASNDBS = (value.hasOwnProperty("$gte") && value.$gte !== undefined) ? value.$gte : null;
+                const ne: any =  value.hasOwnProperty("$ne") ? value.$ne : null;
                 this.storage.iterate((v, k) => {
                     const field: any = getPath(v, fieldName);
                     if (field) {
@@ -387,14 +486,13 @@ export default class Datastore implements IDatastore {
                         } else {
                             const flag: boolean =
                                 (
-                                    (lt && field < lt) &&
-                                    (lte && field <= lte) &&
-                                    (gt && field > gt) &&
-                                    (gte && field >= gte) &&
-                                    (ne && field !== ne)
+                                    ((lt && field < lt) !== null) ||
+                                    ((lte && field <= lte) !== null) ||
+                                    ((gt && field > gt) !== null) ||
+                                    ((gte && field >= gte) !== null) ||
+                                    ((ne && field !== ne) !== null)
                                 ) ||
                                 (value && field === value);
-
                             if (flag) {
                                 ids.push(k);
                             }
@@ -414,6 +512,102 @@ export default class Datastore implements IDatastore {
                 })
                 .catch(reject);
             }
+        });
+    }
+
+    private updateDocsIndices(docs: any[], promises: Array<Promise<any[]>>, indexPromises: Array<Promise<null>>, operation: any, operators: string[], operationKeys: string[], reject: any): any {
+        docs.forEach((doc: any) => {  // each doc
+            let mathed: number;
+            let preMath: number;
+            // update indices
+            this.indices.forEach((index, field) => { // each index in datastore
+                operationKeys.forEach((k) => { // each op key sent by user
+                    if (operationKeys.indexOf(k) !== -1) {
+                        const setKeys = Object.keys(operation[k]);
+                        switch (k) {
+                            case "$set":
+                                setKeys.forEach((sk) => { // each $set obj key
+                                    if (field === sk) {
+                                        // update the index value with the new
+                                        // value if the index fieldname =
+                                        // the $set obj key.
+                                        indexPromises.push(index.updateKey(getPath(doc, field), operation[k][sk]));
+                                    }
+                                });
+                                break;
+                            case "$mul":
+                                setKeys.forEach((mk) => {
+                                    if (field === mk) {
+                                        if (mathed) {
+                                            preMath = mathed;
+                                            mathed = mathed * operation[k][mk];
+                                        } else {
+                                            mathed = getPath(doc, field) * operation[k][mk];
+                                        }
+                                        const indexed = preMath ? preMath : getPath(doc, field);
+                                        indexPromises.push(index.updateKey(indexed, mathed));
+                                    }
+                                });
+                                break;
+                            case "$inc":
+                                setKeys.forEach((ik) => {
+                                    if (field === ik) {
+                                        if (mathed) {
+                                            preMath = mathed;
+                                            mathed = mathed + operation[k][ik];
+                                        } else {
+                                            mathed = getPath(doc, field) + operation[k][ik];
+                                        }
+                                        const indexed = preMath ? preMath : getPath(doc, field);
+                                        indexPromises.push(index.updateKey(indexed, mathed));
+                                    }
+                                });
+                                break;
+                            case "$unset":
+                                setKeys.forEach((ik) => {
+                                    if (field === ik) {
+                                        // To unset a field that is indexed
+                                        // remove the document. The index remove
+                                        // method has this ref and knows the value
+                                        indexPromises.push(index.remove(doc));
+                                    }
+                                });
+                                break;
+                            case "$rename":
+                                setKeys.forEach((rn) => {
+                                    if (field === rn) {
+                                        // save current index value
+                                        const indexValue = this.indices.get(field);
+                                        // delete current index
+                                        this.removeIndex(field)
+                                        .then(() => {
+                                            // create new index with old value new name
+                                            if (indexValue) {
+                                                this.indices.set(operation[k][rn], indexValue);
+                                            } else {
+                                                return reject(new Error(`Cannot rename index of ${field} that does not exist`));
+                                            }
+                                        })
+                                        .catch((e) => reject(e));
+                                    }
+                                });
+                                break;
+                        }
+                    }
+                });
+            });
+            // Update Docs
+            operationKeys.forEach((k) => {
+                if (operators.indexOf(k) !== -1) {
+                    switch (k) {
+                        case "$set": promises.push($set(doc, operation[k])); break;
+                        case "$mul": promises.push($mul(doc, operation[k])); break;
+                        case "$inc": promises.push($inc(doc, operation[k])); break;
+                        case "$unset": promises.push($unset(doc, operation[k])); break;
+                        case "$rename": promises.push($rename(doc, operation[k])); break;
+                    }
+                }
+            });
         });
     }
 
