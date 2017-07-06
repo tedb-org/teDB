@@ -1,6 +1,32 @@
 // All update operators
 import { isEmpty } from "./utlis";
 
+/**
+ * Method used by all update operators except $rename
+ * to updated nested object values by use of a string - `"nested.doc.key"`
+ *
+ * Examples:
+ * ~~~
+ * let obj = {nested: {doc: {key: 1}}};
+ *
+ * operate(obj, "nested.doc.key", 2, "set");
+ * // obj = {nested: {doc: {key: 2}}}
+ *
+ * operate(obj, "nested.doc.key", -1, "inc");
+ * // obj = {nested: {doc: {key: 1}}}
+ *
+ * operate(obj, "nested.doc.key", 3, "mul");
+ * // obj = {nested: {doc: {key: 3}}}
+ *
+ * operate(obj, "nested.doc.key", "", "unset");
+ * // obj = {nested: {doc: {}}}
+ * ~~~
+ * @param obj - object to update
+ * @param is - "string.location"
+ * @param value - input
+ * @param type - operator type `string`
+ * @returns {any}
+ */
 const operate = (obj: any, is: any, value: any, type: string): any => {
     if (typeof is === "string") {
         return operate(obj, is.split("."), value, type);

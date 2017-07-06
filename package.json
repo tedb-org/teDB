@@ -1,13 +1,13 @@
 {
   "name": "tedb",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "TypeScript Embedded Database",
   "main": "dist/tedb.js",
   "types": "dist/tedb.d.ts",
   "scripts": {
     "test": "jest --no-cache --config=./spec/jest.json",
     "build": "rm -rf ./dist/* && tsc",
-    "docs": "typedoc --excludeExternals true --exclude '**/*+(spec|index).ts' --out docs"
+    "docs": "rm -rf ./docs/* && typedoc --excludeExternals true --exclude '**/*+(spec|index).ts' --out docs"
   },
   "repository": {
     "type": "git",

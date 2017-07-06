@@ -50,7 +50,7 @@ export default class Datastore implements IDatastore {
     private generateId: boolean;
 
     /**
-     * @param config - config object `{storage: IStorageDriver, generateId?: boolean}`
+     * @param config - config object `{storage: IStorageDriver}`
      */
     constructor(config: {storage: IStorageDriver}) {
         this.storage = config.storage;
