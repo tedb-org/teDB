@@ -46,7 +46,7 @@ export default class Cursor implements ICursor {
 
     /**
      * Sort order for fields
-     * @param sort - sort object `{fieldName: 1|-1 ...}`
+     * @param sort - sort object `{fieldName: 1 | -1}`
      */
     public sort(sort: any): this {
         this.options.sort = sort;

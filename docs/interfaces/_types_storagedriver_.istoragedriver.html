@@ -38,8 +38,6 @@
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-externals" checked />
-							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
 							<input type="checkbox" id="tsd-filter-only-exported" />
 							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
@@ -94,11 +92,14 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_types_storagedriver_.istoragedriver.html#clear" class="tsd-kind-icon">clear</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_types_storagedriver_.istoragedriver.html#fetchindex" class="tsd-kind-icon">fetch<wbr>Index</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_types_storagedriver_.istoragedriver.html#getitem" class="tsd-kind-icon">get<wbr>Item</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_types_storagedriver_.istoragedriver.html#iterate" class="tsd-kind-icon">iterate</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_types_storagedriver_.istoragedriver.html#keys" class="tsd-kind-icon">keys</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_types_storagedriver_.istoragedriver.html#removeindex" class="tsd-kind-icon">remove<wbr>Index</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_types_storagedriver_.istoragedriver.html#removeitem" class="tsd-kind-icon">remove<wbr>Item</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_types_storagedriver_.istoragedriver.html#setitem" class="tsd-kind-icon">set<wbr>Item</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_types_storagedriver_.istoragedriver.html#storeindex" class="tsd-kind-icon">store<wbr>Index</a></li>
 							</ul>
 						</section>
 					</div>
@@ -116,15 +117,46 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/types/storageDriver.ts#L43">types/storageDriver.ts:43</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/types/storageDriver.ts#L55">types/storageDriver.ts:55</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Clear the entire database</p>
+									<p>Clear the entire datastore</p>
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="fetchindex" class="tsd-anchor"></a>
+					<h3>fetch<wbr>Index</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">fetch<wbr>Index<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/types/storageDriver.ts#L33">types/storageDriver.ts:33</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Retrieve the JSON from the file to be loaded into the datastore indices</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>key: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the path to the element in the object</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -138,7 +170,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/types/storageDriver.ts#L15">types/storageDriver.ts:15</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/types/storageDriver.ts#L11">types/storageDriver.ts:11</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -168,14 +200,14 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/types/storageDriver.ts#L35">types/storageDriver.ts:35</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/types/storageDriver.ts#L47">types/storageDriver.ts:47</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Iterate every key-value pair,
 										IterationCallback should return truthy to break iteration(resulting in promise resolution)
-										IterationCallback should throw exceptions if error occurs, this will be caught by the promise and propogate up
+										IterationCallback should throw exceptions if error occurs, this will be caught by the promise and propagate up
 									the promise chain and handled accordingly. TODO: Add Error types for StorageDrivers</p>
 								</div>
 							</div>
@@ -189,17 +221,17 @@
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter-siganture">
 											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
-												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, iteratorNumber<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, iteratorNumber<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 											</ul>
 											<ul class="tsd-descriptions">
 												<li class="tsd-description">
 													<h4 class="tsd-parameters-title">Parameters</h4>
 													<ul class="tsd-parameters">
 														<li>
-															<h5>value: <span class="tsd-signature-type">any</span></h5>
+															<h5>key: <span class="tsd-signature-type">string</span></h5>
 														</li>
 														<li>
-															<h5>key: <span class="tsd-signature-type">string</span></h5>
+															<h5>value: <span class="tsd-signature-type">any</span></h5>
 														</li>
 														<li>
 															<h5>iteratorNumber: <span class="tsd-signature-type">number</span></h5>
@@ -226,15 +258,45 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/types/storageDriver.ts#L39">types/storageDriver.ts:39</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/types/storageDriver.ts#L51">types/storageDriver.ts:51</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Retrieve all keys</p>
+									<p>Retrieve all keys - _ids of all documents for this</p>
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="removeindex" class="tsd-anchor"></a>
+					<h3>remove<wbr>Index</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">remove<wbr>Index<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/types/storageDriver.ts#L38">types/storageDriver.ts:38</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Remove the saved JSON of a specific Index</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>key: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -248,7 +310,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/types/storageDriver.ts#L26">types/storageDriver.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/types/storageDriver.ts#L22">types/storageDriver.ts:22</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -278,7 +340,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/types/storageDriver.ts#L21">types/storageDriver.ts:21</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/types/storageDriver.ts#L17">types/storageDriver.ts:17</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -301,6 +363,43 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="storeindex" class="tsd-anchor"></a>
+					<h3>store<wbr>Index</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">store<wbr>Index<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/types/storageDriver.ts#L28">types/storageDriver.ts:28</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Store the index into its own file</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>key: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the path to the element in the object</p>
+									</div>
+								</li>
+								<li>
+									<h5>index: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the JSON index</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
 			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -316,16 +415,31 @@
 						<a href="../modules/_datastore_.html">"datastore"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_index_.html">"index"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
 						<a href="../modules/_indices_.html">"indices"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_types_range_.html">"types/range"</a>
+						<a href="../modules/_types_interfaces_.html">"types/interfaces"</a>
 					</li>
 					<li class="current tsd-kind-external-module">
 						<a href="../modules/_types_storagedriver_.html">"types/storage<wbr>Driver"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_updateoperators_.html">"update<wbr>Operators"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_utlis_base64_.html">"utlis/base64"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_utlis_comparearray_.html">"utlis/compare<wbr>Array"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_utlis_id_hasher_.html">"utlis/id_<wbr>hasher"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_utlis_misc_.html">"utlis/misc"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_utlis_range_.html">"utlis/range"</a>
 					</li>
 				</ul>
 			</nav>
@@ -340,6 +454,9 @@
 								<a href="_types_storagedriver_.istoragedriver.html#clear" class="tsd-kind-icon">clear</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="_types_storagedriver_.istoragedriver.html#fetchindex" class="tsd-kind-icon">fetch<wbr>Index</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="_types_storagedriver_.istoragedriver.html#getitem" class="tsd-kind-icon">get<wbr>Item</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
@@ -349,10 +466,16 @@
 								<a href="_types_storagedriver_.istoragedriver.html#keys" class="tsd-kind-icon">keys</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="_types_storagedriver_.istoragedriver.html#removeindex" class="tsd-kind-icon">remove<wbr>Index</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="_types_storagedriver_.istoragedriver.html#removeitem" class="tsd-kind-icon">remove<wbr>Item</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="_types_storagedriver_.istoragedriver.html#setitem" class="tsd-kind-icon">set<wbr>Item</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="_types_storagedriver_.istoragedriver.html#storeindex" class="tsd-kind-icon">store<wbr>Index</a>
 							</li>
 						</ul>
 					</li>

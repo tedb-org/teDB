@@ -7,6 +7,12 @@ export const getPath = (obj: any, path: string) => path.split(".").reduce((o, i)
 
 /**
  * Remove duplicate objects from array comparing certain unique field.
+ *
+ * Example:
+ * ~~~
+ * let a = [{_id: 1, name: "ch"}, {_id: 1, name: "ch"}]
+ * rmDups(a, "_id"); // [{_id: 1, name: "ch"}]
+ * ~~~
  * @param arr
  * @param field
  * @returns {any[]}
@@ -16,7 +22,16 @@ export const rmDups = (arr: any[], field: string): any[] => {
 };
 
 /**
- * Are these empty? [], {}, "", null, undefined. returns true
+ * Checks current element if it empty
+ *
+ * Examples:
+ * ~~~
+ * isEmpty({}); // true
+ * isEmpty([]); // true
+ * isEmpty(""); // true
+ * isEmpty(null); // true
+ * isEmpty(undefined); // true
+ * ~~~
  * @param obj
  * @returns {boolean}
  */
@@ -34,6 +49,15 @@ export const isEmpty = (obj: any) => {
 
 /**
  * Get the type of element that will be sorted as `[object ${TYPE}]`
+ *
+ * Examples:
+ * ~~~
+ * getSortType([{a: 1}], "a"); // [object Number]
+ * getSortType([{a: "b"}], "a"); // [object String]
+ * getSortType([{a: new Date()}], "a"); // [object Date]
+ * getSortType([{a: []}], "a"); // [object Array]
+ * getSortType([{a: {}}], "a"); // [object Object]
+ * ~~~
  * @param arr - Array to check for type, will not send back a type if null or undefined
  * @param field - field name to check against
  * @returns {string}
@@ -82,6 +106,16 @@ const merge = (left: any[], right: any[], sortField: string, sort: number, type:
 
 /**
  * Sort array of documents using MergeSort
+ *
+ * Examples:
+ * ~~~
+ * let docs = [{n: 1}, {n: 6}, {n: 5}];
+ * let sort = {n: -1};
+ * let key = Object.keys(sort)[0]; // "n"
+ * let val = sort[key]; // -1
+ * let type = getSortType(docs, key); // "[object Number]"
+ * mergeSort(docs, key, val, type); // [{n: 6}, {n: 5}, {n: 1}]
+ * ~~~
  * @param toSort - array of documents to sort
  * @param sortField - field name as string from documents
  * @param sortParam - numeric -1 for descending and 1 for ascending sort order

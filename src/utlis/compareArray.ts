@@ -1,3 +1,9 @@
+/**
+ * Private method used in compareArray.
+ * @param a
+ * @param b
+ * @returns {boolean}
+ */
 const isEqual = (a: any[], b: any[]): boolean => {
     if (a.length !== b.length) {
         return false;
@@ -20,6 +26,19 @@ const isEqual = (a: any[], b: any[]): boolean => {
     return equal;
 };
 
+/**
+ * Compare two arrays of equal length, does not deep compare objects in arrays
+ *
+ * Example:
+ * ~~~
+ * let equal: number = compareArray([1, 2, 3], [1, 2, 3]); // 0
+ * let greater: number = compareArray(["b"], ["a"]); // 1
+ * let less: number = compareArray([new Date("1/1/2017")], [new Date()]); // -1
+ * ~~~
+ * @param a
+ * @param b
+ * @returns {number}
+ */
 export const compareArray = (a: any[], b: any[]): number => {
     const array1 = a;
     const array2 = b;

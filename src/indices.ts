@@ -8,12 +8,14 @@ import { compareArray } from "./utlis";
 import * as BTT from "binary-type-tree";
 
 /**
+ * Index interface used for the datastore indices
+ * Inherits types from binary-type-tree
+ *
  * Array String Number, Date, Boolean, -> symbol was redacted.
  * BTT.ASNDBS = Array<any[]|string|number|Date|boolean|null>|string|number|Date|boolean|null
  * -> redacted symbol, Number, Date, Boolean, String, Array
  * BTT.SNDBSA = Array<{}|any[]|string|number|Date|boolean|null>;
  */
-
 export interface IIndex {
     insert(doc: any): Promise<any>;
     insertMany(key: BTT.ASNDBS, indices: any[]): Promise<null>;
@@ -58,6 +60,7 @@ export default class Index implements IIndex {
     /**
      * Insert document into Index
      * @param doc - document to insert into Index
+     * @returns {Promise<any>}
      */
     public insert(doc: any): Promise<any> {
         return new Promise<any>((resolve, reject) => {
@@ -89,6 +92,12 @@ export default class Index implements IIndex {
         });
     }
 
+    /**
+     * Inserts many documents and updates the indices
+     * @param key
+     * @param indices
+     * @returns {Promise<null>}
+     */
     public insertMany(key: BTT.ASNDBS, indices: any[]): Promise<null> {
         return new Promise<null>((resolve, reject) => {
             if (key !== undefined && key !== null) {
@@ -114,6 +123,9 @@ export default class Index implements IIndex {
 
     /**
      * Update a key of a tree
+     * - keys are actually the value, in the tree the keys are values
+     * of the to be updated document while the value in the tree is the
+     * _id of the to be updated document.
      * @param key
      * @param newKey
      * @returns {Promise<null>}
@@ -123,7 +135,6 @@ export default class Index implements IIndex {
             if (this.avl.tree.search(key).length === 0) {
                 return reject(new Error("This key does not exist"));
             }
-
             try {
                 this.avl.updateKey(key, newKey);
             } catch (e) {
@@ -136,11 +147,12 @@ export default class Index implements IIndex {
     /**
      * Remove document from Index
      * @param doc
+     * @returns {Promise<any>}
      */
     public remove(doc: any): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             if (!doc.hasOwnProperty("_id")) {
-                return; // TODO: should throw an error, need to make Error types
+                return reject(new Error("There is no _id to reference this document"));
             }
 
             const key: BTT.ASNDBS = getPath(doc, this.fieldName);
@@ -156,8 +168,8 @@ export default class Index implements IIndex {
     }
 
     /**
-     * Return the tree as JSON { key, value } pairs.
-     * @returns {any}
+     * Return the tree as JSON [{ key, value }, ...] pairs.
+     * @returns {Promise<string>}
      */
     public toJSON(): Promise<string> {
         return new Promise<string>((resolve) => {
@@ -167,7 +179,8 @@ export default class Index implements IIndex {
 
     /**
      * Search Index for key
-     * @param key - key to search by
+     * @param key
+     * @returns {Promise<BTT.SNDBSA>}
      */
     public search(key: BTT.ASNDBS): Promise<BTT.SNDBSA> {
         return new Promise<BTT.SNDBSA>((resolve) => {
@@ -177,7 +190,8 @@ export default class Index implements IIndex {
 
     /**
      * Search Index within bounds
-     * @param range - An IRange to search within bounds
+     * @param range An IRange to search within bounds
+     * @returns {Promise<BTT.SNDBSA>}
      */
     public searchRange(range: IRange): Promise<BTT.SNDBSA> {
         return new Promise<BTT.SNDBSA>((resolve) => {

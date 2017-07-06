@@ -38,8 +38,6 @@
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-externals" checked />
-							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
 							<input type="checkbox" id="tsd-filter-only-exported" />
 							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
@@ -72,9 +70,12 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Datastore class
-						Creates a new Datastore using a specified storageDriver</p>
+						<p>Datastore class</p>
 					</div>
+					<p>Example:</p>
+					<pre><code><span class="hljs-keyword">const</span> UserStorage = <span class="hljs-keyword">new</span> yourStorageClass(<span class="hljs-string">"users"</span>);
+<span class="hljs-keyword">const</span> Users = <span class="hljs-keyword">new</span> Datastore({storage: UserStorage});
+</code></pre><p>Creates a new Datastore using a specified storageDriver</p>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -83,6 +84,12 @@
 					<li>
 						<span class="target">Datastore</span>
 					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel">
+				<h3>Implements</h3>
+				<ul class="tsd-hierarchy">
+					<li><a href="../interfaces/_datastore_.idatastore.html" class="tsd-signature-type">IDatastore</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -99,7 +106,6 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_datastore_.datastore.html#generateid" class="tsd-kind-icon">generate<wbr>Id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_datastore_.datastore.html#hasher" class="tsd-kind-icon">hasher</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_datastore_.datastore.html#indices" class="tsd-kind-icon">indices</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_datastore_.datastore.html#storage" class="tsd-kind-icon">storage</a></li>
 							</ul>
@@ -109,16 +115,23 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_datastore_.datastore.html#count" class="tsd-kind-icon">count</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_datastore_.datastore.html#createid" class="tsd-kind-icon">create<wbr>Id</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_datastore_.datastore.html#createidsarray" class="tsd-kind-icon">create<wbr>Ids<wbr>Array</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_datastore_.datastore.html#ensureindex" class="tsd-kind-icon">ensure<wbr>Index</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_datastore_.datastore.html#find" class="tsd-kind-icon">find</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_datastore_.datastore.html#getdocs" class="tsd-kind-icon">get<wbr>Docs</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_datastore_.datastore.html#getiddate" class="tsd-kind-icon">get<wbr>IdDate</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_datastore_.datastore.html#getiddate" class="tsd-kind-icon">get<wbr>IdDate</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_datastore_.datastore.html#getindices" class="tsd-kind-icon">get<wbr>Indices</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_datastore_.datastore.html#insert" class="tsd-kind-icon">insert</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_datastore_.datastore.html#insertindex" class="tsd-kind-icon">insert<wbr>Index</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_datastore_.datastore.html#remove" class="tsd-kind-icon">remove</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_datastore_.datastore.html#removeindex" class="tsd-kind-icon">remove<wbr>Index</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_datastore_.datastore.html#saveindex" class="tsd-kind-icon">save<wbr>Index</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_datastore_.datastore.html#search" class="tsd-kind-icon">search</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_datastore_.datastore.html#searchcollection" class="tsd-kind-icon">search<wbr>Collection</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_datastore_.datastore.html#searchfield" class="tsd-kind-icon">search<wbr>Field</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_datastore_.datastore.html#searchindices" class="tsd-kind-icon">search<wbr>Indices</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_datastore_.datastore.html#update" class="tsd-kind-icon">update</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_datastore_.datastore.html#updatedocsindices" class="tsd-kind-icon">update<wbr>Docs<wbr>Indices</a></li>
 							</ul>
 						</section>
 					</div>
@@ -136,7 +149,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/datastore.ts#L23">datastore.ts:23</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L50">datastore.ts:50</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -147,13 +160,10 @@
 									<h5>config: <span class="tsd-signature-type">object</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<div class="lead">
-											<p>config object <code>{storage: IStorageDriver, generateId?: boolean}</code></p>
+											<p>config object <code>{storage: IStorageDriver}</code></p>
 										</div>
 									</div>
 									<ul class="tsd-parameters">
-										<li class="tsd-parameter">
-											<h5><span class="tsd-flag ts-flagOptional">Optional</span> generate<wbr>Id<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span></h5>
-										</li>
 										<li class="tsd-parameter">
 											<h5>storage<span class="tsd-signature-symbol">: </span><a href="../interfaces/_types_storagedriver_.istoragedriver.html" class="tsd-signature-type">IStorageDriver</a></h5>
 										</li>
@@ -173,7 +183,7 @@
 					<div class="tsd-signature tsd-kind-icon">generate<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/datastore.ts#L23">datastore.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L50">datastore.ts:50</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -183,27 +193,12 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
-					<a name="hasher" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> hasher</h3>
-					<div class="tsd-signature tsd-kind-icon">hasher<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Hashids</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/datastore.ts#L21">datastore.ts:21</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Hasher for generating unique IDs</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="indices" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> indices</h3>
 					<div class="tsd-signature tsd-kind-icon">indices<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="_indices_.index.html" class="tsd-signature-type">Index</a><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/datastore.ts#L17">datastore.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L46">datastore.ts:46</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -218,7 +213,7 @@
 					<div class="tsd-signature tsd-kind-icon">storage<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_types_storagedriver_.istoragedriver.html" class="tsd-signature-type">IStorageDriver</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/datastore.ts#L19">datastore.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L48">datastore.ts:48</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -234,13 +229,14 @@
 					<a name="count" class="tsd-anchor"></a>
 					<h3>count</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">count<span class="tsd-signature-symbol">(</span>query<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_cursor_.cursor.html" class="tsd-signature-type">Cursor</a></li>
+						<li class="tsd-signature tsd-kind-icon">count<span class="tsd-signature-symbol">(</span>query<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_cursor_.cursor.html" class="tsd-signature-type">Cursor</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_datastore_.idatastore.html">IDatastore</a>.<a href="../interfaces/_datastore_.idatastore.html#count">count</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/datastore.ts#L74">datastore.ts:74</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L128">datastore.ts:128</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -251,7 +247,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>query: <span class="tsd-signature-type">any</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> query: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
 									<div class="tsd-comment tsd-typography">
 									</div>
 								</li>
@@ -270,7 +266,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/datastore.ts#L224">datastore.ts:224</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L756">datastore.ts:756</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -282,36 +278,65 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="ensureindex" class="tsd-anchor"></a>
-					<h3>ensure<wbr>Index</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">ensure<wbr>Index<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="createidsarray" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> create<wbr>Ids<wbr>Array</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Ids<wbr>Array<span class="tsd-signature-symbol">(</span>promises<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>, ids<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/datastore.ts#L120">datastore.ts:120</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L746">datastore.ts:746</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Return fill provided promise array with promises from the storage driver</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>promises: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>ids: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="ensureindex" class="tsd-anchor"></a>
+					<h3>ensure<wbr>Index</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">ensure<wbr>Index<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><a href="../interfaces/_types_interfaces_.iindexoptions.html" class="tsd-signature-type">IindexOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_datastore_.idatastore.html">IDatastore</a>.<a href="../interfaces/_datastore_.idatastore.html#ensureindex">ensureIndex</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L317">datastore.ts:317</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Ensure an index on the datastore</p>
 								</div>
+								<p>Example:</p>
+								<pre><code><span class="hljs-selector-tag">return</span> <span class="hljs-selector-tag">Users</span><span class="hljs-selector-class">.ensureIndex</span>({<span class="hljs-attribute">fieldName</span>: <span class="hljs-string">"username"</span>, unique: true});
+</code></pre>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>options: <span class="tsd-signature-type">object</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>{fieldName: string}</p>
-									</div>
-									<ul class="tsd-parameters">
-										<li class="tsd-parameter">
-											<h5>field<wbr>Name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
-										</li>
-									</ul>
+									<h5>options: <a href="../interfaces/_types_interfaces_.iindexoptions.html" class="tsd-signature-type">IindexOptions</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -322,26 +347,40 @@
 					<a name="find" class="tsd-anchor"></a>
 					<h3>find</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">find<span class="tsd-signature-symbol">(</span>query<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_cursor_.cursor.html" class="tsd-signature-type">Cursor</a></li>
+						<li class="tsd-signature tsd-kind-icon">find<span class="tsd-signature-symbol">(</span>query<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_cursor_.cursor.html" class="tsd-signature-type">Cursor</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_datastore_.idatastore.html">IDatastore</a>.<a href="../interfaces/_datastore_.idatastore.html#find">find</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/datastore.ts#L66">datastore.ts:66</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L120">datastore.ts:120</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Find documents</p>
 								</div>
+								<p>Examples:</p>
+								<pre><code>Users.find()
+ .sort({age: <span class="hljs-number">-1</span>})
+ .skip(<span class="hljs-number">1</span>)
+ .limit(<span class="hljs-number">10</span>)
+ .exec()
+ .<span class="hljs-keyword">then</span>(<span class="hljs-function"><span class="hljs-params">(users)</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(users))
+ .<span class="hljs-keyword">catch</span>(<span class="hljs-function"><span class="hljs-params">(e)</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(e));
+
+Users.find({$or: [{name: <span class="hljs-string">"a"</span>}, {name: <span class="hljs-string">"b"</span>}]})
+ .<span class="hljs-keyword">then</span>(<span class="hljs-function"><span class="hljs-params">(docs)</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(docs.length)) <span class="hljs-regexp">//</span> <span class="hljs-number">2</span> <span class="hljs-keyword">if</span> unique
+ .<span class="hljs-keyword">catch</span>(<span class="hljs-function"><span class="hljs-params">(e)</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(e));
+
+<span class="hljs-keyword">return</span> Users.find({age: {$gt: <span class="hljs-number">0</span>, $lte: <span class="hljs-number">27</span>, $ne: <span class="hljs-number">5</span>}});
+</code></pre>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>query: <span class="tsd-signature-type">any</span></h5>
-									<div class="tsd-comment tsd-typography">
-									</div>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> query: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_cursor_.cursor.html" class="tsd-signature-type">Cursor</a></h4>
@@ -352,22 +391,30 @@
 					<a name="getdocs" class="tsd-anchor"></a>
 					<h3>get<wbr>Docs</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Docs<span class="tsd-signature-symbol">(</span>ids<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Docs<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><a href="../interfaces/_cursor_.ioptions.html" class="tsd-signature-type">Ioptions</a>, ids<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_datastore_.idatastore.html">IDatastore</a>.<a href="../interfaces/_datastore_.idatastore.html#getdocs">getDocs</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/datastore.ts#L131">datastore.ts:131</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L424">datastore.ts:424</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Get Document by ID/s</p>
+									<p>Get Document by ID/s
+									Used internally</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
+								<li>
+									<h5>options: <a href="../interfaces/_cursor_.ioptions.html" class="tsd-signature-type">Ioptions</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>sort limit skip options</p>
+									</div>
+								</li>
 								<li>
 									<h5>ids: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 									<div class="tsd-comment tsd-typography">
@@ -375,27 +422,31 @@
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="getiddate" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> get<wbr>IdDate</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<h3>get<wbr>IdDate</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 						<li class="tsd-signature tsd-kind-icon">get<wbr>IdDate<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Date</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/datastore.ts#L236">datastore.ts:236</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L536">datastore.ts:536</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Get Date from ID</p>
+									<p>Get Date from ID ... do we need this on the dataStore?</p>
 								</div>
+								<p>Example:</p>
+								<pre><code>let <span class="hljs-keyword">id</span> = <span class="hljs-string">"UE9UQVJWd0JBQUE9cmZ4Y2MxVzNlOFk9TXV4dmJ0WU5JUFk9d0FkMW1oSHY2SWs9"</span>; <span class="hljs-comment">// an ID</span>
+Users.getIdDate(<span class="hljs-keyword">id</span>); <span class="hljs-comment">// date object -&gt; 2017-05-26T17:14:48.252Z</span>
+</code></pre>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -411,6 +462,38 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getindices" class="tsd-anchor"></a>
+					<h3>get<wbr>Indices</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Indices<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_datastore_.idatastore.html">IDatastore</a>.<a href="../interfaces/_datastore_.idatastore.html#getindices">getIndices</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L411">datastore.ts:411</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Retrieve the indices of this datastore.</p>
+								</div>
+								<p>Example:</p>
+								<pre><code><span class="hljs-type">Users</span>.getIndices()
+ .then((<span class="hljs-built_in">indices</span>) =&gt; {
+     <span class="hljs-keyword">let</span> usernameIndex = <span class="hljs-built_in">indices</span>.<span class="hljs-keyword">get</span>(<span class="hljs-string">"username"</span>);
+     <span class="hljs-keyword">if</span>(usernameIndex) {
+         <span class="hljs-keyword">return</span> usernameIndex.toJSON(); <span class="hljs-comment">// a method on index bTree</span>
+     }
+ }); <span class="hljs-comment">// no reject, will always resolve</span>
+</code></pre>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="insert" class="tsd-anchor"></a>
 					<h3>insert</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -419,14 +502,20 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_datastore_.idatastore.html">IDatastore</a>.<a href="../interfaces/_datastore_.idatastore.html#insert">insert</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/datastore.ts#L41">datastore.ts:41</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L75">datastore.ts:75</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Insert a single document</p>
+									<p>Insert a single document and insert any indices of document into
+									its respective binary tree.</p>
 								</div>
+								<pre><code>Users.insert({name: <span class="hljs-string">"xyz"</span>, age: <span class="hljs-number">30</span>})
+     .<span class="hljs-keyword">then</span>(<span class="hljs-function"><span class="hljs-params">(doc)</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(doc)) <span class="hljs-regexp">//</span> {_id: <span class="hljs-string">"..."</span>, name: <span class="hljs-string">"xyz"</span>, age: <span class="hljs-number">30</span>}
+     .<span class="hljs-keyword">catch</span>(<span class="hljs-function"><span class="hljs-params">(e)</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(e));
+</code></pre>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -442,29 +531,66 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="remove" class="tsd-anchor"></a>
-					<h3>remove</h3>
+					<a name="insertindex" class="tsd-anchor"></a>
+					<h3>insert<wbr>Index</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">remove<span class="tsd-signature-symbol">(</span>query<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">insert<wbr>Index<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_datastore_.idatastore.html">IDatastore</a>.<a href="../interfaces/_datastore_.idatastore.html#insertindex">insertIndex</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/datastore.ts#L91">datastore.ts:91</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L377">datastore.ts:377</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Removes document/s by query</p>
+									<p>Insert a stored index into the index of this datastore</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>query: <span class="tsd-signature-type">any</span></h5>
+									<h5>key: <span class="tsd-signature-type">string</span></h5>
 									<div class="tsd-comment tsd-typography">
+										<p>the index fieldName</p>
 									</div>
+								</li>
+								<li>
+									<h5>index: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the key value pair obj</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="remove" class="tsd-anchor"></a>
+					<h3>remove</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">remove<span class="tsd-signature-symbol">(</span>query<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_datastore_.idatastore.html">IDatastore</a>.<a href="../interfaces/_datastore_.idatastore.html#remove">remove</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L265">datastore.ts:265</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Removes document/s by query - uses find method to retrieve ids. multi always</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> query: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -472,22 +598,59 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="search" class="tsd-anchor"></a>
-					<h3>search</h3>
+					<a name="removeindex" class="tsd-anchor"></a>
+					<h3>remove<wbr>Index</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">search<span class="tsd-signature-symbol">(</span>fieldName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">remove<wbr>Index<span class="tsd-signature-symbol">(</span>fieldName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_datastore_.idatastore.html">IDatastore</a>.<a href="../interfaces/_datastore_.idatastore.html#removeindex">removeIndex</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/datastore.ts#L153">datastore.ts:153</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L337">datastore.ts:337</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Search for IDs, chooses best strategy, preferring to search indices if they exist for the given field.
-									Returns array of IDs</p>
+									<p>Remove index will delete the index from the Map which also
+										holds the Btree of the indices. If you need to remove the
+										index from the persisted version in from the storage driver,
+										call the removeIndex from the storage driver from a different source.
+									This method should not assume you saved the index.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>fieldName: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Field that needs index removed</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="saveindex" class="tsd-anchor"></a>
+					<h3>save<wbr>Index</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">save<wbr>Index<span class="tsd-signature-symbol">(</span>fieldName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_datastore_.idatastore.html">IDatastore</a>.<a href="../interfaces/_datastore_.idatastore.html#saveindex">saveIndex</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L354">datastore.ts:354</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Save the index currently in memory to the persisted version if need be
+									through the storage driver.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -495,9 +658,43 @@
 								<li>
 									<h5>fieldName: <span class="tsd-signature-type">string</span></h5>
 								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="search" class="tsd-anchor"></a>
+					<h3>search</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">search<span class="tsd-signature-symbol">(</span>fieldName<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, value<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L457">datastore.ts:457</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Search for IDs, chooses best strategy. Handles logical operators($or, $and)
+										Returns array of IDs
+									Used Internally</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
 								<li>
-									<h5>value: <span class="tsd-signature-type">any</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> fieldName: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
 									<div class="tsd-comment tsd-typography">
+										<p>element name or query start $or/$and</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> value: <span class="tsd-signature-type">any</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>string,number,date,null - or [{ field: value }, { field: value }]</p>
 									</div>
 								</li>
 							</ul>
@@ -509,13 +706,13 @@
 					<a name="searchcollection" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> search<wbr>Collection</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">search<wbr>Collection<span class="tsd-signature-symbol">(</span>fieldName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">search<wbr>Collection<span class="tsd-signature-symbol">(</span>fieldName<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, value<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_types_interfaces_.irange.html" class="tsd-signature-type">IRange</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/datastore.ts#L188">datastore.ts:188</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L591">datastore.ts:591</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -527,13 +724,13 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>fieldName: <span class="tsd-signature-type">string</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> fieldName: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>field to search</p>
 									</div>
 								</li>
 								<li>
-									<h5>value: <span class="tsd-signature-type">any</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> value: <a href="../interfaces/_types_interfaces_.irange.html" class="tsd-signature-type">IRange</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>value to search by</p>
 									</div>
@@ -544,21 +741,57 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
-					<a name="searchindices" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> search<wbr>Indices</h3>
+					<a name="searchfield" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> search<wbr>Field</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">search<wbr>Indices<span class="tsd-signature-symbol">(</span>fieldName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">search<wbr>Field<span class="tsd-signature-symbol">(</span>fieldName<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, value<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/datastore.ts#L165">datastore.ts:165</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L547">datastore.ts:547</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Search for IDs, chooses best strategy, preferring to search indices if they exist for the given field.
+									Returns array of IDs</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> fieldName: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> value: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="searchindices" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> search<wbr>Indices</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">search<wbr>Indices<span class="tsd-signature-symbol">(</span>fieldName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, value<span class="tsd-signature-symbol">: </span><a href="../interfaces/_types_interfaces_.irange.html" class="tsd-signature-type">IRange</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">BTT.SNDBSA</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L568">datastore.ts:568</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Search indices by field
+										Example 1: dbName.searchIndices(&quot;fieldName&quot;, &quot;1234&quot;);
+										will return the value id of that key as an array of one element.
+										Example 2: dbName.searchIndices(&quot;fieldName&quot;, { $gte: 1, $lte 10, $ne: 3 }
+										will return an array of ids from the given range.
 									Returns array of IDs</p>
 								</div>
 							</div>
@@ -571,13 +804,13 @@
 									</div>
 								</li>
 								<li>
-									<h5>value: <span class="tsd-signature-type">any</span></h5>
+									<h5>value: <a href="../interfaces/_types_interfaces_.irange.html" class="tsd-signature-type">IRange</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>value to search by</p>
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">BTT.SNDBSA</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -585,19 +818,40 @@
 					<a name="update" class="tsd-anchor"></a>
 					<h3>update</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">update<span class="tsd-signature-symbol">(</span>query<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, operation<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">update<span class="tsd-signature-symbol">(</span>query<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, operation<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_types_interfaces_.iupdateoptions.html" class="tsd-signature-type">IupdateOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_datastore_.idatastore.html">IDatastore</a>.<a href="../interfaces/_datastore_.idatastore.html#update">update</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/7f9cd51/src/datastore.ts#L83">datastore.ts:83</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L161">datastore.ts:161</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Update document/s</p>
 								</div>
+								<p>Examples: -&gt; lets say two users {name: &quot;bob&quot;, age: 1},
+								{name: &quot;slydel&quot;, age: 45, companies: {name: &quot;Initech&quot;, alternate: &quot;Intertrode&quot;}}</p>
+								<pre><code>Users.<span class="hljs-keyword">update</span>({name: <span class="hljs-string">"bob"</span>},{$rename: {name: <span class="hljs-string">"first"</span>}, $set: {job: <span class="hljs-string">"consultant"</span>}},
+ {returnUpdatedDocs: true})
+ .<span class="hljs-keyword">then</span>((docs) =&gt; console.log(docs[<span class="hljs-number">0</span>]) // {_id: <span class="hljs-string">"..."</span>, first: <span class="hljs-string">"bob"</span>, age: <span class="hljs-number">1</span>, job: <span class="hljs-string">"consultant"</span>}
+ .<span class="hljs-keyword">catch</span>();
+
+Users.<span class="hljs-keyword">update</span>({first: <span class="hljs-string">"bob"</span>},{$unset: {<span class="hljs-string">"companies.alternate"</span>: <span class="hljs-string">""</span>}, $inc: {age: -<span class="hljs-number">44</span>},
+ $mul: {age: <span class="hljs-number">5</span>}}, {returnUpdatedDocs: true})
+ .<span class="hljs-keyword">then</span>((docs) =&gt; console.log(docs[<span class="hljs-number">0</span>]) // {_id: <span class="hljs-string">"..."</span>, name: <span class="hljs-string">"bob"</span>, age: <span class="hljs-number">5</span>, companies: {name: <span class="hljs-string">"Initech"</span>}}
+ .<span class="hljs-keyword">catch</span>();
+
+Users.<span class="hljs-keyword">update</span>({name: <span class="hljs-string">"Charles"</span>, age: <span class="hljs-number">22</span>}, {$inc: {age: <span class="hljs-number">4</span>}}, {upser: true, returnUpdatedDocs: true}})
+ .<span class="hljs-keyword">then</span>((docs) =&gt; console.log(docs[<span class="hljs-number">0</span>]) // {_id: <span class="hljs-string">"..."</span>, name: <span class="hljs-string">"Charles"</span>, age: <span class="hljs-number">26</span>}
+ .<span class="hljs-keyword">catch</span>();
+
+Users.<span class="hljs-keyword">update</span>({age: {$gt: <span class="hljs-number">0</span>}},{$unset: {age: <span class="hljs-string">""</span>, name: <span class="hljs-string">""</span>}},{ multi: true, returnUpdatedDocs: true})
+ .<span class="hljs-keyword">then</span>((docs) =&gt; console.log(docs)) // {_id: <span class="hljs-string">".."</span>}, {_id: <span class="hljs-string">".."</span>}, {_id: <span class="hljs-string">".."</span>, companies: {name: <span class="hljs-string">"Initech"</span>}}
+ .<span class="hljs-keyword">catch</span>();
+</code></pre>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -613,8 +867,81 @@
 										<p>update operation, either a new doc or modifies portions of a document(eg. <code>$set</code>)</p>
 									</div>
 								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <a href="../interfaces/_types_interfaces_.iupdateoptions.html" class="tsd-signature-type">IupdateOptions</a><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>{ fieldName, unique?, compareKeys?, checkKeyEquality? }</p>
+									</div>
+								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="updatedocsindices" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> update<wbr>Docs<wbr>Indices</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">update<wbr>Docs<wbr>Indices<span class="tsd-signature-symbol">(</span>docs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span>, promises<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>, indexPromises<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>, operation<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, operators<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, operationKeys<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, reject<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/fb66e91/src/datastore.ts#L645">datastore.ts:645</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Actual method to update the documents and associated indices</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>docs: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>an array of documents to be updated</p>
+									</div>
+								</li>
+								<li>
+									<h5>promises: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>reference to promise array to be resolved later</p>
+									</div>
+								</li>
+								<li>
+									<h5>indexPromises: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>reference to promise array to be resolved later</p>
+									</div>
+								</li>
+								<li>
+									<h5>operation: <span class="tsd-signature-type">any</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>operation query from update method</p>
+									</div>
+								</li>
+								<li>
+									<h5>operators: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>array of operators passed by reference from the update method</p>
+									</div>
+								</li>
+								<li>
+									<h5>operationKeys: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Each key from the query. could be less than operators array length</p>
+									</div>
+								</li>
+								<li>
+									<h5>reject: <span class="tsd-signature-type">any</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>passed reference to reject from update method.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -633,16 +960,31 @@
 						<a href="../modules/_datastore_.html">"datastore"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_index_.html">"index"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
 						<a href="../modules/_indices_.html">"indices"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_types_range_.html">"types/range"</a>
+						<a href="../modules/_types_interfaces_.html">"types/interfaces"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_types_storagedriver_.html">"types/storage<wbr>Driver"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_updateoperators_.html">"update<wbr>Operators"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_utlis_base64_.html">"utlis/base64"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_utlis_comparearray_.html">"utlis/compare<wbr>Array"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_utlis_id_hasher_.html">"utlis/id_<wbr>hasher"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_utlis_misc_.html">"utlis/misc"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_utlis_range_.html">"utlis/range"</a>
 					</li>
 				</ul>
 			</nav>
@@ -660,9 +1002,6 @@
 								<a href="_datastore_.datastore.html#generateid" class="tsd-kind-icon">generate<wbr>Id</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-								<a href="_datastore_.datastore.html#hasher" class="tsd-kind-icon">hasher</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_datastore_.datastore.html#indices" class="tsd-kind-icon">indices</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
@@ -674,6 +1013,9 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="_datastore_.datastore.html#createid" class="tsd-kind-icon">create<wbr>Id</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="_datastore_.datastore.html#createidsarray" class="tsd-kind-icon">create<wbr>Ids<wbr>Array</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_datastore_.datastore.html#ensureindex" class="tsd-kind-icon">ensure<wbr>Index</a>
 							</li>
@@ -683,14 +1025,26 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_datastore_.datastore.html#getdocs" class="tsd-kind-icon">get<wbr>Docs</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_datastore_.datastore.html#getiddate" class="tsd-kind-icon">get<wbr>IdDate</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_datastore_.datastore.html#getindices" class="tsd-kind-icon">get<wbr>Indices</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_datastore_.datastore.html#insert" class="tsd-kind-icon">insert</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_datastore_.datastore.html#insertindex" class="tsd-kind-icon">insert<wbr>Index</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_datastore_.datastore.html#remove" class="tsd-kind-icon">remove</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_datastore_.datastore.html#removeindex" class="tsd-kind-icon">remove<wbr>Index</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_datastore_.datastore.html#saveindex" class="tsd-kind-icon">save<wbr>Index</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_datastore_.datastore.html#search" class="tsd-kind-icon">search</a>
@@ -699,15 +1053,24 @@
 								<a href="_datastore_.datastore.html#searchcollection" class="tsd-kind-icon">search<wbr>Collection</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="_datastore_.datastore.html#searchfield" class="tsd-kind-icon">search<wbr>Field</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="_datastore_.datastore.html#searchindices" class="tsd-kind-icon">search<wbr>Indices</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_datastore_.datastore.html#update" class="tsd-kind-icon">update</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="_datastore_.datastore.html#updatedocsindices" class="tsd-kind-icon">update<wbr>Docs<wbr>Indices</a>
+							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/_datastore_.idatastore.html" class="tsd-kind-icon">IDatastore</a>
+					</li>
 				</ul>
 			</nav>
 		</div>

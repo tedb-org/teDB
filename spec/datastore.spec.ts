@@ -261,13 +261,17 @@ describe("testing the datastore", () => {
         const States = new Datastore({storage: StateStorage});
         let unsetObj: any;
         test("creating Index", () => {
-            expect.assertions(1);
+            expect.assertions(2);
             return States.ensureIndex({fieldName: "name", unique: true})
+            .then(() => {
+                return States.ensureIndex({fieldName: "cities.one", unique: true});
+            })
             .then(() => {
                 return States.getIndices();
             })
             .then((indices) => {
                 expect(indices.get("name").fieldName).toEqual("name");
+                expect(indices.get("cities.one").fieldName).toEqual("cities.one");
             });
         });
 
@@ -302,6 +306,28 @@ describe("testing the datastore", () => {
                 docs.push(doc);
                 expect(docs.length).toEqual(4);
             });
+        });
+
+        test("finding using nested indexed field", () => {
+            expect.assertions(2);
+            return States.find({"cities.one": "LA"})
+                .exec()
+                .then((doc) => {
+                    const Cali = doc[0];
+                    expect(Cali.name).toEqual("California");
+                    expect(Cali.cities.one).toEqual("LA");
+                });
+        });
+
+        test("finding using nested non-indexed field", () => {
+            expect.assertions(2);
+            return States.find({"cities.two": "Spokane"})
+                .exec()
+                .then((doc) => {
+                    const Wash = doc[0];
+                    expect(Wash.name).toEqual("Washington");
+                    expect(Wash.cities.two).toEqual("Spokane");
+                });
         });
 
         test("update - upsert - multi", () => {
