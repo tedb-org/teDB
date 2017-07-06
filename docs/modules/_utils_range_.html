@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>&quot;utlis/compareArray&quot; | tedb</title>
+	<title>&quot;utils/range&quot; | tedb</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,10 +54,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="_utlis_comparearray_.html">&quot;utlis/compareArray&quot;</a>
+					<a href="_utils_range_.html">&quot;utils/range&quot;</a>
 				</li>
 			</ul>
-			<h1>External module &quot;utlis/compareArray&quot;</h1>
+			<h1>External module &quot;utils/range&quot;</h1>
 		</div>
 	</div>
 </header>
@@ -71,8 +71,9 @@
 						<section class="tsd-index-section ">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_utlis_comparearray_.html#comparearray" class="tsd-kind-icon">compare<wbr>Array</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_utlis_comparearray_.html#isequal" class="tsd-kind-icon">is<wbr>Equal</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_utils_range_.html#numrange" class="tsd-kind-icon">num<wbr>Range</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_utils_range_.html#range" class="tsd-kind-icon">range</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_utils_range_.html#utf8range" class="tsd-kind-icon">utf8<wbr>Range</a></li>
 							</ul>
 						</section>
 					</div>
@@ -80,70 +81,105 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Functions</h2>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module">
-					<a name="comparearray" class="tsd-anchor"></a>
-					<h3>compare<wbr>Array</h3>
-					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
-						<li class="tsd-signature tsd-kind-icon">compare<wbr>Array<span class="tsd-signature-symbol">(</span>a<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span>, b<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="numrange" class="tsd-anchor"></a>
+					<h3>num<wbr>Range</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">num<wbr>Range<span class="tsd-signature-symbol">(</span>start<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, end<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/98d85f7/src/utlis/compareArray.ts#L42">utlis/compareArray.ts:42</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/08af3cd/src/utils/range.ts#L7">utils/range.ts:7</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Compare two arrays of equal length, does not deep compare objects in arrays</p>
+									<p>Returns a range of numerical values given numbers</p>
 								</div>
-								<p>Example:</p>
-								<pre><code><span class="hljs-keyword">let</span> equal: <span class="hljs-built_in">number</span> = compareArray([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>], [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]); <span class="hljs-comment">// 0</span>
-<span class="hljs-keyword">let</span> greater: <span class="hljs-built_in">number</span> = compareArray([<span class="hljs-string">"b"</span>], [<span class="hljs-string">"a"</span>]); <span class="hljs-comment">// 1</span>
-<span class="hljs-keyword">let</span> less: <span class="hljs-built_in">number</span> = compareArray([<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-string">"1/1/2017"</span>)], [<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>()]); <span class="hljs-comment">// -1</span>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>start: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>end: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module">
+					<a name="range" class="tsd-anchor"></a>
+					<h3>range</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
+						<li class="tsd-signature tsd-kind-icon">range<span class="tsd-signature-symbol">(</span>start<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, end<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/08af3cd/src/utils/range.ts#L68">utils/range.ts:68</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Uses utf8Range and numRange to return a range.</p>
+								</div>
+								<p>Example</p>
+								<pre><code><span class="hljs-built_in">let</span> numbers: number[] = <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>, <span class="hljs-number">5</span>); // [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>]
+<span class="hljs-built_in">let</span> <span class="hljs-built_in">reverse</span>: number[] = <span class="hljs-built_in">range</span>(<span class="hljs-number">5</span>, <span class="hljs-number">1</span>); // [<span class="hljs-number">5</span>, <span class="hljs-number">4</span>, <span class="hljs-number">3</span>, <span class="hljs-number">2</span>, <span class="hljs-number">1</span>]
+<span class="hljs-built_in">let</span> letters: <span class="hljs-built_in">string</span>[] = <span class="hljs-built_in">range</span>(<span class="hljs-string">"a"</span>, <span class="hljs-string">"d"</span>); // [<span class="hljs-string">"a"</span>, <span class="hljs-string">"b"</span>, <span class="hljs-string">"c"</span>, <span class="hljs-string">"d"</span>]
+<span class="hljs-built_in">let</span> reverseL: <span class="hljs-built_in">string</span>[] = <span class="hljs-built_in">range</span>(<span class="hljs-string">"d"</span>, <span class="hljs-string">"a"</span>); // [<span class="hljs-string">"d"</span>, <span class="hljs-string">"c"</span>, <span class="hljs-string">"b"</span>, <span class="hljs-string">"a"</span>]
 </code></pre>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>a: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5>start: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
 								</li>
 								<li>
-									<h5>b: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5>end: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>
+							</h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-					<a name="isequal" class="tsd-anchor"></a>
-					<h3>is<wbr>Equal</h3>
+					<a name="utf8range" class="tsd-anchor"></a>
+					<h3>utf8<wbr>Range</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">is<wbr>Equal<span class="tsd-signature-symbol">(</span>a<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span>, b<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon">utf8<wbr>Range<span class="tsd-signature-symbol">(</span>start<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, end<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/98d85f7/src/utlis/compareArray.ts#L7">utlis/compareArray.ts:7</a></li>
+									<li>Defined in <a href="https://github.com/tsturzl/teDB/blob/08af3cd/src/utils/range.ts#L32">utils/range.ts:32</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Private method used in compareArray.</p>
+									<p>Returns a range of utf8 characters based on position in utf8 range</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>a: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5>start: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
 								</li>
 								<li>
-									<h5>b: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5>end: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -174,29 +210,32 @@
 						<a href="_updateoperators_.html">"update<wbr>Operators"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="_utlis_base64_.html">"utlis/base64"</a>
+						<a href="_utils_base64_.html">"utils/base64"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_utils_comparearray_.html">"utils/compare<wbr>Array"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_utils_id_hasher_.html">"utils/id_<wbr>hasher"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_utils_misc_.html">"utils/misc"</a>
 					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="_utlis_comparearray_.html">"utlis/compare<wbr>Array"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="_utlis_id_hasher_.html">"utlis/id_<wbr>hasher"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="_utlis_misc_.html">"utlis/misc"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="_utlis_range_.html">"utlis/range"</a>
+						<a href="_utils_range_.html">"utils/range"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_utils_range_.html#numrange" class="tsd-kind-icon">num<wbr>Range</a>
+					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
-						<a href="_utlis_comparearray_.html#comparearray" class="tsd-kind-icon">compare<wbr>Array</a>
+						<a href="_utils_range_.html#range" class="tsd-kind-icon">range</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_utlis_comparearray_.html#isequal" class="tsd-kind-icon">is<wbr>Equal</a>
+						<a href="_utils_range_.html#utf8range" class="tsd-kind-icon">utf8<wbr>Range</a>
 					</li>
 				</ul>
 			</nav>

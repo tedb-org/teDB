@@ -1,4 +1,4 @@
-import { range } from "../../src/utlis";
+import { range } from "../../src/utils";
 
 describe("testing range function", () => {
 

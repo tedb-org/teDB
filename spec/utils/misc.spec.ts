@@ -1,4 +1,4 @@
-import { isEmpty, getSortType, mergeSort, getPath } from "../../src/utlis";
+import { isEmpty, getSortType, mergeSort, getPath } from "../../src/utils";
 
 describe("testing miscellaneous methods", () => {
 

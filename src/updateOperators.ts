@@ -1,5 +1,5 @@
 // All update operators
-import { isEmpty } from "./utlis";
+import { isEmpty } from "./utils";
 
 /**
  * Method used by all update operators except $rename

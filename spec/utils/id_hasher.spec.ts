@@ -1,4 +1,4 @@
-import { decode, getUUID, ByteBuffer, getDate } from "../../src/utlis";
+import { decode, getUUID, ByteBuffer, getDate } from "../../src/utils";
 
 describe("testing the id_hasher", () => {
     const id: string = getUUID();

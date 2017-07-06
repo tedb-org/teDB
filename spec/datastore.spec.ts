@@ -10,7 +10,7 @@
 
 import { Index, IIndex, Datastore, IDatastore, Cursor,
     IStorageDriver, IRange } from "../src";
-import { getDate } from "../src/utlis";
+import { getDate } from "../src/utils";
 import { MockStorageDriver } from "./example";
 import * as fs from "fs";
 import ErrnoException = NodeJS.ErrnoException;

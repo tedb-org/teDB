@@ -2,7 +2,7 @@
  * Created by tsturzl on 4/11/17.
  */
 import Datastore from "./datastore";
-import { isEmpty, mergeSort, getSortType} from "./utlis";
+import { isEmpty, mergeSort, getSortType} from "./utils";
 
 export interface ICursor {
     sort(sort: any): this;

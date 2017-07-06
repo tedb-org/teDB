@@ -1,4 +1,4 @@
-import { compareArray } from "../../src/utlis";
+import { compareArray } from "../../src/utils";
 
 test("compareArray", () => {
     const equal: number = compareArray([1, 2, 3], [1, 2, 3]);

@@ -1,10 +1,10 @@
 /**
  * Created by tsturzl on 4/11/17.
  */
-import { getPath } from "./utlis";
+import { getPath } from "./utils";
 import Datastore from "./datastore";
 import { IRange, IindexOptions } from "./types";
-import { compareArray } from "./utlis";
+import { compareArray } from "./utils";
 import * as BTT from "binary-type-tree";
 
 /**
