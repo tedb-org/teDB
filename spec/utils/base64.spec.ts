@@ -1,4 +1,4 @@
-import Base64 from "../../src/utils";
+import { Base64 } from "../../src/utils";
 
 describe("testing base64", () => {
     const B64 = new Base64();

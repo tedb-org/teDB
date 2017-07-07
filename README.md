@@ -22,8 +22,7 @@ When it comes to importing TeDB into your project using ES5 or ES6 works almost 
     * getDate - Used to retrieve the Date from a _id of Datastore document if you would rather not used the Datastore method available.
     * rmDups - remove duplicates from an array. Only works for comparable `===` values
     * getPath - get the value given dot notated string path `"path.in.object"`
-    * encode - encode a value using Base64
-    * decode - decode a value that was encoded with encode
+    * Base64: class - encode and decode base 64 encoding with `==` at the end. used to make _ids
     * compareArray - Compare two arrays of equal length, returns 0 if equal, -1 if first is less and 1 if greater. Comparison only works for types **string, number, Date**
     
 ```typescript
@@ -31,7 +30,7 @@ When it comes to importing TeDB into your project using ES5 or ES6 works almost 
 import * as tedb from "tedb";
 import { Datastore, IDatastore, Cursor, Ioptions,
  Index, IIndex, IStorageDriver, IRange, range, isEmpty, getDate,
- compareArray, rmDups, getPath, decode, encode } from "tedb";
+ compareArray, rmDups, getPath, Base64 } from "tedb";
 // ES5 options
 var tedb = require("tedb");
 var Datastore = require("tedb").Datastore;
