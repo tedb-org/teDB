@@ -15,8 +15,6 @@ TeDB uses an AVL balanced binary tree [binary-type-tree](https://github.com/marc
 
 Almost all operations use a method of the storage driver to save, delete, or search, for documents. This is why a robust storage driver is needed a more specific application to your needs. Feel free to write your own storage driver and possibly have it mentioned below for others to use. TeDB is almost completely Promise based and you can expect each method to return a promise, even of the return is null or never. A large benefit to using TeDB is it is written 100% in Typescript. Except for one javascript preprocessor for Jest. 
 
-#~ In Active Development ~
-
 When it comes to importing TeDB into your project using ES5 or ES6 works almost the same way. When using Typescript there are more important pieces you can pull such as class types and Interfaces. When using ES5 you will only need the Datastore. There are also many utility methods made available if you would like to use some of the internal methods of TeDB such as:
 * TeDB Utilities
     * range - create range of utf8 characters given two utf8 characters, or numbers descending/ascending
@@ -27,7 +25,17 @@ When it comes to importing TeDB into your project using ES5 or ES6 works almost 
     * encode - encode a value using Base64
     * decode - decode a value that was encoded with encode
     * compareArray - Compare two arrays of equal length, returns 0 if equal, -1 if first is less and 1 if greater. Comparison only works for types **string, number, Date**
- #~
+    
+```typescript
+// ES6 options
+import * as tedb from "tedb";
+import { Datastore, IDatastore, Cursor, Ioptions,
+ Index, IIndex, IStorageDriver, IRange, range, isEmpty, getDate,
+ compareArray, rmDups, getPath, decode, encode } from "tedb";
+// ES5 options
+var tedb = require("tedb");
+var Datastore = require("tedb").Datastore;
+```
 
 
 ## Writing a storage driver for TeDB
