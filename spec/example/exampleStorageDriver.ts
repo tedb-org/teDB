@@ -98,7 +98,7 @@ export class MockStorageDriver implements IStorageDriver {
      * where the file path of the associated index is "users" and the key
      * given in the method is the path to the element indexed "internal.age".
      */
-    public storeIndex(key: string, index: string): Promise<null> {
+    public storeIndex(key: string, index: string): Promise<any> {
         return new Promise<null>((resolve, reject) => {
             const cwd = process.cwd();
             const fileName = `${this.filePath}/index_${key}.db`;
@@ -115,7 +115,7 @@ export class MockStorageDriver implements IStorageDriver {
      * a string that will find the correct file. Then read the contents
      * and return the the stores JSON
      */
-    public fetchIndex(key: string): Promise<any> {
+    public fetchIndex(key: string): Promise<string> {
         return new Promise<any>((resolve, reject) => {
             const cwd = process.cwd();
             const fileName = `${this.filePath}/index_${key}.db`;

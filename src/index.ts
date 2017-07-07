@@ -11,6 +11,7 @@ import { Ioptions } from "./cursor";
 import { IDatastore } from "./datastore";
 import { IStorageDriver, IRange } from "./types";
 
+export { range, isEmpty, getDate, compareArray, rmDups, getPath, decode, encode } from "./utils";
 export { Datastore, IDatastore};
 export { Cursor, Ioptions };
 export { Index, IIndex };

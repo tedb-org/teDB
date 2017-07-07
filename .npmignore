@@ -4,6 +4,7 @@ spec/
 node_modules/
 tslint.json
 .npmignore
+.editorconfig
 .git
 *.DS_Store
 .idea/

@@ -12,7 +12,9 @@
           "jest",
           "node"
       ],
-      "lib": ["es6"]
+      "lib": [
+          "es6"
+      ]
   },
   "include": [
       "spec",

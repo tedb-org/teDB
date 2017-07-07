@@ -16,7 +16,7 @@ import * as BTT from "binary-type-tree";
  */
 
 export interface IDatastore {
-    insert(doc: any): Promise<never>;
+    insert(doc: any): Promise<any>;
     find(query: any): Cursor;
     count(query: any): Cursor;
     update(query: any, operation: any, options: IupdateOptions): Promise<any>;
@@ -80,7 +80,7 @@ export default class Datastore implements IDatastore {
 
             doc._id = this.createId();
 
-            const indexPromises: Array<Promise<never>> = [];
+            const indexPromises: Array<Promise<any>> = [];
 
             this.indices.forEach((v) => {
                 indexPromises.push(v.insert(doc));
@@ -349,7 +349,7 @@ export default class Datastore implements IDatastore {
      * Save the index currently in memory to the persisted version if need be
      * through the storage driver.
      * @param fieldName
-     * @returns {Promise<null>}
+     * @returns {Promise<any>}
      */
     public saveIndex(fieldName: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
@@ -454,10 +454,10 @@ export default class Datastore implements IDatastore {
      * @param value - string,number,date,null - or [{ field: value }, { field: value }]
      * @returns {Promise<T>}
      */
-    public search(fieldName?: string, value?: any): Promise<string[]> {
+    public search(fieldName?: string, value?: any): Promise<any> {
         return new Promise((resolve, reject) => {
             if (fieldName === "$or" && value instanceof Array) {
-                const promises: Array<Promise<string[]>> = [];
+                const promises: Array<Promise<any>> = [];
 
                 value.forEach((query): void => {
                     for (const field in query) {
@@ -481,7 +481,7 @@ export default class Datastore implements IDatastore {
             } else if (fieldName === "$and" && value instanceof Array) {
                 // Combine query results with set intersection
                 // this means all queries must match for the document's _id to return
-                const promises: Array<Promise<string[]>> = [];
+                const promises: Array<Promise<any>> = [];
 
                 value.forEach((query): void => {
                     for (const field in query) {
@@ -542,9 +542,9 @@ export default class Datastore implements IDatastore {
      * Returns array of IDs
      * @param fieldName
      * @param value
-     * @returns {any}
+     * @returns {Promise<BTT.SNDBSA>}
      */
-    private searchField(fieldName?: string, value?: any): Promise<string[]> {
+    private searchField(fieldName?: string, value?: any): Promise<BTT.SNDBSA> {
         if (fieldName && value) {
             return this.indices.has(fieldName) ?
                 this.searchIndices(fieldName, value) :

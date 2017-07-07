@@ -6,11 +6,29 @@ A TypeScript Embedded Database.
 ```bash
 npm install --save tedb
 ```
+## Resources:
+
+ * [API Documentation]()
 
 ## Usage
 TeDB uses an AVL balanced binary tree [binary-type-tree](https://github.com/marcusjwhelan/binary-type-tree) to save indexed fields of documents. TeDB does not save documents to memory or have a set way of saving data. It is hooked up to a storage driver that can either work to persists data to disk or save data to memory. The binary tree only saves the value and _id to memory allowing for larger data sets to be indexed. 
 
 Almost all operations use a method of the storage driver to save, delete, or search, for documents. This is why a robust storage driver is needed a more specific application to your needs. Feel free to write your own storage driver and possibly have it mentioned below for others to use. TeDB is almost completely Promise based and you can expect each method to return a promise, even of the return is null or never. A large benefit to using TeDB is it is written 100% in Typescript. Except for one javascript preprocessor for Jest. 
+
+#~ In Active Development ~
+
+When it comes to importing TeDB into your project using ES5 or ES6 works almost the same way. When using Typescript there are more important pieces you can pull such as class types and Interfaces. When using ES5 you will only need the Datastore. There are also many utility methods made available if you would like to use some of the internal methods of TeDB such as:
+* TeDB Utilities
+    * range - create range of utf8 characters given two utf8 characters, or numbers descending/ascending
+    * isEmpty - Return true if {}, [], "", null, undefined
+    * getDate - Used to retrieve the Date from a _id of Datastore document if you would rather not used the Datastore method available.
+    * rmDups - remove duplicates from an array. Only works for comparable `===` values
+    * getPath - get the value given dot notated string path `"path.in.object"`
+    * encode - encode a value using Base64
+    * decode - decode a value that was encoded with encode
+    * compareArray - Compare two arrays of equal length, returns 0 if equal, -1 if first is less and 1 if greater. Comparison only works for types **string, number, Date**
+ #~
+
 
 ## Writing a storage driver for TeDB
 There is a very simple example of a NodeJS storage driver in the `/spec/example` directory that is used for the testing of the datastore. You can also see an example of what a data store preferably should look like from your storage driver for nodejs in the `/spec/fixtures/db` directory. When creating a storage driver that persists to a filesystem for FAT32, NTFS, ext2, ext3, and ext4 most directories use a binary tree store the location of the file. So utilizing this it is faster to query the file instead of having to create another binary tree to hold the location of a document in a file. [source](https://stackoverflow.com/questions/466521/how-many-files-can-i-put-in-a-directory). 
@@ -18,10 +36,6 @@ There is a very simple example of a NodeJS storage driver in the `/spec/example`
 This however is not always the case and this is why many different storage drivers are needed for more specific situations where possibly on mobile this is not the best option. But for these other file systems you could have a datastore with around 4.3 billion documents. With each database capable of 4.3 billion datastores. This of course is dependant on the storage driver you create and the way in which the storage driver saves its data. 
 
 Memory only storage drivers could utilize other in memory databases such as indexedDB. I would be on the lookout for in memory javascript databases because this project was started in the response to other javascript embedded databases indexing entire documents for speed. This can with a large enough database overload your memory and bring your application to a halt.
-
-## Resources:
-
- * [API Documentation]()
 
 ## Storage drivers
 

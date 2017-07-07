@@ -44,7 +44,7 @@ export interface IStorageDriver {
      *
      * @param iteratorCallback - Function to iterate key values pairs, return truthy to break iteration
      */
-    iterate(iteratorCallback: (key: string, value: any, iteratorNumber: number) => any): Promise<any>;
+    iterate(iteratorCallback: (key: string, value: any, iteratorNumber?: number) => any): Promise<any>;
     /**
      * Retrieve all keys - _ids of all documents for this
      */
