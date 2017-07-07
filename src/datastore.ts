@@ -3,7 +3,7 @@
  */
 import Index from "./indices";
 import { IindexOptions, IStorageDriver, IRange, IupdateOptions } from "./types";
-import { Cursor, Ioptions} from "../src";
+import { Cursor, Ioptions} from "./index";
 import { $set, $inc, $mul, $unset, $rename } from "./updateOperators";
 import { isEmpty, getPath, getUUID, getDate, rmDups } from "./utils";
 import * as BTT from "binary-type-tree";

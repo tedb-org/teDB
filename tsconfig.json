@@ -11,7 +11,7 @@
             "jest",
             "node"
         ],
-        "outFile": "dist/tedb.js",
+        "outDir": "dist/",
         "lib": ["es6"]
     },
     "include": [

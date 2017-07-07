@@ -1,9 +1,9 @@
 {
   "name": "tedb",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "TypeScript Embedded Database",
-  "main": "dist/tedb.js",
-  "types": "dist/tedb.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest --no-cache --config=./spec/jest.json",
     "build": "rm -rf ./dist/* && tsc",
@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/tsturzl/teDB#readme",
   "dependencies": {
-    "binary-type-tree": "^1.0.8"
+    "binary-type-tree": "^1.1.0"
   },
   "devDependencies": {
     "@types/jest": "^19.2.3",
