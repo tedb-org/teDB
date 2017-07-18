@@ -62,8 +62,6 @@ describe("testing the datastore", () => {
                 const ind: Index = indices.get("name");
                 if (ind) {
                     return ind.toJSON();
-                } else {
-                    throw new Error("No index for name");
                 }
             })
             .then((res) => {
@@ -408,14 +406,14 @@ describe("testing the datastore", () => {
                     return StateStorage.fetchIndex("name");
                 })
                 .then((res) => {
-                    res = res as any[];
-                    expect(res.length).toEqual(6);
-                    expect(res[0].key).toEqual("Oklahoma");
-                    expect(res[1].key).toEqual("Texas");
-                    expect(res[2].key).toEqual("Massachusetts");
-                    expect(res[3].key).toEqual("Washington");
-                    expect(res[4].key).toEqual("South Carolina");
-                    expect(res[5].key).toEqual("California");
+                    const index = res;
+                    expect(index.length).toEqual(6);
+                    expect(index[0].key).toEqual("Oklahoma");
+                    expect(index[1].key).toEqual("Texas");
+                    expect(index[2].key).toEqual("Massachusetts");
+                    expect(index[3].key).toEqual("Washington");
+                    expect(index[4].key).toEqual("South Carolina");
+                    expect(index[5].key).toEqual("California");
                 });
         });
 

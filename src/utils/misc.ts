@@ -131,4 +131,3 @@ export const mergeSort = (toSort: any[], sortField: string, sortParam: number, t
     const right = toSort.slice(mid);
     return merge(mergeSort(left, sortField, sortParam, type), mergeSort(right, sortField, sortParam, type), sortField, sortParam, type);
 };
-

@@ -30,7 +30,7 @@ export interface IStorageDriver {
      * Retrieve the JSON from the file to be loaded into the datastore indices
      * @param key - the path to the element in the object
      */
-    fetchIndex(key: string): Promise<string>;
+    fetchIndex(key: string): Promise<any[]>;
     /**
      * Remove the saved JSON of a specific Index
      * @param key

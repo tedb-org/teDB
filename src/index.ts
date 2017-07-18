@@ -9,11 +9,10 @@ import Index from "./indices";
 import { IIndex } from "./indices";
 import { Ioptions } from "./cursor";
 import { IDatastore } from "./datastore";
-import { IStorageDriver, IRange } from "./types";
+import { IStorageDriver, IRange, IindexOptions, IupdateOptions } from "./types";
 
 export { range, isEmpty, getDate, compareArray, rmDups, getPath, Base64 } from "./utils";
 export { Datastore, IDatastore};
 export { Cursor, Ioptions };
 export { Index, IIndex };
-export { IStorageDriver };
-export { IRange };
+export { IStorageDriver, IRange, IindexOptions, IupdateOptions };

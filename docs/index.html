@@ -67,17 +67,39 @@
 				<h2 id="install">Install</h2>
 				<pre><code class="lang-bash">npm install --save tedb
 </code></pre>
-				<h2 id="usage">Usage</h2>
-				<p>TeDB uses an AVL balanced binary tree <a href="https://github.com/marcusjwhelan/binary-type-tree">binary-type-tree</a> to save indexed fields of documents. TeDB does not save documents to memory or have a set way of saving data. It is hooked up to a storage driver that can either work to persists data to disk or save data to memory. The binary tree only saves the value and _id to memory allowing for larger data sets to be indexed. </p>
-				<p>Almost all operations use a method of the storage driver to save, delete, or search, for documents. This is why a robust storage driver is needed a more specific application to your needs. Feel free to write your own storage driver and possibly have it mentioned below for others to use. TeDB is almost completely Promise based and you can expect each method to return a promise, even of the return is null or never. A large benefit to using TeDB is it is written 100% in Typescript. Except for one javascript preprocessor for Jest. </p>
-				<h2 id="writing-a-storage-driver-for-tedb">Writing a storage driver for TeDB</h2>
-				<p>There is a very simple example of a NodeJS storage driver in the <code>/spec/example</code> directory that is used for the testing of the datastore. You can also see an example of what a data store preferably should look like from your storage driver for nodejs in the <code>/spec/fixtures/db</code> directory. When creating a storage driver that persists to a filesystem for FAT32, NTFS, ext2, ext3, and ext4 most directories use a binary tree store the location of the file. So utilizing this it is faster to query the file instead of having to create another binary tree to hold the location of a document in a file. <a href="https://stackoverflow.com/questions/466521/how-many-files-can-i-put-in-a-directory">source</a>. </p>
-				<p>This however is not always the case and this is why many different storage drivers are needed for more specific situations where possibly on mobile this is not the best option. But for these other file systems you could have a datastore with around 4.3 billion documents. With each database capable of 4.3 billion datastores. This of course is dependant on the storage driver you create and the way in which the storage driver saves its data. </p>
-				<p>Memory only storage drivers could utilize other in memory databases such as indexedDB. I would be on the lookout for in memory javascript databases because this project was started in the response to other javascript embedded databases indexing entire documents for speed. This can with a large enough database overload your memory and bring your application to a halt.</p>
 				<h2 id="resources-">Resources:</h2>
 				<ul>
 					<li><a href="">API Documentation</a></li>
 				</ul>
+				<h2 id="usage">Usage</h2>
+				<p>TeDB uses an AVL balanced binary tree <a href="https://github.com/marcusjwhelan/binary-type-tree">binary-type-tree</a> to save indexed fields of documents. TeDB does not save documents to memory or have a set way of saving data. It is hooked up to a storage driver that can either work to persists data to disk or save data to memory. The binary tree only saves the value and _id to memory allowing for larger data sets to be indexed. </p>
+				<p>Almost all operations use a method of the storage driver to save, delete, or search, for documents. This is why a robust storage driver is needed a more specific application to your needs. Feel free to write your own storage driver and possibly have it mentioned below for others to use. TeDB is almost completely Promise based and you can expect each method to return a promise, even of the return is null or never. A large benefit to using TeDB is it is written 100% in Typescript. Except for one javascript preprocessor for Jest. </p>
+				<p>When it comes to importing TeDB into your project using ES5 or ES6 works almost the same way. When using Typescript there are more important pieces you can pull such as class types and Interfaces. When using ES5 you will only need the Datastore. There are also many utility methods made available if you would like to use some of the internal methods of TeDB such as:</p>
+				<ul>
+					<li>TeDB Utilities<ul>
+							<li>range - create range of utf8 characters given two utf8 characters, or numbers descending/ascending</li>
+							<li>isEmpty - Return true if {}, [], &quot;&quot;, null, undefined</li>
+							<li>getDate - Used to retrieve the Date from a _id of Datastore document if you would rather not used the Datastore method available.</li>
+							<li>rmDups - remove duplicates from an array. Only works for comparable <code>===</code> values</li>
+							<li>getPath - get the value given dot notated string path <code>&quot;path.in.object&quot;</code></li>
+							<li>Base64: class - encode and decode base 64 encoding with <code>==</code> at the end. used to make _ids</li>
+							<li>compareArray - Compare two arrays of equal length, returns 0 if equal, -1 if first is less and 1 if greater. Comparison only works for types <strong>string, number, Date</strong></li>
+						</ul>
+					</li>
+				</ul>
+				<pre><code class="lang-typescript"><span class="hljs-comment">// ES6 options</span>
+<span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> tedb <span class="hljs-keyword">from</span> <span class="hljs-string">"tedb"</span>;
+<span class="hljs-keyword">import</span> { Datastore, IDatastore, Cursor, Ioptions,
+ Index, IIndex, IStorageDriver, IRange, range, isEmpty, getDate,
+ compareArray, rmDups, getPath, Base64 } <span class="hljs-keyword">from</span> <span class="hljs-string">"tedb"</span>;
+<span class="hljs-comment">// ES5 options</span>
+<span class="hljs-keyword">var</span> tedb = <span class="hljs-built_in">require</span>(<span class="hljs-string">"tedb"</span>);
+<span class="hljs-keyword">var</span> Datastore = <span class="hljs-built_in">require</span>(<span class="hljs-string">"tedb"</span>).Datastore;
+</code></pre>
+				<h2 id="writing-a-storage-driver-for-tedb">Writing a storage driver for TeDB</h2>
+				<p>There is a very simple example of a NodeJS storage driver in the <code>/spec/example</code> directory that is used for the testing of the datastore. You can also see an example of what a data store preferably should look like from your storage driver for nodejs in the <code>/spec/fixtures/db</code> directory. When creating a storage driver that persists to a filesystem for FAT32, NTFS, ext2, ext3, and ext4 most directories use a binary tree store the location of the file. So utilizing this it is faster to query the file instead of having to create another binary tree to hold the location of a document in a file. <a href="https://stackoverflow.com/questions/466521/how-many-files-can-i-put-in-a-directory">source</a>. </p>
+				<p>This however is not always the case and this is why many different storage drivers are needed for more specific situations where possibly on mobile this is not the best option. But for these other file systems you could have a datastore with around 4.3 billion documents. With each database capable of 4.3 billion datastores. This of course is dependant on the storage driver you create and the way in which the storage driver saves its data. </p>
+				<p>Memory only storage drivers could utilize other in memory databases such as indexedDB. I would be on the lookout for in memory javascript databases because this project was started in the response to other javascript embedded databases indexing entire documents for speed. This can with a large enough database overload your memory and bring your application to a halt.</p>
 				<h2 id="storage-drivers">Storage drivers</h2>
 				<ul>
 					<li><a href="">Example Link </a></li>
@@ -326,7 +348,13 @@ Users.update({name: <span class="hljs-string">"xyz"</span>}, {$<span class="hljs
 						<a href="modules/_indices_.html">"indices"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_types_interfaces_.html">"types/interfaces"</a>
+						<a href="modules/_types_irange_.html">"types/IRange"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_types_iindexoptions_.html">"types/<wbr>Iindex<wbr>Options"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_types_iupdateoptions_.html">"types/<wbr>Iupdate<wbr>Options"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_types_storagedriver_.html">"types/storage<wbr>Driver"</a>

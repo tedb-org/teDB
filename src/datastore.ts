@@ -409,8 +409,12 @@ export default class Datastore implements IDatastore {
      * @returns {Promise<any>}
      */
     public getIndices(): Promise<any> {
-        return new Promise<any>((resolve) => {
-            resolve(this.indices);
+        return new Promise<any>((resolve, reject) => {
+            if (this.indices) {
+                resolve(this.indices);
+            } else {
+                reject(`No indices found in TeDB: ${this.indices}`);
+            }
         });
     }
 
@@ -566,7 +570,7 @@ export default class Datastore implements IDatastore {
      * @returns {Promise<BTT.SNDBSA>}
      */
     private searchIndices(fieldName: string, value: IRange): Promise<BTT.SNDBSA> {
-        return new Promise<BTT.SNDBSA>((resolve) => {
+        return new Promise<BTT.SNDBSA>((resolve, reject) => {
             const index: Index | undefined = this.indices.get(fieldName);
 
             if (!index) {

@@ -34,7 +34,7 @@ export class MockStorageDriver implements IStorageDriver {
             const cwd = process.cwd();
             fs.readFile(`${cwd}/spec/example/db/${this.filePath}/${key}.db`, "utf8", (err: ErrnoException, data: string) => {
                 if (err) {
-                    return reject(err);
+                    reject(err);
                 }
                 resolve(JSON.parse(data));
             });
@@ -77,12 +77,12 @@ export class MockStorageDriver implements IStorageDriver {
             const cwd = process.cwd();
             fs.unlink(`${cwd}/spec/example/db/${this.filePath}/${key}.db`, (err: ErrnoException) => {
                 if (err) {
-                    return reject(err);
+                    reject(err);
                 }
                 try {
                     this.allKeys = this.allKeys.filter((cur) => cur !== key);
                 } catch (e) {
-                    return reject(e);
+                    reject(e);
                 }
                 resolve();
             });
@@ -98,7 +98,7 @@ export class MockStorageDriver implements IStorageDriver {
      * where the file path of the associated index is "users" and the key
      * given in the method is the path to the element indexed "internal.age".
      */
-    public storeIndex(key: string, index: string): Promise<any> {
+    public storeIndex(key: string, index: string): Promise<null> {
         return new Promise<null>((resolve, reject) => {
             const cwd = process.cwd();
             const fileName = `${this.filePath}/index_${key}.db`;
@@ -115,7 +115,7 @@ export class MockStorageDriver implements IStorageDriver {
      * a string that will find the correct file. Then read the contents
      * and return the the stores JSON
      */
-    public fetchIndex(key: string): Promise<string> {
+    public fetchIndex(key: string): Promise<any[]> {
         return new Promise<any>((resolve, reject) => {
             const cwd = process.cwd();
             const fileName = `${this.filePath}/index_${key}.db`;
@@ -161,7 +161,7 @@ export class MockStorageDriver implements IStorageDriver {
             const cwd = process.cwd();
             fs.readdir(`${cwd}/spec/example/db/${this.filePath}`, (err: ErrnoException, files) => {
                 if (err) {
-                    return reject(err);
+                    reject(err);
                 }
                 for (let i = files.length - 1; i >= 0; i--) {
                     try {
@@ -173,7 +173,7 @@ export class MockStorageDriver implements IStorageDriver {
                             }
                         }
                     } catch (e) {
-                        return reject(e);
+                        reject(e);
                     }
                 }
                 resolve();
@@ -196,18 +196,18 @@ export class MockStorageDriver implements IStorageDriver {
             const cwd = process.cwd();
             fs.readdir(`${cwd}/spec/example/db/${this.filePath}`, (err: ErrnoException, files) => {
                 if (err) {
-                    return reject(err);
+                    reject(err);
                 }
                 for (let i = files.length - 1; i >= 0; i--) {
                     try {
                         fs.unlinkSync(`${cwd}/spec/example/db/${this.filePath}/${files[i]}`);
                     } catch (e) {
-                        return reject(e);
+                        reject(e);
                     }
                 }
                 fs.rmdir(`${cwd}/spec/example/db/${this.filePath}`, (error: ErrnoException) => {
                     if (error) {
-                        return reject(error);
+                        reject(error);
                     }
                     this.allKeys = [];
                     resolve();

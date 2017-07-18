@@ -13,7 +13,7 @@ npm install --save tedb
 ## Usage
 TeDB uses an AVL balanced binary tree [binary-type-tree](https://github.com/marcusjwhelan/binary-type-tree) to save indexed fields of documents. TeDB does not save documents to memory or have a set way of saving data. It is hooked up to a storage driver that can either work to persists data to disk or save data to memory. The binary tree only saves the value and _id to memory allowing for larger data sets to be indexed. 
 
-Almost all operations use a method of the storage driver to save, delete, or search, for documents. This is why a robust storage driver is needed a more specific application to your needs. Feel free to write your own storage driver and possibly have it mentioned below for others to use. TeDB is almost completely Promise based and you can expect each method to return a promise, even of the return is null or never. A large benefit to using TeDB is it is written 100% in Typescript. Except for one javascript preprocessor for Jest. 
+Almost all operations use a method of the storage driver to save, delete, or search, for documents. This is why a robust storage driver is needed more specifically fit your needs. Feel free to write your own storage driver and possibly have it mentioned below for others to use. TeDB is almost completely Promise based and you can expect each method to return a promise, even if the return is null or never. A large benefit to using TeDB is it is written 100% in Typescript. Except for one javascript preprocessor for Jest. 
 
 When it comes to importing TeDB into your project using ES5 or ES6 works almost the same way. When using Typescript there are more important pieces you can pull such as class types and Interfaces. When using ES5 you will only need the Datastore. There are also many utility methods made available if you would like to use some of the internal methods of TeDB such as:
 * TeDB Utilities
@@ -28,9 +28,9 @@ When it comes to importing TeDB into your project using ES5 or ES6 works almost 
 ```typescript
 // ES6 options
 import * as tedb from "tedb";
-import { Datastore, IDatastore, Cursor, Ioptions,
- Index, IIndex, IStorageDriver, IRange, range, isEmpty, getDate,
- compareArray, rmDups, getPath, Base64 } from "tedb";
+import { Datastore, IDatastore, Cursor, Ioptions, IindexOptions,
+ IupdateOptions, Index, IIndex, IStorageDriver, IRange, range,
+ isEmpty, getDate, compareArray, rmDups, getPath, Base64 } from "tedb";
 // ES5 options
 var tedb = require("tedb");
 var Datastore = require("tedb").Datastore;
