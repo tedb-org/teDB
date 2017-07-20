@@ -83,7 +83,7 @@ export default class Index implements IIndex {
             }
 
             try {
-                this.avl.insert(key, doc._id);
+                this.avl.insert(key, [doc._id]);
             } catch (e) {
                 return reject(e);
             }
