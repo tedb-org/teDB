@@ -3,8 +3,13 @@
  * @param obj
  * @param path
  */
-export const getPath = (obj: any, path: string) => path.split(".").reduce((o, i) => o[i], obj);
-
+export const getPath = (obj: any, path: string) => {
+    return path.split(".").reduce((o, i) => {
+        if (o !== undefined) {
+            return o[i];
+        }
+    }, obj);
+};
 /**
  * Remove duplicate objects from array comparing certain unique field.
  *

@@ -70,7 +70,9 @@ export const $set = (obj: any, set: any): Promise<any> => {
         const returnObj: any = obj;
         const setKeys: any = Object.keys(set);
         try {
-            setKeys.forEach((path: string) => operate(returnObj, path, set[path], "set"));
+            setKeys.forEach((path: string) => {
+                operate(returnObj, path, set[path], "set");
+            });
             resolve(returnObj);
         } catch (e) {
             return reject(e);

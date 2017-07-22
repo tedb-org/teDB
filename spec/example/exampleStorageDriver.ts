@@ -36,7 +36,13 @@ export class MockStorageDriver implements IStorageDriver {
                 if (err) {
                     reject(err);
                 }
-                resolve(JSON.parse(data));
+                let a: any;
+                try {
+                    a = JSON.parse(data);
+                } catch (e) {
+                    reject(e);
+                }
+                resolve(a);
             });
         });
     }

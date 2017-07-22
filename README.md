@@ -24,13 +24,53 @@ When it comes to importing TeDB into your project using ES5 or ES6 works almost 
     * getPath - get the value given dot notated string path `"path.in.object"`
     * Base64: class - encode and decode base 64 encoding with `==` at the end. used to make _ids
     * compareArray - Compare two arrays of equal length, returns 0 if equal, -1 if first is less and 1 if greater. Comparison only works for types **string, number, Date**
+    * NEW compressObj: - Convert object notation into dot object notation. 
+    ```typescript
+    const doc: any = { example: {obj: [1,2], is: "d"}, great: 9};
+    const target: any = {};
+    compressObj(doc, target);
+    console.log(target); 
+    // output
+    /*{
+      "example.obj.0": 1,
+      "example.obj.1": 2,
+      "example.is": "d",
+      "great": 9,
+    }*/
+    ```
+    * NEW expandObj: - Convert dot string notated object into expanded object.
+    ```typescript
+    const doc = {
+      "nested.reg.obj": 5,
+      "nested.dot.0": 3,
+      "nested.dot.1": 4,
+      "is": "nested",
+      "very.nested.obj.is.nested.far.in.obj": "hello";
+    }
+    const expanded = expandObj(doc);
+    console.log(expanded);
+    // output
+    /*{
+      nested: {
+          reg: {
+            obj: 5,
+          },
+          dot: [3, 4],
+      },
+      is: "nested",
+      very: {nested: {obj: {is: {nested: {far: {in: {
+        obj: "hello",
+      }}}}}}}
+    }*/
+    ```    
     
 ```typescript
 // ES6 options
 import * as tedb from "tedb";
 import { Datastore, IDatastore, Cursor, Ioptions, IindexOptions,
  IupdateOptions, Index, IIndex, IStorageDriver, IRange, range,
- isEmpty, getDate, compareArray, rmDups, getPath, Base64 } from "tedb";
+ isEmpty, getDate, compareArray, rmDups, getPath, Base64,
+ expandObj, compressObj} from "tedb";
 // ES5 options
 var tedb = require("tedb");
 var Datastore = require("tedb").Datastore;
@@ -72,7 +112,7 @@ const Users = new tedb.DataStore({storage: UserStorage});
 For the storage driver it should have the methods found on the storage driver interface found [here](https://github.com/tsturzl/teDB/blob/master/src/types/storageDriver.ts). Now that you have the datastore created you can insert and query on those inserted items. Each item inserted has an automatic `_id` generated for them. This `_id` also saves the created on Date. The `_id`s are not indexed automatically but can be if you decide to.
  
 ## Indexing
-Indices are saved as a Map on the Datastore class for each property. When you create an index on a property you give the path of the index and then the options of that index. 
+Indices are saved as a Map on the Datastore class for each property. When you create an index on a property you give the path of the index and then the options of that index. Indices are stored as a key, value store with the key being the value given i.e. the actual username. And where the value of the key value storey is actually the _id of the object. `_id`s are created each time you insert an object into TeDB. The values of the key value store are always arrays. `{ "myUserNameValue": ["_idofobject"]}` if the index is not unique then the value is still an array except for each matching key the new ids are added. `{ "actualAge#": ["_id1", "_id2", "_id3"]}`.
 * Index Options
     * fieldName - The path as a string `"path.to.index"` to be indexed on the object
     * unique - Set value to have a unique restriction or not
@@ -172,16 +212,29 @@ Find uses a cursor class to work through a query object. Find always returns an 
    * sort - Sort by field {fieldName: -1 } or {fieldName: 1 }
    * skip - Skip a certain number of returned items 
    * limit - Set a limit to max number of items returned
-   * exec - execute the search using the cursor options, will search for all docs before applying the sort, skip, or limit methods on them. 
+   * exec - execute the search using the cursor options, will search for all docs based on query before applying the sort, skip, or limit methods on them. 
      
 The find method actually will search through all the documents queried by either the index if indexed or by a collection search if not indexed. In the storage driver when documents are inserted, or removed their should be a keys array holding the keys of all the documents inserted just in case a field is searched without a query. If you search with an empty query the **keys** method of the storage driver is used that should return all the _ids of the datastore instead of having to retrieve all the keys from the storage driver memory/drive. 
 
 If you would rather not store memory for each _id inserted then use a storage driver that does not use the keys() method and you will not be able to search without a query.
 
 * Find query options
-    * $or - search an object query of one **or** multiple, no nested queries such as $gt, $lt
-    * $and - search an object with **and** results or multiple, no nested queries
-    * $gt, $lt, $gte, $lte, $ne - can combine any assortment but no nested queries.
+    * $or - search an object query of one **or** multiple
+    * $and - search an object with **and** results or multiple
+    * $gt, $lt, $gte, $lte, $ne - can combine any assortment.
+    
+Nesting queries is now supported but only in $and or $or. Cannot nest value inside $gt.. query options. No nesting $and or $or inside one another.
+
+```typescript
+// Example of nesting
+Users.find({$and: [
+    {age: {$gt: 25}},
+    {age: {$ne: 28}},
+    {age: {$lte: 35}},
+    ]}).exec()
+    .then(resolve)
+    .catch(reject);
+``` 
     
 ```typescript
 // simple find
@@ -224,6 +277,15 @@ Users.count({})
     .then((num) => {
         console.log(num); // total docs as a number
     });
+//
+// If you would like to find an object that happens to have
+// no index or _id/lets say you removed the _id by accident.
+const doc = {/* exact doc match you want to find */};
+const target = {};
+compressObj(doc, target);
+Users.find(target)
+    .then(resolve)
+    .catch(reject);
 ```
 TeDB also stores the time inserted.
 ```typescript
@@ -242,8 +304,9 @@ Update uses find to retrieve the objects and the storage driver to write back th
     * multi - return many documents: Default false
     * upsert - insert the document if not found: Default false, creates _id on insert
     * returnUpdatedDocs - returns all the docs after being updated and stored.
+    * exactObjectFind - when finding objects search based on the exact object itself. Cannot use find queries such as $gt, $lt. Best used with updating an object completely if anything changes.
 * Update Operators
-    * $set - write, overwrite a value to the document/s that are returned
+    * $set - write, overwrite a value to the document/s that are returned. Warning Cannot create an object from undefined.
     * $mul - multiply the value with the given query value
     * $inc - increment a positive or negative number to the value of the document
     * $unset - delete the value from the object
@@ -253,13 +316,40 @@ You can work all the update options together, dependent on order.
 ```typescript
 // original object {_id: "...", name: "xyz"}
 // query, operators, options
-Users.update({name: "xyz"}, {$set: {"nested.key": 1}, $inc: {"nested.key": 3},
+Users.update({name: "xyz"}, {$set: {"nested": {"key": 1}}, $inc: {"nested.key": 3},
     $mul: {"nested.key": 2}, $rename: {"nested.key": "accounts"}, 
     $unset: {"name": ""}}, {returnUpdatedDocs: true})
     .then((docs) => {
         console.log(docs[0]); // {_id: "...", nested: { accounts: 8 }}
     });
+// example of exactObjectFind
+// exactObjectFind. you must send in object formatting.
+Users.update({
+        name: "t",
+        nested: {
+            key: 2
+        },
+    }, {
+        $set: {"nested": {"key": 1}},
+    }, {
+        returnUpdatedDocs: true,
+        upsert: true,
+        exactObjectFind: true,
+    })
+    .then((docs) => {
+        console.log(docs[0]); // {_id: "...", name: "t", nested: {key: 1}}
+    });
+// with another object
+const incomingObj = externalAPI.request.data[0];
+Users.update(incomingObj, {$set: {synced: true}}, {
+        upsert: true,
+        exactObjectFind: true    
+    })
+    .then(resolve)
+    .catch(reject);
 ```
+
+The `exactObjectFind` param is great for pulling down a repo that and updating lots of data. If you pull down data and need to compare it to an already stored object and rewrite that object if the incoming data has changed. This is the perfect solution. Upsert if not found and can send an entire object.
 
 ## Remove
 Uses the find method to retrieve _ids and removes multiple always, as well as removing indexed items from the Mapped indices for all indexed items on a object. 
@@ -272,6 +362,15 @@ Users.remove({"nested.accounts": 8})
     .then((docs) => {
         console.log(docs.length); // 0
     });
+// If you would like to remove an object that exactly
+// matches all parameters. If lets say you remove _id then 
+// you can use compressObj.
+const doc = {/* contents */};
+const target = {};
+compressObj(doc, target);
+Users.remove(target)
+    .then(resolve)
+    .catch(reject);
 ```
 
 ## License

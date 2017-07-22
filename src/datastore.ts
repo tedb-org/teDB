@@ -5,7 +5,7 @@ import Index from "./indices";
 import { IindexOptions, IStorageDriver, IRange, IupdateOptions } from "./types";
 import { Cursor, Ioptions} from "./index";
 import { $set, $inc, $mul, $unset, $rename } from "./updateOperators";
-import { isEmpty, getPath, getUUID, getDate, rmDups } from "./utils";
+import { isEmpty, getPath, getUUID, getDate, rmDups, compressObj, expandObj } from "./utils";
 import * as BTT from "binary-type-tree";
 
 /**
@@ -168,8 +168,16 @@ export default class Datastore implements IDatastore {
             const operators: string[] = ["$set", "$mul", "$inc", "$unset", "$rename"];
             const multi: boolean = options.multi || false;
             const upsert: boolean = options.upsert || false;
+            const exactObjectFind: boolean = options.exactObjectFind || false;
             const returnUpdatedDocs: boolean = options.returnUpdatedDocs || false;
             const operationKeys: string[] = Object.keys(operation);
+
+            if (exactObjectFind) {
+                // compresses all object + nested objects to "dot.notation";
+                const target: any = {};
+                compressObj(query, target);
+                query = target;
+            }
 
             if (multi) {
                 return this.find(query)
@@ -178,23 +186,27 @@ export default class Datastore implements IDatastore {
                         res = res as any[];
                         if (res.length === 0) {
                             if (upsert) {
+                                if (exactObjectFind) {
+                                    query = expandObj(query);
+                                }
                                 query._id = this.createId();
                                 this.indices.forEach((v) => indexPromises.push(v.insert(query)));
-
                                 this.updateDocsIndices([query], promises, indexPromises, operation, operators, operationKeys, reject);
                             } else {
                                 return [];
                             }
                         } else {
+                            if (exactObjectFind) {
+                                res = res.map((doc) => expandObj(doc));
+                            }
                             // no return value, all are passed and used by reference.
                             this.updateDocsIndices(res, promises, indexPromises, operation, operators, operationKeys, reject);
                         }
 
                         // If any index changes - error, reject and do not update and save.
-                        Promise.all(indexPromises)
-                        .catch(reject);
-
-                        // return promises
+                        return Promise.all(indexPromises);
+                    })
+                    .then(() => {
                         return Promise.all(promises);
                     })
                     .then((docs: any[]) => rmDups(docs, "_id"))
@@ -222,18 +234,24 @@ export default class Datastore implements IDatastore {
                         res = res as any[];
                         if (res.length === 0) {
                             if (upsert) {
+                                if (exactObjectFind) {
+                                    query = expandObj(query);
+                                }
                                 query._id = this.createId();
                                 this.indices.forEach((v) => indexPromises.push(v.insert(query)));
-
                                 this.updateDocsIndices([query], promises, indexPromises, operation, operators, operationKeys, reject);
                             } else {
                                 return [];
                             }
                         } else {
+                            if (exactObjectFind) {
+                                res = res.map((doc) => expandObj(doc));
+                            }
                             this.updateDocsIndices(res, promises, indexPromises, operation, operators, operationKeys, reject);
                         }
-                        Promise.all(indexPromises)
-                        .catch(reject);
+                        return Promise.all(indexPromises);
+                    })
+                    .then(() => {
                         return Promise.all(promises);
                     })
                     .then((docs: any[]) => rmDups(docs, "_id"))
@@ -626,7 +644,9 @@ export default class Datastore implements IDatastore {
                 .then(() => {
                     resolve(ids);
                 })
-                .catch(reject);
+                .catch((e) => {
+                    reject(e);
+                });
             } else {
                 // here return keys from storage driver
                 this.storage.keys()

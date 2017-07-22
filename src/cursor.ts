@@ -11,6 +11,10 @@ export interface ICursor {
     exec(): Promise<any[] | number>;
 }
 
+export interface I$and {
+    $and: any[];
+}
+
 export interface Ioptions {
     sort?: any;
     skip?: number;
@@ -79,13 +83,25 @@ export default class Cursor implements ICursor {
     public exec(): Promise<any[] | number> {
         return new Promise<any[] | number>((resolve, reject) => {
             const promisesGetIds: Array<Promise<string[]>> = [];
-
             if (isEmpty(this.query)) {
                 promisesGetIds.push(this.datastore.search());
             } else {
                 for (const field in this.query) {
                     if (this.query.hasOwnProperty(field)) {
-                        promisesGetIds.push(this.datastore.search(field, this.query[field]));
+                        if (field === "$and" || field === "$or") {
+                            promisesGetIds.push(this.datastore.search(field, this.query[field]));
+                        } else {
+                            const searchKeys = Object.keys(this.query);
+                            const searchValues = Object.values(this.query);
+                            const newQuery: I$and = {$and: []};
+                            searchKeys.forEach((v: any, i: number) => {
+                                const obj: any = {};
+                                obj[v] = searchValues[i];
+                                newQuery.$and.push(obj);
+                            });
+                            promisesGetIds.push(this.datastore.search("$and", newQuery.$and));
+                            // promisesGetIds.push(this.datastore.search(field, this.query[field]));
+                        }
                     }
                 }
             }
@@ -94,7 +110,6 @@ export default class Cursor implements ICursor {
 
             joined
                 .then((idsArr: string[][]): number | Promise<any[]>  => {
-                    // Use a Set to dedupe
                     const idSet: Set<string> = idsArr
                         .reduce((a, b) => a.concat(b), [])
                         .reduce((set: Set<string>, id): Set<string> => set.add(id), new Set());

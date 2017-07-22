@@ -73,7 +73,7 @@
 				</ul>
 				<h2 id="usage">Usage</h2>
 				<p>TeDB uses an AVL balanced binary tree <a href="https://github.com/marcusjwhelan/binary-type-tree">binary-type-tree</a> to save indexed fields of documents. TeDB does not save documents to memory or have a set way of saving data. It is hooked up to a storage driver that can either work to persists data to disk or save data to memory. The binary tree only saves the value and _id to memory allowing for larger data sets to be indexed. </p>
-				<p>Almost all operations use a method of the storage driver to save, delete, or search, for documents. This is why a robust storage driver is needed a more specific application to your needs. Feel free to write your own storage driver and possibly have it mentioned below for others to use. TeDB is almost completely Promise based and you can expect each method to return a promise, even of the return is null or never. A large benefit to using TeDB is it is written 100% in Typescript. Except for one javascript preprocessor for Jest. </p>
+				<p>Almost all operations use a method of the storage driver to save, delete, or search, for documents. This is why a robust storage driver is needed more specifically fit your needs. Feel free to write your own storage driver and possibly have it mentioned below for others to use. TeDB is almost completely Promise based and you can expect each method to return a promise, even if the return is null or never. A large benefit to using TeDB is it is written 100% in Typescript. Except for one javascript preprocessor for Jest. </p>
 				<p>When it comes to importing TeDB into your project using ES5 or ES6 works almost the same way. When using Typescript there are more important pieces you can pull such as class types and Interfaces. When using ES5 you will only need the Datastore. There are also many utility methods made available if you would like to use some of the internal methods of TeDB such as:</p>
 				<ul>
 					<li>TeDB Utilities<ul>
@@ -84,14 +84,52 @@
 							<li>getPath - get the value given dot notated string path <code>&quot;path.in.object&quot;</code></li>
 							<li>Base64: class - encode and decode base 64 encoding with <code>==</code> at the end. used to make _ids</li>
 							<li>compareArray - Compare two arrays of equal length, returns 0 if equal, -1 if first is less and 1 if greater. Comparison only works for types <strong>string, number, Date</strong></li>
+							<li>NEW compressObj: - Convert object notation into dot object notation. <pre><code class="lang-typescript"><span class="hljs-keyword">const</span> doc: <span class="hljs-built_in">any</span> = { example: {obj: [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>], is: <span class="hljs-string">"d"</span>}, great: <span class="hljs-number">9</span>};
+<span class="hljs-keyword">const</span> target: <span class="hljs-built_in">any</span> = {};
+compressObj(doc, target);
+<span class="hljs-built_in">console</span>.log(target); 
+<span class="hljs-comment">// output</span>
+<span class="hljs-comment">/*{
+"example.obj.0": 1,
+"example.obj.1": 2,
+"example.is": "d",
+"great": 9,
+}*/</span>
+</code></pre>
+							</li>
+							<li>NEW expandObj: - Convert dot string notated object into expanded object.<pre><code class="lang-typescript"><span class="hljs-keyword">const</span> doc = {
+<span class="hljs-string">"nested.reg.obj"</span>: <span class="hljs-number">5</span>,
+<span class="hljs-string">"nested.dot.0"</span>: <span class="hljs-number">3</span>,
+<span class="hljs-string">"nested.dot.1"</span>: <span class="hljs-number">4</span>,
+<span class="hljs-string">"is"</span>: <span class="hljs-string">"nested"</span>,
+<span class="hljs-string">"very.nested.obj.is.nested.far.in.obj"</span>: <span class="hljs-string">"hello"</span>;
+}
+<span class="hljs-keyword">const</span> expanded = expandObj(doc);
+<span class="hljs-built_in">console</span>.log(expanded);
+<span class="hljs-comment">// output</span>
+<span class="hljs-comment">/*{
+nested: {
+    reg: {
+      obj: 5,
+    },
+    dot: [3, 4],
+},
+is: "nested",
+very: {nested: {obj: {is: {nested: {far: {in: {
+  obj: "hello",
+}}}}}}}
+}*/</span>
+</code></pre>
+							</li>
 						</ul>
 					</li>
 				</ul>
 				<pre><code class="lang-typescript"><span class="hljs-comment">// ES6 options</span>
 <span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> tedb <span class="hljs-keyword">from</span> <span class="hljs-string">"tedb"</span>;
-<span class="hljs-keyword">import</span> { Datastore, IDatastore, Cursor, Ioptions,
- Index, IIndex, IStorageDriver, IRange, range, isEmpty, getDate,
- compareArray, rmDups, getPath, Base64 } <span class="hljs-keyword">from</span> <span class="hljs-string">"tedb"</span>;
+<span class="hljs-keyword">import</span> { Datastore, IDatastore, Cursor, Ioptions, IindexOptions,
+ IupdateOptions, Index, IIndex, IStorageDriver, IRange, range,
+ isEmpty, getDate, compareArray, rmDups, getPath, Base64,
+ expandObj, compressObj} <span class="hljs-keyword">from</span> <span class="hljs-string">"tedb"</span>;
 <span class="hljs-comment">// ES5 options</span>
 <span class="hljs-keyword">var</span> tedb = <span class="hljs-built_in">require</span>(<span class="hljs-string">"tedb"</span>);
 <span class="hljs-keyword">var</span> Datastore = <span class="hljs-built_in">require</span>(<span class="hljs-string">"tedb"</span>).Datastore;
@@ -125,7 +163,7 @@
 </code></pre>
 				<p>For the storage driver it should have the methods found on the storage driver interface found <a href="https://github.com/tsturzl/teDB/blob/master/src/types/storageDriver.ts">here</a>. Now that you have the datastore created you can insert and query on those inserted items. Each item inserted has an automatic <code>_id</code> generated for them. This <code>_id</code> also saves the created on Date. The <code>_id</code>s are not indexed automatically but can be if you decide to.</p>
 				<h2 id="indexing">Indexing</h2>
-				<p>Indices are saved as a Map on the Datastore class for each property. When you create an index on a property you give the path of the index and then the options of that index. </p>
+				<p>Indices are saved as a Map on the Datastore class for each property. When you create an index on a property you give the path of the index and then the options of that index. Indices are stored as a key, value store with the key being the value given i.e. the actual username. And where the value of the key value storey is actually the _id of the object. <code>_id</code>s are created each time you insert an object into TeDB. The values of the key value store are always arrays. <code>{ &quot;myUserNameValue&quot;: [&quot;_idofobject&quot;]}</code> if the index is not unique then the value is still an array except for each matching key the new ids are added. <code>{ &quot;actualAge#&quot;: [&quot;_id1&quot;, &quot;_id2&quot;, &quot;_id3&quot;]}</code>.</p>
 				<ul>
 					<li>Index Options<ul>
 							<li>fieldName - The path as a string <code>&quot;path.to.index&quot;</code> to be indexed on the object</li>
@@ -225,7 +263,7 @@ docs.forEach(<span class="hljs-function">(<span class="hljs-params">doc</span>) 
 							<li>sort - Sort by field {fieldName: -1 } or {fieldName: 1 }</li>
 							<li>skip - Skip a certain number of returned items </li>
 							<li>limit - Set a limit to max number of items returned</li>
-							<li>exec - execute the search using the cursor options, will search for all docs before applying the sort, skip, or limit methods on them. </li>
+							<li>exec - execute the search using the cursor options, will search for all docs based on query before applying the sort, skip, or limit methods on them. </li>
 						</ul>
 					</li>
 				</ul>
@@ -233,12 +271,22 @@ docs.forEach(<span class="hljs-function">(<span class="hljs-params">doc</span>) 
 				<p>If you would rather not store memory for each _id inserted then use a storage driver that does not use the keys() method and you will not be able to search without a query.</p>
 				<ul>
 					<li>Find query options<ul>
-							<li>$or - search an object query of one <strong>or</strong> multiple, no nested queries such as $gt, $lt</li>
-							<li>$and - search an object with <strong>and</strong> results or multiple, no nested queries</li>
-							<li>$gt, $lt, $gte, $lte, $ne - can combine any assortment but no nested queries.</li>
+							<li>$or - search an object query of one <strong>or</strong> multiple</li>
+							<li>$and - search an object with <strong>and</strong> results or multiple</li>
+							<li>$gt, $lt, $gte, $lte, $ne - can combine any assortment.</li>
 						</ul>
 					</li>
 				</ul>
+				<p>Nesting queries is now supported but only in $and or $or. Cannot nest value inside $gt.. query options. No nesting $and or $or inside one another.</p>
+				<pre><code class="lang-typescript"><span class="hljs-comment">// Example of nesting</span>
+Users.find({$and: [
+    {age: {$gt: <span class="hljs-number">25</span>}},
+    {age: {$ne: <span class="hljs-number">28</span>}},
+    {age: {$lte: <span class="hljs-number">35</span>}},
+    ]}).exec()
+    .then(resolve)
+    .catch(reject);
+</code></pre>
 				<pre><code class="lang-typescript"><span class="hljs-comment">// simple find</span>
 Users.find({name: <span class="hljs-string">"xyz"</span>})
     .exec()
@@ -279,6 +327,15 @@ Users.count({})
     .then(<span class="hljs-function">(<span class="hljs-params">num</span>) =&gt;</span> {
         <span class="hljs-built_in">console</span>.log(num); <span class="hljs-comment">// total docs as a number</span>
     });
+<span class="hljs-comment">//</span>
+<span class="hljs-comment">// If you would like to find an object that happens to have</span>
+<span class="hljs-comment">// no index or _id/lets say you removed the _id by accident.</span>
+<span class="hljs-keyword">const</span> doc = {<span class="hljs-comment">/* exact doc match you want to find */</span>};
+<span class="hljs-keyword">const</span> target = {};
+compressObj(doc, target);
+Users.find(target)
+    .then(resolve)
+    .catch(reject);
 </code></pre>
 				<p>TeDB also stores the time inserted.</p>
 				<pre><code class="lang-typescript">Users.find()
@@ -296,10 +353,11 @@ Users.count({})
 							<li>multi - return many documents: Default false</li>
 							<li>upsert - insert the document if not found: Default false, creates _id on insert</li>
 							<li>returnUpdatedDocs - returns all the docs after being updated and stored.</li>
+							<li>exactObjectFind - when finding objects search based on the exact object itself. Cannot use find queries such as $gt, $lt. Best used with updating an object completely if anything changes.</li>
 						</ul>
 					</li>
 					<li>Update Operators<ul>
-							<li>$set - write, overwrite a value to the document/s that are returned</li>
+							<li>$set - write, overwrite a value to the document/s that are returned. Warning Cannot create an object from undefined.</li>
 							<li>$mul - multiply the value with the given query value</li>
 							<li>$inc - increment a positive or negative number to the value of the document</li>
 							<li>$unset - delete the value from the object</li>
@@ -310,13 +368,39 @@ Users.count({})
 				</ul>
 				<pre><code class="lang-typescript"><span class="hljs-comment">// original object {_id: "...", name: "xyz"}</span>
 <span class="hljs-comment">// query, operators, options</span>
-Users.update({name: <span class="hljs-string">"xyz"</span>}, {$<span class="hljs-keyword">set</span>: {<span class="hljs-string">"nested.key"</span>: <span class="hljs-number">1</span>}, $inc: {<span class="hljs-string">"nested.key"</span>: <span class="hljs-number">3</span>},
+Users.update({name: <span class="hljs-string">"xyz"</span>}, {$<span class="hljs-keyword">set</span>: {<span class="hljs-string">"nested"</span>: {<span class="hljs-string">"key"</span>: <span class="hljs-number">1</span>}}, $inc: {<span class="hljs-string">"nested.key"</span>: <span class="hljs-number">3</span>},
     $mul: {<span class="hljs-string">"nested.key"</span>: <span class="hljs-number">2</span>}, $rename: {<span class="hljs-string">"nested.key"</span>: <span class="hljs-string">"accounts"</span>}, 
     $unset: {<span class="hljs-string">"name"</span>: <span class="hljs-string">""</span>}}, {returnUpdatedDocs: <span class="hljs-literal">true</span>})
     .then(<span class="hljs-function">(<span class="hljs-params">docs</span>) =&gt;</span> {
         <span class="hljs-built_in">console</span>.log(docs[<span class="hljs-number">0</span>]); <span class="hljs-comment">// {_id: "...", nested: { accounts: 8 }}</span>
     });
+<span class="hljs-comment">// example of exactObjectFind</span>
+<span class="hljs-comment">// exactObjectFind. you must send in object formatting.</span>
+Users.update({
+        name: <span class="hljs-string">"t"</span>,
+        nested: {
+            key: <span class="hljs-number">2</span>
+        },
+    }, {
+        $<span class="hljs-keyword">set</span>: {<span class="hljs-string">"nested"</span>: {<span class="hljs-string">"key"</span>: <span class="hljs-number">1</span>}},
+    }, {
+        returnUpdatedDocs: <span class="hljs-literal">true</span>,
+        upsert: <span class="hljs-literal">true</span>,
+        exactObjectFind: <span class="hljs-literal">true</span>,
+    })
+    .then(<span class="hljs-function">(<span class="hljs-params">docs</span>) =&gt;</span> {
+        <span class="hljs-built_in">console</span>.log(docs[<span class="hljs-number">0</span>]); <span class="hljs-comment">// {_id: "...", name: "t", nested: {key: 1}}</span>
+    });
+<span class="hljs-comment">// with another object</span>
+<span class="hljs-keyword">const</span> incomingObj = externalAPI.request.data[<span class="hljs-number">0</span>];
+Users.update(incomingObj, {$<span class="hljs-keyword">set</span>: {synced: <span class="hljs-literal">true</span>}}, {
+        upsert: <span class="hljs-literal">true</span>,
+        exactObjectFind: <span class="hljs-literal">true</span>    
+    })
+    .then(resolve)
+    .catch(reject);
 </code></pre>
+				<p>The <code>exactObjectFind</code> param is great for pulling down a repo that and updating lots of data. If you pull down data and need to compare it to an already stored object and rewrite that object if the incoming data has changed. This is the perfect solution. Upsert if not found and can send an entire object.</p>
 				<h2 id="remove">Remove</h2>
 				<p>Uses the find method to retrieve _ids and removes multiple always, as well as removing indexed items from the Mapped indices for all indexed items on a object. </p>
 				<pre><code class="lang-typescript">Users.remove({<span class="hljs-string">"nested.accounts"</span>: <span class="hljs-number">8</span>})
@@ -327,6 +411,15 @@ Users.update({name: <span class="hljs-string">"xyz"</span>}, {$<span class="hljs
     .then(<span class="hljs-function">(<span class="hljs-params">docs</span>) =&gt;</span> {
         <span class="hljs-built_in">console</span>.log(docs.length); <span class="hljs-comment">// 0</span>
     });
+<span class="hljs-comment">// If you would like to remove an object that exactly</span>
+<span class="hljs-comment">// matches all parameters. If lets say you remove _id then </span>
+<span class="hljs-comment">// you can use compressObj.</span>
+<span class="hljs-keyword">const</span> doc = {<span class="hljs-comment">/* contents */</span>};
+<span class="hljs-keyword">const</span> target = {};
+compressObj(doc, target);
+Users.remove(target)
+    .then(resolve)
+    .catch(reject);
 </code></pre>
 				<h2 id="license">License</h2>
 				<p>See <a href="LICENSE">License</a></p>
@@ -367,6 +460,12 @@ Users.update({name: <span class="hljs-string">"xyz"</span>}, {$<span class="hljs
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_utils_comparearray_.html">"utils/compare<wbr>Array"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_utils_compressobj_.html">"utils/compress<wbr>Obj"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_utils_expandobj_.html">"utils/expand<wbr>Obj"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_utils_id_hasher_.html">"utils/id_<wbr>hasher"</a>
