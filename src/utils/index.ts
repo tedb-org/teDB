@@ -6,3 +6,4 @@ export { range } from "./range";
 export { isEmpty, mergeSort, getSortType, getPath, rmDups } from "./misc";
 export { expandObj } from "./expandObj";
 export { compressObj } from "./compressObj";
+export { flatten } from "./flatten";

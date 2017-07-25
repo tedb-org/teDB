@@ -5,32 +5,32 @@ import { getPath } from "./utils";
 import Datastore from "./datastore";
 import { IRange, IindexOptions } from "./types";
 import { compareArray } from "./utils";
-import * as BTT from "binary-type-tree";
+import { AVLTree, ASNDBS, SNDBSA } from "binary-type-tree";
 
 /**
  * Index interface used for the datastore indices
  * Inherits types from binary-type-tree
  *
  * Array String Number, Date, Boolean, -> symbol was redacted.
- * BTT.ASNDBS = Array<any[]|string|number|Date|boolean|null>|string|number|Date|boolean|null
+ * ASNDBS = Array<any[]|string|number|Date|boolean|null>|string|number|Date|boolean|null
  * -> redacted symbol, Number, Date, Boolean, String, Array
- * BTT.SNDBSA = Array<{}|any[]|string|number|Date|boolean|null>;
+ * SNDBSA = Array<{}|any[]|string|number|Date|boolean|null>;
  */
 export interface IIndex {
     insert(doc: any): Promise<any>;
-    insertMany(key: BTT.ASNDBS, indices: any[]): Promise<null>;
-    updateKey(key: BTT.ASNDBS, newKey: BTT.ASNDBS): Promise<any>;
+    insertMany(key: ASNDBS, indices: any[]): Promise<null>;
+    updateKey(key: ASNDBS, newKey: ASNDBS): Promise<any>;
     remove(doc: any): Promise<any>;
     toJSON(): Promise<string>;
-    search(key: BTT.ASNDBS): Promise<BTT.SNDBSA>;
-    searchRange(range: IRange): Promise<BTT.SNDBSA>;
+    search(key: ASNDBS): Promise<SNDBSA>;
+    searchRange(range: IRange): Promise<SNDBSA>;
 }
 
 export default class Index implements IIndex {
     /** Field Name for Index */
     protected fieldName: string;
     /** ALV Tree for indexing */
-    private avl: BTT.AVLTree;
+    private avl: AVLTree;
     /** Reference to Datastore */
     private datastore: Datastore;
     /** Is the index holding an array */
@@ -42,7 +42,7 @@ export default class Index implements IIndex {
      * @param options - Options for Index, `{fieldName: string}`
      */
     constructor(datastore: Datastore, options: IindexOptions) {
-        this.avl = options.unique ? new BTT.AVLTree({unique: true}) : new BTT.AVLTree({});
+        this.avl = options.unique ? new AVLTree({unique: true}) : new AVLTree({});
 
         if (options.compareKeys) {
             this.avl.compareKeys = options.compareKeys;
@@ -72,7 +72,7 @@ export default class Index implements IIndex {
                 return reject(new Error("_id field needs to be type `string`"));
             }
 
-            const key: BTT.ASNDBS = getPath(doc, this.fieldName);
+            const key: ASNDBS = getPath(doc, this.fieldName);
             if (key !== undefined && key !== null) {
                 if (key.constructor.name === "Array" && !this.isArray) {
                     this.avl.compareKeys = compareArray;
@@ -98,10 +98,10 @@ export default class Index implements IIndex {
      * @param indices
      * @returns {Promise<null>}
      */
-    public insertMany(key: BTT.ASNDBS, indices: any[]): Promise<null> {
+    public insertMany(key: ASNDBS, indices: any[]): Promise<null> {
         return new Promise<null>((resolve, reject) => {
             if (key !== undefined && key !== null) {
-                if (key.constructor.name === "Array" && !this.isArray) {
+                if (Object.prototype.toString.call(key) === "[object Array]" && !this.isArray) {
                     this.avl.compareKeys = compareArray;
                     this.isArray = true;
                 }
@@ -111,7 +111,7 @@ export default class Index implements IIndex {
 
             try {
                 for (const item of indices) {
-                    this.avl.insert(item.key, [item.value]);
+                    this.avl.insert(item.key, item.value);
                 }
             } catch (e) {
                 return reject(e);
@@ -130,7 +130,7 @@ export default class Index implements IIndex {
      * @param newKey
      * @returns {Promise<null>}
      */
-    public updateKey(key: BTT.ASNDBS, newKey: BTT.ASNDBS): Promise<null> {
+    public updateKey(key: ASNDBS, newKey: ASNDBS): Promise<null> {
         return new Promise<null>((resolve, reject) => {
             if (this.avl.tree.search(key).length === 0) {
                 return reject(new Error("This key does not exist"));
@@ -155,10 +155,10 @@ export default class Index implements IIndex {
                 return reject(new Error("There is no _id to reference this document"));
             }
 
-            const key: BTT.ASNDBS = getPath(doc, this.fieldName);
+            const key: ASNDBS = getPath(doc, this.fieldName);
 
             try {
-                this.avl.delete(key, [doc._id]);
+                this.avl.Delete(key, [doc._id]);
             } catch (e) {
                 return reject(e);
             }
@@ -173,17 +173,17 @@ export default class Index implements IIndex {
      */
     public toJSON(): Promise<string> {
         return new Promise<string>((resolve) => {
-            resolve(this.avl.tree.toJSON<BTT.AVLTree>());
+            resolve(this.avl.tree.toJSON<AVLTree>());
         });
     }
 
     /**
      * Search Index for key
      * @param key
-     * @returns {Promise<BTT.SNDBSA>}
+     * @returns {Promise<SNDBSA>}
      */
-    public search(key: BTT.ASNDBS): Promise<BTT.SNDBSA> {
-        return new Promise<BTT.SNDBSA>((resolve) => {
+    public search(key: ASNDBS): Promise<SNDBSA> {
+        return new Promise<SNDBSA>((resolve) => {
             resolve(this.avl.tree.search(key));
         });
     }
@@ -191,10 +191,10 @@ export default class Index implements IIndex {
     /**
      * Search Index within bounds
      * @param range An IRange to search within bounds
-     * @returns {Promise<BTT.SNDBSA>}
+     * @returns {Promise<SNDBSA>}
      */
-    public searchRange(range: IRange): Promise<BTT.SNDBSA> {
-        return new Promise<BTT.SNDBSA>((resolve) => {
+    public searchRange(range: IRange): Promise<SNDBSA> {
+        return new Promise<SNDBSA>((resolve) => {
             resolve(this.avl.tree.query(range));
         });
     }

@@ -153,16 +153,6 @@ describe("testing the datastore, testing loading in and querying persisted data"
         });
     });
 
-    test("finding all users", () => {
-        expect.assertions(1);
-        return Users.find()
-        .exec()
-        .then((res) => {
-            res = res as any[];
-            expect(res.length).toEqual(9);
-        });
-    });
-
     test("finding all users age 22-28", () => {
         expect.assertions(1);
         return Users.find({age: {$gte: 22, $lte: 28}})
@@ -170,6 +160,16 @@ describe("testing the datastore, testing loading in and querying persisted data"
         .then((res) => {
             res = res as any[];
             expect(res.length).toEqual(5);
+        });
+    });
+
+    test("finding all users", () => {
+        expect.assertions(1);
+        return Users.find()
+        .exec()
+        .then((res) => {
+            res = res as any[];
+            expect(res.length).toEqual(9);
         });
     });
 

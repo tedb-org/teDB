@@ -70,7 +70,7 @@ import * as tedb from "tedb";
 import { Datastore, IDatastore, Cursor, Ioptions, IindexOptions,
  IupdateOptions, Index, IIndex, IStorageDriver, IRange, range,
  isEmpty, getDate, compareArray, rmDups, getPath, Base64,
- expandObj, compressObj} from "tedb";
+ expandObj, compressObj, flatten} from "tedb";
 // ES5 options
 var tedb = require("tedb");
 var Datastore = require("tedb").Datastore;
@@ -364,7 +364,8 @@ Users.remove({"nested.accounts": 8})
     });
 // If you would like to remove an object that exactly
 // matches all parameters. If lets say you remove _id then 
-// you can use compressObj.
+// you can use compressObj. Useful when you do not want to 
+// remove many.
 const doc = {/* contents */};
 const target = {};
 compressObj(doc, target);

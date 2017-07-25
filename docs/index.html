@@ -129,7 +129,7 @@ very: {nested: {obj: {is: {nested: {far: {in: {
 <span class="hljs-keyword">import</span> { Datastore, IDatastore, Cursor, Ioptions, IindexOptions,
  IupdateOptions, Index, IIndex, IStorageDriver, IRange, range,
  isEmpty, getDate, compareArray, rmDups, getPath, Base64,
- expandObj, compressObj} <span class="hljs-keyword">from</span> <span class="hljs-string">"tedb"</span>;
+ expandObj, compressObj, flatten} <span class="hljs-keyword">from</span> <span class="hljs-string">"tedb"</span>;
 <span class="hljs-comment">// ES5 options</span>
 <span class="hljs-keyword">var</span> tedb = <span class="hljs-built_in">require</span>(<span class="hljs-string">"tedb"</span>);
 <span class="hljs-keyword">var</span> Datastore = <span class="hljs-built_in">require</span>(<span class="hljs-string">"tedb"</span>).Datastore;
@@ -413,7 +413,8 @@ Users.update(incomingObj, {$<span class="hljs-keyword">set</span>: {synced: <spa
     });
 <span class="hljs-comment">// If you would like to remove an object that exactly</span>
 <span class="hljs-comment">// matches all parameters. If lets say you remove _id then </span>
-<span class="hljs-comment">// you can use compressObj.</span>
+<span class="hljs-comment">// you can use compressObj. Useful when you do not want to </span>
+<span class="hljs-comment">// remove many.</span>
 <span class="hljs-keyword">const</span> doc = {<span class="hljs-comment">/* contents */</span>};
 <span class="hljs-keyword">const</span> target = {};
 compressObj(doc, target);
@@ -466,6 +467,9 @@ Users.remove(target)
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_utils_expandobj_.html">"utils/expand<wbr>Obj"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_utils_flatten_.html">"utils/flatten"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_utils_id_hasher_.html">"utils/id_<wbr>hasher"</a>

@@ -2,7 +2,7 @@
  * Created by tsturzl on 4/11/17.
  */
 import Datastore from "./datastore";
-import { isEmpty, mergeSort, getSortType} from "./utils";
+import { isEmpty, mergeSort, getSortType, flatten} from "./utils";
 
 export interface ICursor {
     sort(sort: any): this;
@@ -100,7 +100,6 @@ export default class Cursor implements ICursor {
                                 newQuery.$and.push(obj);
                             });
                             promisesGetIds.push(this.datastore.search("$and", newQuery.$and));
-                            // promisesGetIds.push(this.datastore.search(field, this.query[field]));
                         }
                     }
                 }
@@ -110,36 +109,35 @@ export default class Cursor implements ICursor {
 
             joined
                 .then((idsArr: string[][]): number | Promise<any[]>  => {
+                    idsArr = flatten(idsArr);
                     const idSet: Set<string> = idsArr
                         .reduce((a, b) => a.concat(b), [])
                         .reduce((set: Set<string>, id): Set<string> => set.add(id), new Set());
 
                     const ids = Array.from(idSet.values());
-
                     if (this.count) {
                         return ids.length;
                     } else {
-                        return this.datastore.getDocs(this.options, ids)
-                            .then((res) => {
-                                if (this.options.sort) {
-                                    try {
-                                        const sortKey = Object.keys(this.options.sort)[0];
-                                        const sortValue = this.options.sort[sortKey];
-                                        const sortType = getSortType(res, sortKey);
-                                        if (sortType === "") {
-                                            // can't sort null or undefined
-                                            return res;
-                                        } else {
-                                            return mergeSort(res, sortKey, sortValue, sortType);
-                                        }
-                                    } catch (e) {
-                                        reject(e);
-                                    }
-                                } else {
-                                    return res;
-                                }
-                            })
-                            .catch((err) => reject(err));
+                        return this.datastore.getDocs(this.options, ids);
+                    }
+                })
+                .then((res: any[]) => {
+                    if (this.options.sort) {
+                        try {
+                            const sortKey = Object.keys(this.options.sort)[0];
+                            const sortValue = this.options.sort[sortKey];
+                            const sortType = getSortType(res, sortKey);
+                            if (sortType === "") {
+                                // can't sort null or undefined
+                                return res;
+                            } else {
+                                return mergeSort(res, sortKey, sortValue, sortType);
+                            }
+                        } catch (e) {
+                            return reject(e);
+                        }
+                    } else {
+                        return res;
                     }
                 })
                 .then(resolve)

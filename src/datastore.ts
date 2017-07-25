@@ -282,41 +282,40 @@ export default class Datastore implements IDatastore {
      */
     public remove(query: any = {}): Promise<number> {
         return new Promise((resolve, reject) => {
+            const uniqueIds: string[] = [];
             this.find(query)
                 .exec()
                 .then((docs: any[]): Promise<any[][]> => {
                     // Array of promises for index remove
                     const promises: Array<Promise<any[]>> = [];
+                    docs.forEach((document) => {
+                        this.indices.forEach((i: Index, fieldName: string) => {
+                            promises.push(i.remove(document));
 
-                    for (let i = docs.length - 1; i >= 0; i--) {
-                        this.indices.forEach((v) => {
-                            promises.push(v.remove(docs[i]));
                         });
-                    }
+                    });
 
                     return Promise.all(promises);
                 })
+                .then((docs: any[]) => rmDups(docs, "_id"))
                 .then((docs: any[]) => {
                     const promises: Array<Promise<null>> = [];
-                    const uniqueIds: string[] = [];
-
-                    for (let i = docs.length - 1; i >= 0; i--) {
-                        if (uniqueIds.indexOf(docs[i]._id) === -1) {
-                            uniqueIds.push(docs[i]._id);
+                    docs.forEach((document) => {
+                        if (uniqueIds.indexOf(document._id) === -1) {
+                            uniqueIds.push(document._id);
                         }
-                    }
+                    });
 
-                    for (let i = uniqueIds.length - 1; i >= 0; i--) {
-                        if (uniqueIds[i] && typeof uniqueIds[i] === "string") {
-                            promises.push(this.storage.removeItem(uniqueIds[i]));
+                    uniqueIds.forEach((id) => {
+                        if (id && (Object.prototype.toString.call(id) === "[object String]")) {
+                            promises.push(this.storage.removeItem(id));
                         }
-                    }
+                    });
 
-                    Promise.all(promises)
-                        .then((): any => {
-                            resolve(uniqueIds.length);
-                        })
-                        .catch(reject);
+                    return Promise.all(promises);
+                })
+                .then((): any => {
+                    resolve(uniqueIds.length);
                 })
                 .catch(reject);
         });
@@ -448,7 +447,6 @@ export default class Datastore implements IDatastore {
             let idsArr: string[] = (typeof ids === "string") ? [ids] : ids;
 
             const promises: Array<Promise<any>> = [];
-
             if (isEmpty(options)) {
                 this.createIdsArray(promises, idsArr);
             } else if (options.skip && options.limit) {
@@ -534,7 +532,7 @@ export default class Datastore implements IDatastore {
                 this.searchField(fieldName, value)
                     .then(resolve)
                     .catch(reject);
-            } else if (!fieldName && !value) {
+            } else if ((fieldName === undefined) && (value === undefined)) {
                this.searchField()
                     .then(resolve)
                     .catch(reject);
@@ -567,7 +565,7 @@ export default class Datastore implements IDatastore {
      * @returns {Promise<BTT.SNDBSA>}
      */
     private searchField(fieldName?: string, value?: any): Promise<BTT.SNDBSA> {
-        if (fieldName && value) {
+        if (fieldName && (value !== undefined)) {
             return this.indices.has(fieldName) ?
                 this.searchIndices(fieldName, value) :
                 this.searchCollection(fieldName, value);
@@ -613,7 +611,7 @@ export default class Datastore implements IDatastore {
     private searchCollection(fieldName?: string, value?: IRange): Promise<string[]> {
         return new Promise((resolve, reject): any => {
             const ids: string[] = [];
-            if (fieldName && value) {
+            if (fieldName && (value !== undefined)) {
                 const lt: BTT.ASNDBS = (value.hasOwnProperty("$lt") && value.$lt !== undefined) ? value.$lt : null;
                 const lte: BTT.ASNDBS = (value.hasOwnProperty("$lte") && value.$lte !== undefined) ? value.$lte : null;
                 const gt: BTT.ASNDBS = (value.hasOwnProperty("$gt") && value.$gt !== undefined) ? value.$gt : null;
