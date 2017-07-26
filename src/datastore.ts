@@ -285,17 +285,21 @@ export default class Datastore implements IDatastore {
             const uniqueIds: string[] = [];
             this.find(query)
                 .exec()
-                .then((docs: any[]): Promise<any[][]> => {
+                .then((docs: any[]): Promise<any[][]> | any[] => {
                     // Array of promises for index remove
                     const promises: Array<Promise<any[]>> = [];
-                    docs.forEach((document) => {
-                        this.indices.forEach((i: Index, fieldName: string) => {
-                            promises.push(i.remove(document));
+                    if (this.indices.size !== 0) {
+                        docs.forEach((document) => {
+                            this.indices.forEach((i: Index, fieldName: string) => {
+                                promises.push(i.remove(document));
 
+                            });
                         });
-                    });
 
-                    return Promise.all(promises);
+                        return Promise.all(promises);
+                    } else {
+                        return docs;
+                    }
                 })
                 .then((docs: any[]) => rmDups(docs, "_id"))
                 .then((docs: any[]) => {
@@ -612,16 +616,30 @@ export default class Datastore implements IDatastore {
         return new Promise((resolve, reject): any => {
             const ids: string[] = [];
             if (fieldName && (value !== undefined)) {
-                const lt: BTT.ASNDBS = (value.hasOwnProperty("$lt") && value.$lt !== undefined) ? value.$lt : null;
-                const lte: BTT.ASNDBS = (value.hasOwnProperty("$lte") && value.$lte !== undefined) ? value.$lte : null;
-                const gt: BTT.ASNDBS = (value.hasOwnProperty("$gt") && value.$gt !== undefined) ? value.$gt : null;
-                const gte: BTT.ASNDBS = (value.hasOwnProperty("$gte") && value.$gte !== undefined) ? value.$gte : null;
-                const ne: any =  value.hasOwnProperty("$ne") ? value.$ne : null;
+                let lt: BTT.ASNDBS;
+                let lte: BTT.ASNDBS;
+                let gt: BTT.ASNDBS;
+                let gte: BTT.ASNDBS;
+                let ne: any;
+                if (value !== null && Object.prototype.toString.call(value) === "[object Object]") {
+                    lt = (value.hasOwnProperty("$lt") && value.$lt !== undefined) ? value.$lt : null;
+                    lte = (value.hasOwnProperty("$lte") && value.$lte !== undefined) ? value.$lte : null;
+                    gt = (value.hasOwnProperty("$gt") && value.$gt !== undefined) ? value.$gt : null;
+                    gte = (value.hasOwnProperty("$gte") && value.$gte !== undefined) ? value.$gte : null;
+                    ne = value.hasOwnProperty("$ne") ? value.$ne : null;
+                } else {
+                    lt = null;
+                    lte = null;
+                    gt = null;
+                    gte = null;
+                    ne = null;
+                }
+
                 this.storage.iterate((v, k) => {
                     const field: any = getPath(v, fieldName);
-                    if (field) {
+                    if (field !== undefined) {
                         if (lt === null && lte === null && gt === null &&
-                            gte === null && ne === null && k === value) {
+                            gte === null && ne === null && (k === value || field === value)) {
                             ids.push(k);
                         } else {
                             const flag: boolean =

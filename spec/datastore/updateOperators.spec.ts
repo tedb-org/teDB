@@ -1,4 +1,4 @@
-import { $set, $inc, $mul, $unset, $rename } from "../src/updateOperators";
+import { $set, $inc, $mul, $unset, $rename } from "../../src/updateOperators";
 
 describe("testing the update operators", () => {
     const testObject = {

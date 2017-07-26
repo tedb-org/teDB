@@ -1,5 +1,5 @@
-import { Index, Datastore } from "../src";
-import { MockStorageDriver } from "./example";
+import { Index, Datastore } from "../../src";
+import { MockStorageDriver } from "../example";
 import * as fs from "fs";
 
 describe("testing a non unique indexed datastore", () => {

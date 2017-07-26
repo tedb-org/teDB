@@ -1,6 +1,6 @@
 {
   "name": "tedb",
-  "version": "0.2.5",
+  "version": "0.2.6-alpha",
   "description": "TypeScript Embedded Database",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
