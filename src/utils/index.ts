@@ -7,3 +7,6 @@ export { isEmpty, mergeSort, getSortType, getPath, rmDups } from "./misc";
 export { expandObj } from "./expandObj";
 export { compressObj } from "./compressObj";
 export { flatten } from "./flatten";
+export { saveArrDups } from "./saveArrDups";
+export { getDubs } from "./getDubs";
+export { rmArrDups } from "./rmArrDups";

@@ -1,6 +1,6 @@
 /*
 
-!! ONLY RUN IF FOR TIME TESTING !!
+// !! ONLY RUN IF FOR TIME TESTING !!
 
 import { Index, Datastore } from "../../src";
 import { MockStorageDriver } from "../example";

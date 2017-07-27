@@ -5,7 +5,22 @@
  * with the /spec/fixtures/db directory at start. After this
  * loading a database will write or read to /spec/example/db.
  *
+ *    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  *
+ *  Very specific tests here. To start it. Un-uncomment the
+ *  beforeAll and the test("clear"). Run the test. All should
+ *  pass.
+ *
+ *  Then Comment out the test("clear") at the bottom, run
+ *  tests, all should pass
+ *
+ *  Then Comment out the inside of the beforeAll. Run tests
+ *  and all should pass.
+ *
+ *  Finally run the tests in this state one or two times more
+ *  the tests should all still pass.
+ *
+ *    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  */
 
 import { Index, IIndex, Datastore, IDatastore, Cursor,
@@ -134,6 +149,53 @@ describe("testing the datastore, testing loading in and querying persisted data"
         });
     });
 
+    test("update all", () => {
+        return Users.update({}, {
+                $set: {
+                    isSynced: false,
+                },
+            }, {returnUpdatedDocs: true, multi: true})
+            .then((res) => {
+                expect(res.length > 8).toEqual(true);
+            });
+    });
+
+    test("upserting a test user to update", () => {
+        expect.assertions(4);
+        return Users.update({
+                name: "tester",
+                age: 100,
+                isSynced: false,
+            }, {
+                $set: {
+                    isSynced: true,
+                },
+            }, {
+                upsert: true,
+                returnUpdatedDocs: true,
+                exactObjectFind: true,
+            })
+            .then((res) => {
+                expect(res[0].name).toEqual("tester");
+                expect(res[0].age).toEqual(100);
+                expect(res[0].isSynced).toEqual(true);
+                return Users.getIndices();
+            })
+            .then((indices) => {
+                const promises: Array<Promise<null>> = [];
+                indices.forEach((v: Index, k: string) => {
+                    promises.push(Users.saveIndex(k));
+                });
+                return Promise.all(promises);
+            })
+            .then(() => {
+                return UserStorage.fetchIndex("name");
+            })
+            .then((res) => {
+                expect(res.length).toEqual(11);
+            });
+    });
+
     test("finding a user", () => {
         expect.assertions(2);
         return Users.find({name: "Joshua"})
@@ -146,10 +208,24 @@ describe("testing the datastore, testing loading in and querying persisted data"
     });
 
     test("removing a user", () => {
-        expect.assertions(1);
+        expect.assertions(2);
         return Users.remove({name: "Joshua"})
         .then((res) => {
             expect(res).toBe(1);
+            return Users.getIndices();
+        })
+        .then((indices) => {
+            const promises: Array<Promise<null>> = [];
+            indices.forEach((v: Index, k: string) => {
+                promises.push(Users.saveIndex(k));
+            });
+            return Promise.all(promises);
+        })
+        .then(() => {
+            return UserStorage.fetchIndex("name");
+        })
+        .then((res) => {
+            expect(res.length).toEqual(10);
         });
     });
 
@@ -169,7 +245,7 @@ describe("testing the datastore, testing loading in and querying persisted data"
         .exec()
         .then((res) => {
             res = res as any[];
-            expect(res.length).toEqual(9);
+            expect(res.length).toEqual(10);
         });
     });
 
@@ -180,7 +256,7 @@ describe("testing the datastore, testing loading in and querying persisted data"
         .then((res) => {
             res = res as any[];
             expect(res.length).toEqual(2);
-            expect(res).toEqual((expect.arrayContaining([{ _id: "T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", name: "Marcus", age: 0, friends: [ "UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9", "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9" ] }, { _id: "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9", name: "Gavin", age: 25, friends: [ "T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", "UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9"]}])));
+            expect(res).toEqual((expect.arrayContaining([{ _id: "T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", name: "Marcus", age: 0, friends: [ "UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9", "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9" ], isSynced: false }, { _id: "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9", name: "Gavin", age: 25, friends: [ "T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", "UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9"], isSynced: false}])));
         });
     });
 
@@ -201,7 +277,7 @@ describe("testing the datastore, testing loading in and querying persisted data"
         .then((res) => {
             res = res as any[];
             expect(res.length).toEqual(1);
-            expect(res).toEqual(expect.arrayContaining([{_id: "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9", age: 25, friends: ["T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", "UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9"], name: "Gavin"}]));
+            expect(res).toEqual(expect.arrayContaining([{_id: "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9", age: 25, friends: ["T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", "UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9"], isSynced: false, name: "Gavin"}]));
         });
     });
 
@@ -210,7 +286,7 @@ describe("testing the datastore, testing loading in and querying persisted data"
         return Users.find({_id: "T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9"})
         .exec()
         .then((res) => {
-            expect(res).toEqual(expect.arrayContaining([{_id: "T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", age: 0, friends: ["UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9", "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9"], name: "Marcus"}]));
+            expect(res).toEqual(expect.arrayContaining([{_id: "T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", age: 0, friends: ["UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9", "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9"], isSynced: false, name: "Marcus"}]));
         });
     });
 
@@ -223,7 +299,7 @@ describe("testing the datastore, testing loading in and querying persisted data"
         .exec()
         .then((res) => {
             res = res as any[];
-            expect(res).toEqual(expect.arrayContaining([{_id: "UGVUQVJWd0JBQUE9R2JkWG9UUlErcDg9cUdSOU5CMnNwR0U9ZmpkUzVuZmhIWE09", age: 39, friends: ["UHVUQVJWd0JBQUE9ZkZTNFRzQ0YwRVE9QTBRaUpUWjFJQ0U9UlRsNVg3MHNPcFE9", "UCtUQVJWd0JBQUE9TVMrYjRpWVUrTEk9cWpON01RWGlQWjA9c1NWQzBacFNqakE9"], name: "Scott"}, {_id: "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9", age: 25, friends: ["T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", "UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9"], name: "Gavin"}]));
+            expect(res).toEqual(expect.arrayContaining([{_id: "UGVUQVJWd0JBQUE9R2JkWG9UUlErcDg9cUdSOU5CMnNwR0U9ZmpkUzVuZmhIWE09", age: 39, friends: ["UHVUQVJWd0JBQUE9ZkZTNFRzQ0YwRVE9QTBRaUpUWjFJQ0U9UlRsNVg3MHNPcFE9", "UCtUQVJWd0JBQUE9TVMrYjRpWVUrTEk9cWpON01RWGlQWjA9c1NWQzBacFNqakE9"], isSynced: false, name: "Scott"}, {_id: "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9", age: 25, friends: ["T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", "UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9"], isSynced: false, name: "Gavin"}]));
             expect(res.length).toEqual(2);
         });
     });
@@ -237,7 +313,7 @@ describe("testing the datastore, testing loading in and querying persisted data"
         .exec()
         .then((res) => {
             res = res as any[];
-            expect(res).toEqual(expect.arrayContaining([ { _id: "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9", name: "Gavin", age: 25, friends: [ "T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", "UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9" ] }, { _id: "UCtUQVJWd0JBQUE9dnVrRm1xWmJDVTQ9aGR2VjN0Z1gvK009dVpUVzMrY3N4eDg9", name: "Morgan", age: 26, friends: [ "UE9UQVJWd0JBQUE9cmZ4Y2MxVzNlOFk9TXV4dmJ0WU5JUFk9d0FkMW1oSHY2SWs9", "UCtUQVJWd0JBQUE9cHE1SmpnSE44eDQ9Rko2RmlJeHJrR1E9ZkN4cjROblB1WEU9"]}]));
+            expect(res).toEqual(expect.arrayContaining([ { _id: "UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9", name: "Gavin", age: 25, friends: [ "T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9", "UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9" ], isSynced: false}, { _id: "UCtUQVJWd0JBQUE9dnVrRm1xWmJDVTQ9aGR2VjN0Z1gvK009dVpUVzMrY3N4eDg9", name: "Morgan", age: 26, friends: [ "UE9UQVJWd0JBQUE9cmZ4Y2MxVzNlOFk9TXV4dmJ0WU5JUFk9d0FkMW1oSHY2SWs9", "UCtUQVJWd0JBQUE9cHE1SmpnSE44eDQ9Rko2RmlJeHJrR1E9ZkN4cjROblB1WEU9"], isSynced: false}]));
             expect(res.length).toEqual(2);
         });
     });

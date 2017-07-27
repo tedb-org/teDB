@@ -2,7 +2,7 @@
  * Created by tsturzl on 4/11/17.
  */
 import Datastore from "./datastore";
-import { isEmpty, mergeSort, getSortType, flatten} from "./utils";
+import { isEmpty, mergeSort, getSortType, flatten, rmArrDups} from "./utils";
 
 export interface ICursor {
     sort(sort: any): this;
@@ -41,7 +41,7 @@ export default class Cursor implements ICursor {
      * @param query - query for search
      * @param count - is this a count operation? Default: false
      */
-    constructor(datastore: Datastore, query: any, count?: boolean) {
+    constructor(datastore: Datastore, query: any = {}, count?: boolean) {
         this.datastore = datastore;
         this.query = query;
         this.count = count || false;
@@ -86,22 +86,22 @@ export default class Cursor implements ICursor {
             if (isEmpty(this.query)) {
                 promisesGetIds.push(this.datastore.search());
             } else {
-                for (const field in this.query) {
-                    if (this.query.hasOwnProperty(field)) {
-                        if (field === "$and" || field === "$or") {
+                const searchKeys = Object.keys(this.query);
+                if (searchKeys.indexOf("$or") !== -1 || searchKeys.indexOf("$and") !== -1) {
+                    for (const field in this.query) {
+                        if (this.query.hasOwnProperty(field)) {
                             promisesGetIds.push(this.datastore.search(field, this.query[field]));
-                        } else {
-                            const searchKeys = Object.keys(this.query);
-                            const searchValues = Object.values(this.query);
-                            const newQuery: I$and = {$and: []};
-                            searchKeys.forEach((v: any, i: number) => {
-                                const obj: any = {};
-                                obj[v] = searchValues[i];
-                                newQuery.$and.push(obj);
-                            });
-                            promisesGetIds.push(this.datastore.search("$and", newQuery.$and));
                         }
                     }
+                } else {
+                    const searchValues = Object.values(this.query);
+                    const newQuery: I$and = {$and: []};
+                    searchKeys.forEach((v: any, i: number) => {
+                        const obj: any = {};
+                        obj[v] = searchValues[i];
+                        newQuery.$and.push(obj);
+                    });
+                    promisesGetIds.push(this.datastore.search("$and", newQuery.$and));
                 }
             }
 
@@ -110,11 +110,7 @@ export default class Cursor implements ICursor {
             joined
                 .then((idsArr: string[][]): number | Promise<any[]>  => {
                     idsArr = flatten(idsArr);
-                    const idSet: Set<string> = idsArr
-                        .reduce((a, b) => a.concat(b), [])
-                        .reduce((set: Set<string>, id): Set<string> => set.add(id), new Set());
-
-                    const ids = Array.from(idSet.values());
+                    const ids = rmArrDups(idsArr);
                     if (this.count) {
                         return ids.length;
                     } else {

@@ -74,14 +74,13 @@ export default class Index implements IIndex {
 
             const key: ASNDBS = getPath(doc, this.fieldName);
             if (key !== undefined && key !== null) {
-                if (key.constructor.name === "Array" && !this.isArray) {
+                if (Object.prototype.toString.call(key) === "[object Array]" && !this.isArray) {
                     this.avl.compareKeys = compareArray;
                     this.isArray = true;
                 }
             } else {
                 return reject(new Error("Key was not retrieved from document"));
             }
-
             try {
                 this.avl.insert(key, [doc._id]);
             } catch (e) {

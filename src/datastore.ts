@@ -5,8 +5,9 @@ import Index from "./indices";
 import { IindexOptions, IStorageDriver, IRange, IupdateOptions } from "./types";
 import { Cursor, Ioptions} from "./index";
 import { $set, $inc, $mul, $unset, $rename } from "./updateOperators";
-import { isEmpty, getPath, getUUID, getDate, rmDups, compressObj, expandObj } from "./utils";
+import { isEmpty, getPath, getUUID, getDate, rmDups, compressObj, expandObj, saveArrDups } from "./utils";
 import * as BTT from "binary-type-tree";
+import { flatten } from "./utils/flatten";
 
 /**
  * Array String Number, Date, Boolean, -> symbol was redacted. : Used for keys
@@ -178,7 +179,6 @@ export default class Datastore implements IDatastore {
                 compressObj(query, target);
                 query = target;
             }
-
             if (multi) {
                 return this.find(query)
                     .exec()
@@ -196,9 +196,6 @@ export default class Datastore implements IDatastore {
                                 return [];
                             }
                         } else {
-                            if (exactObjectFind) {
-                                res = res.map((doc) => expandObj(doc));
-                            }
                             // no return value, all are passed and used by reference.
                             this.updateDocsIndices(res, promises, indexPromises, operation, operators, operationKeys, reject);
                         }
@@ -238,15 +235,14 @@ export default class Datastore implements IDatastore {
                                     query = expandObj(query);
                                 }
                                 query._id = this.createId();
-                                this.indices.forEach((v) => indexPromises.push(v.insert(query)));
+                                this.indices.forEach((v: Index) => {
+                                    indexPromises.push(v.insert(query));
+                                });
                                 this.updateDocsIndices([query], promises, indexPromises, operation, operators, operationKeys, reject);
                             } else {
                                 return [];
                             }
                         } else {
-                            if (exactObjectFind) {
-                                res = res.map((doc) => expandObj(doc));
-                            }
                             this.updateDocsIndices(res, promises, indexPromises, operation, operators, operationKeys, reject);
                         }
                         return Promise.all(indexPromises);
@@ -254,7 +250,9 @@ export default class Datastore implements IDatastore {
                     .then(() => {
                         return Promise.all(promises);
                     })
-                    .then((docs: any[]) => rmDups(docs, "_id"))
+                    .then((docs: any[]) => {
+                        return rmDups(docs, "_id");
+                    })
                     .then((docs: any[]) => {
                         const docPromises: Array<Promise<any[]>> = [];
                         // save new docs to storage driver.
@@ -292,7 +290,6 @@ export default class Datastore implements IDatastore {
                         docs.forEach((document) => {
                             this.indices.forEach((i: Index, fieldName: string) => {
                                 promises.push(i.remove(document));
-
                             });
                         });
 
@@ -372,7 +369,7 @@ export default class Datastore implements IDatastore {
      * @param fieldName
      * @returns {Promise<any>}
      */
-    public saveIndex(fieldName: string): Promise<any> {
+    public saveIndex(fieldName: string): Promise<null> {
         return new Promise<any>((resolve, reject) => {
             const index = this.indices.get(fieldName);
             if (index) {
@@ -492,19 +489,11 @@ export default class Datastore implements IDatastore {
                 });
 
                 Promise.all(promises)
-                    .then((idsArr: string[][]): string[] => {
-                        const idSet: Set<string> = idsArr
-                            .reduce((a, b) => a.concat(b), [])
-                            .reduce((set: Set<string>, id): Set<string> => set.add(id), new Set());
-
-                        return Array.from(idSet.values());
-                    })
+                    .then((idsArr: string[][]) => flatten(idsArr))
                     .then(resolve)
                     .catch(reject);
 
             } else if (fieldName === "$and" && value instanceof Array) {
-                // Combine query results with set intersection
-                // this means all queries must match for the document's _id to return
                 const promises: Array<Promise<any>> = [];
 
                 value.forEach((query): void => {
@@ -516,19 +505,7 @@ export default class Datastore implements IDatastore {
                 });
 
                 Promise.all(promises)
-                    // Convert Array of Arrays into Array of Sets
-                    .then((idsArr: string[][]): Array<Set<string>> => {
-                        return idsArr.map((ids) =>
-                            ids.reduce((set: Set<string>, id): Set<string> => set.add(id), new Set()));
-                    })
-                    // Intersect all Sets into a single result Set
-                    .then((idSets: Array<Set<string>>): string[] => {
-                        // Having the results accumulated into a Set means duplication is not possible
-                        const resultSet: Set<string> = idSets
-                            .reduce((a, b) => new Set(Array.from(a).filter((x) => b.has(x))), idSets.pop());
-
-                        return Array.from(resultSet.values());
-                    })
+                    .then((idsArr: string[][]) => saveArrDups(idsArr))
                     .then(resolve)
                     .catch(reject);
 
