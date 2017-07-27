@@ -5,7 +5,7 @@ import Index from "./indices";
 import { IindexOptions, IStorageDriver, IRange, IupdateOptions } from "./types";
 import { Cursor, Ioptions} from "./index";
 import { $set, $inc, $mul, $unset, $rename } from "./updateOperators";
-import { isEmpty, getPath, getUUID, getDate, rmDups, compressObj, expandObj, saveArrDups } from "./utils";
+import { isEmpty, getPath, getUUID, getDate, rmObjDups, compressObj, expandObj, saveArrDups } from "./utils";
 import * as BTT from "binary-type-tree";
 import { flatten } from "./utils/flatten";
 
@@ -206,7 +206,7 @@ export default class Datastore implements IDatastore {
                     .then(() => {
                         return Promise.all(promises);
                     })
-                    .then((docs: any[]) => rmDups(docs, "_id"))
+                    .then((docs: any[]) => rmObjDups(docs, "_id"))
                     .then((docs: any[]) => {
                         const docPromises: Array<Promise<any[]>> = [];
                         // save new docs to storage driver.
@@ -251,7 +251,7 @@ export default class Datastore implements IDatastore {
                         return Promise.all(promises);
                     })
                     .then((docs: any[]) => {
-                        return rmDups(docs, "_id");
+                        return rmObjDups(docs, "_id");
                     })
                     .then((docs: any[]) => {
                         const docPromises: Array<Promise<any[]>> = [];
@@ -298,7 +298,7 @@ export default class Datastore implements IDatastore {
                         return docs;
                     }
                 })
-                .then((docs: any[]) => rmDups(docs, "_id"))
+                .then((docs: any[]) => rmObjDups(docs, "_id"))
                 .then((docs: any[]) => {
                     const promises: Array<Promise<null>> = [];
                     docs.forEach((document) => {

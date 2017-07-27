@@ -1,7 +1,6 @@
 
 import { Datastore } from "../../src";
 import { MockStorageDriver } from "../example";
-import { compressObj } from "../../src";
 import * as fs from "fs";
 
 describe("creating new Datastore, most update testing", () => {

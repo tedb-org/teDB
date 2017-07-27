@@ -1,4 +1,4 @@
-import {getDubs} from "./getDubs";
+import {getDups} from "./getDups";
 
 /**
  * Get only duplicates from array of arrays
@@ -41,7 +41,7 @@ export const saveArrDups = (arr: any[][]): Promise<any[]> => {
                     clear = true;
                     return [];
                 } else {
-                    return getDubs(init, item);
+                    return getDups(init, item);
                 }
             }
         }, []);

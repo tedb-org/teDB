@@ -15,62 +15,13 @@ TeDB uses an AVL balanced binary tree [binary-type-tree](https://github.com/marc
 
 Almost all operations use a method of the storage driver to save, delete, or search, for documents. This is why a robust storage driver is needed more specifically fit your needs. Feel free to write your own storage driver and possibly have it mentioned below for others to use. TeDB is almost completely Promise based and you can expect each method to return a promise, even if the return is null or never. A large benefit to using TeDB is it is written 100% in Typescript. Except for one javascript preprocessor for Jest. 
 
-When it comes to importing TeDB into your project using ES5 or ES6 works almost the same way. When using Typescript there are more important pieces you can pull such as class types and Interfaces. When using ES5 you will only need the Datastore. There are also many utility methods made available if you would like to use some of the internal methods of TeDB such as:
-* TeDB Utilities
-    * range - create range of utf8 characters given two utf8 characters, or numbers descending/ascending
-    * isEmpty - Return true if {}, [], "", null, undefined
-    * getDate - Used to retrieve the Date from a _id of Datastore document if you would rather not used the Datastore method available.
-    * rmDups - remove duplicates from an array. Only works for comparable `===` values
-    * getPath - get the value given dot notated string path `"path.in.object"`
-    * Base64: class - encode and decode base 64 encoding with `==` at the end. used to make _ids
-    * compareArray - Compare two arrays of equal length, returns 0 if equal, -1 if first is less and 1 if greater. Comparison only works for types **string, number, Date**
-    * NEW compressObj: - Convert object notation into dot object notation. 
-    ```typescript
-    const doc: any = { example: {obj: [1,2], is: "d"}, great: 9};
-    const target: any = {};
-    compressObj(doc, target);
-    console.log(target); 
-    // output
-    /*{
-      "example.obj.0": 1,
-      "example.obj.1": 2,
-      "example.is": "d",
-      "great": 9,
-    }*/
-    ```
-    * NEW expandObj: - Convert dot string notated object into expanded object.
-    ```typescript
-    const doc = {
-      "nested.reg.obj": 5,
-      "nested.dot.0": 3,
-      "nested.dot.1": 4,
-      "is": "nested",
-      "very.nested.obj.is.nested.far.in.obj": "hello";
-    }
-    const expanded = expandObj(doc);
-    console.log(expanded);
-    // output
-    /*{
-      nested: {
-          reg: {
-            obj: 5,
-          },
-          dot: [3, 4],
-      },
-      is: "nested",
-      very: {nested: {obj: {is: {nested: {far: {in: {
-        obj: "hello",
-      }}}}}}}
-    }*/
-    ```    
-    
 ```typescript
 // ES6 options
 import * as tedb from "tedb";
 import { Datastore, IDatastore, Cursor, Ioptions, IindexOptions,
  IupdateOptions, Index, IIndex, IStorageDriver, IRange, range,
- isEmpty, getDate, compareArray, rmDups, getPath, Base64,
- expandObj, compressObj, flatten} from "tedb";
+ isEmpty, getDate, compareArray, rmObjDups, getPath, Base64,
+ expandObj, compressObj, flatten, saveArrDups, getDups, rmArrDups} from "tedb";
 // ES5 options
 var tedb = require("tedb");
 var Datastore = require("tedb").Datastore;
@@ -99,6 +50,7 @@ Memory only storage drivers could utilize other in memory databases such as inde
 * <a href="#findcount-and-get-date-from-_id">Find/Count and Get Date from _id</a>
 * <a href="#update">Update</a>
 * <a href="#remove">Remove</a>
+* <a href="#utilities">Utilities</a>
 * <a href="#license">License</a>
  
 ## Creating a Datastore
@@ -373,6 +325,115 @@ Users.remove(target)
     .then(resolve)
     .catch(reject);
 ```
+
+## Utilities
+There are many methods used internally for TeDB that are tested against many other methods to be very quick and easy to use. Some were build as promises and other as regular functions. The reason for each is dependant on how it is used within TeDB. However these methods have such great use we decided to export them and have them available to use. To keep the dependency list to only one, which is also written by one of the active contributors, we had to write many of our own helper methods instead of importing a larger library with many unused methods. Making this package a standalone database.
+
+* TeDB Utilities
+    * range - create range of utf8 characters given two utf8 characters, or numbers descending/ascending
+    * isEmpty - Return true if {}, [], "", null, undefined
+    * getDate - Used to retrieve the Date from a _id of Datastore document if you would rather not used the Datastore method available.
+    * rmObjDups - remove duplicate objects from an array. Only works for comparable `===` values
+    * getPath - get the value given dot notated string path `"path.in.object"`
+    * Base64: class - encode and decode base 64 encoding with `==` at the end. used to make _ids
+    * compareArray - Compare two arrays of equal length, returns 0 if equal, -1 if first is less and 1 if greater. Comparison only works for types **string, number, Date**
+    * NEW compressObj: - Convert object notation into dot object notation.
+    * NEW expandObj: - Convert dot string notated object into expanded object.
+    * NEW flatten: - Compress arrays of arrays into one array.
+    * NEW saveArrDups: - Save duplicated items in array of arrays.
+    * NEW getDups: - Compare two arrays and get only the duplicate items in new array.
+    * NEW rmArrDups: - Remove duplicate items in array.
+    
+range
+```typescript
+const numbers: number[] = range(-5, 5) as number[]; // have to specify - bc multiple possibilities
+const strs: string[] = range("a", "b") as string[]; // utf8 range
+```
+isEmpty
+```typescript
+console.log(isEmpty([]) && isEmpty({}) && isEmpty("") && isEmpty(null) && isEmpty(undefined)); // true
+```
+getDate - shown above
+
+rmObjDups
+```typescript
+const list = any[] = [
+    {a: "a"}, {a: "a"}, {a: "b"}, {a: "c"}, {a: "c"}, {a: "b"}
+];
+const newList = rmObjDups(list, "a");
+console.log(newList); // [{a: "a"}, {a: "b"}, {a: "c"}]
+```
+getPath
+```typescript
+const obj = {nested: {value: {is: {here: 3}}}};
+console.log(getPath("nested.value.is.here")); // 3
+```
+
+Base64 - recommend reading the source
+
+compressObj
+```typescript
+const doc: any = { example: {obj: [1,2], is: "d"}, great: 9};
+const target: any = {};
+compressObj(doc, target);
+console.log(target); 
+// output
+/*{
+  "example.obj.0": 1,
+  "example.obj.1": 2,
+  "example.is": "d",
+  "great": 9,
+}*/
+```
+expandObj
+```typescript
+const doc = {
+  "nested.reg.obj": 5,
+  "nested.dot.0": 3,
+  "nested.dot.1": 4,
+  "is": "nested",
+  "very.nested.obj.is.nested.far.in.obj": "hello";
+}
+const expanded = expandObj(doc);
+console.log(expanded);
+// output
+/*{
+  nested: {
+      reg: {
+        obj: 5,
+      },
+      dot: [3, 4],
+  },
+  is: "nested",
+  very: {nested: {obj: {is: {nested: {far: {in: {
+    obj: "hello",
+  }}}}}}}
+}*/
+```
+flatten
+```typescript
+const hArray = [[1,2], 3, [[[[4]],[5]]],[6,[[[7]]]]];
+console.log(flatten(hArray)); // [1,2,3,4,5,6,7];
+```
+saveArrDups
+```typescript
+const dArray = [[1,2],[1],[23,4,1,2]];
+saveArrDups(dArray)
+    .then((res) => {
+        console.log(res); // [1, 1, 1];
+    });
+```
+getDups
+```typescript
+const da = [1, 2, 3];
+const db = [2, 3, 5];
+console.log(getDups(da, db)); // [1, 2];
+```
+rmArrDups
+```typescript
+const arrayD = [1, 1, 1, 2, 2, 3];
+console.log(rmArrDups(arrayD)); // [1, 2, 3];
+```  
 
 ## License
 See [License](LICENSE)

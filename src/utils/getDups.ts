@@ -12,6 +12,6 @@
  * @param {any[]} arr2
  * @returns {any[]}
  */
-export const getDubs = (arr1: any[], arr2: any[]): any[] => {
+export const getDups = (arr1: any[], arr2: any[]): any[] => {
     return arr1.filter((val) => arr2.indexOf(val) !== -1);
 };

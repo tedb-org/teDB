@@ -23,12 +23,10 @@
  *    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  */
 
-import { Index, IIndex, Datastore, IDatastore, Cursor,
-    IStorageDriver, IRange } from "../../src";
+import { Index, Datastore } from "../../src";
 import { getDate } from "../../src/utils";
 import { MockStorageDriver } from "../example";
 import * as fs from "fs";
-import ErrnoException = NodeJS.ErrnoException;
 
 beforeAll(() => {
     const cwd = process.cwd();
