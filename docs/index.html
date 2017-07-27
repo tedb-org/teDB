@@ -74,62 +74,12 @@
 				<h2 id="usage">Usage</h2>
 				<p>TeDB uses an AVL balanced binary tree <a href="https://github.com/marcusjwhelan/binary-type-tree">binary-type-tree</a> to save indexed fields of documents. TeDB does not save documents to memory or have a set way of saving data. It is hooked up to a storage driver that can either work to persists data to disk or save data to memory. The binary tree only saves the value and _id to memory allowing for larger data sets to be indexed. </p>
 				<p>Almost all operations use a method of the storage driver to save, delete, or search, for documents. This is why a robust storage driver is needed more specifically fit your needs. Feel free to write your own storage driver and possibly have it mentioned below for others to use. TeDB is almost completely Promise based and you can expect each method to return a promise, even if the return is null or never. A large benefit to using TeDB is it is written 100% in Typescript. Except for one javascript preprocessor for Jest. </p>
-				<p>When it comes to importing TeDB into your project using ES5 or ES6 works almost the same way. When using Typescript there are more important pieces you can pull such as class types and Interfaces. When using ES5 you will only need the Datastore. There are also many utility methods made available if you would like to use some of the internal methods of TeDB such as:</p>
-				<ul>
-					<li>TeDB Utilities<ul>
-							<li>range - create range of utf8 characters given two utf8 characters, or numbers descending/ascending</li>
-							<li>isEmpty - Return true if {}, [], &quot;&quot;, null, undefined</li>
-							<li>getDate - Used to retrieve the Date from a _id of Datastore document if you would rather not used the Datastore method available.</li>
-							<li>rmDups - remove duplicates from an array. Only works for comparable <code>===</code> values</li>
-							<li>getPath - get the value given dot notated string path <code>&quot;path.in.object&quot;</code></li>
-							<li>Base64: class - encode and decode base 64 encoding with <code>==</code> at the end. used to make _ids</li>
-							<li>compareArray - Compare two arrays of equal length, returns 0 if equal, -1 if first is less and 1 if greater. Comparison only works for types <strong>string, number, Date</strong></li>
-							<li>NEW compressObj: - Convert object notation into dot object notation. <pre><code class="lang-typescript"><span class="hljs-keyword">const</span> doc: <span class="hljs-built_in">any</span> = { example: {obj: [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>], is: <span class="hljs-string">"d"</span>}, great: <span class="hljs-number">9</span>};
-<span class="hljs-keyword">const</span> target: <span class="hljs-built_in">any</span> = {};
-compressObj(doc, target);
-<span class="hljs-built_in">console</span>.log(target); 
-<span class="hljs-comment">// output</span>
-<span class="hljs-comment">/*{
-"example.obj.0": 1,
-"example.obj.1": 2,
-"example.is": "d",
-"great": 9,
-}*/</span>
-</code></pre>
-							</li>
-							<li>NEW expandObj: - Convert dot string notated object into expanded object.<pre><code class="lang-typescript"><span class="hljs-keyword">const</span> doc = {
-<span class="hljs-string">"nested.reg.obj"</span>: <span class="hljs-number">5</span>,
-<span class="hljs-string">"nested.dot.0"</span>: <span class="hljs-number">3</span>,
-<span class="hljs-string">"nested.dot.1"</span>: <span class="hljs-number">4</span>,
-<span class="hljs-string">"is"</span>: <span class="hljs-string">"nested"</span>,
-<span class="hljs-string">"very.nested.obj.is.nested.far.in.obj"</span>: <span class="hljs-string">"hello"</span>;
-}
-<span class="hljs-keyword">const</span> expanded = expandObj(doc);
-<span class="hljs-built_in">console</span>.log(expanded);
-<span class="hljs-comment">// output</span>
-<span class="hljs-comment">/*{
-nested: {
-    reg: {
-      obj: 5,
-    },
-    dot: [3, 4],
-},
-is: "nested",
-very: {nested: {obj: {is: {nested: {far: {in: {
-  obj: "hello",
-}}}}}}}
-}*/</span>
-</code></pre>
-							</li>
-						</ul>
-					</li>
-				</ul>
 				<pre><code class="lang-typescript"><span class="hljs-comment">// ES6 options</span>
 <span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> tedb <span class="hljs-keyword">from</span> <span class="hljs-string">"tedb"</span>;
 <span class="hljs-keyword">import</span> { Datastore, IDatastore, Cursor, Ioptions, IindexOptions,
  IupdateOptions, Index, IIndex, IStorageDriver, IRange, range,
- isEmpty, getDate, compareArray, rmDups, getPath, Base64,
- expandObj, compressObj, flatten} <span class="hljs-keyword">from</span> <span class="hljs-string">"tedb"</span>;
+ isEmpty, getDate, compareArray, rmObjDups, getPath, Base64,
+ expandObj, compressObj, flatten, saveArrDups, getDups, rmArrDups} <span class="hljs-keyword">from</span> <span class="hljs-string">"tedb"</span>;
 <span class="hljs-comment">// ES5 options</span>
 <span class="hljs-keyword">var</span> tedb = <span class="hljs-built_in">require</span>(<span class="hljs-string">"tedb"</span>);
 <span class="hljs-keyword">var</span> Datastore = <span class="hljs-built_in">require</span>(<span class="hljs-string">"tedb"</span>).Datastore;
@@ -152,6 +102,7 @@ very: {nested: {obj: {is: {nested: {far: {in: {
 					<li><a href="#findcount-and-get-date-from-_id">Find/Count and Get Date from _id</a></li>
 					<li><a href="#update">Update</a></li>
 					<li><a href="#remove">Remove</a></li>
+					<li><a href="#utilities">Utilities</a></li>
 					<li><a href="#license">License</a></li>
 				</ul>
 				<h2 id="creating-a-datastore">Creating a Datastore</h2>
@@ -422,6 +373,103 @@ Users.remove(target)
     .then(resolve)
     .catch(reject);
 </code></pre>
+				<h2 id="utilities">Utilities</h2>
+				<p>There are many methods used internally for TeDB that are tested against many other methods to be very quick and easy to use. Some were build as promises and other as regular functions. The reason for each is dependant on how it is used within TeDB. However these methods have such great use we decided to export them and have them available to use. To keep the dependency list to only one, which is also written by one of the active contributors, we had to write many of our own helper methods instead of importing a larger library with many unused methods. Making this package a standalone database.</p>
+				<ul>
+					<li>TeDB Utilities<ul>
+							<li>range - create range of utf8 characters given two utf8 characters, or numbers descending/ascending</li>
+							<li>isEmpty - Return true if {}, [], &quot;&quot;, null, undefined</li>
+							<li>getDate - Used to retrieve the Date from a _id of Datastore document if you would rather not used the Datastore method available.</li>
+							<li>rmObjDups - remove duplicate objects from an array. Only works for comparable <code>===</code> values</li>
+							<li>getPath - get the value given dot notated string path <code>&quot;path.in.object&quot;</code></li>
+							<li>Base64: class - encode and decode base 64 encoding with <code>==</code> at the end. used to make _ids</li>
+							<li>compareArray - Compare two arrays of equal length, returns 0 if equal, -1 if first is less and 1 if greater. Comparison only works for types <strong>string, number, Date</strong></li>
+							<li>NEW compressObj: - Convert object notation into dot object notation.</li>
+							<li>NEW expandObj: - Convert dot string notated object into expanded object.</li>
+							<li>NEW flatten: - Compress arrays of arrays into one array.</li>
+							<li>NEW saveArrDups: - Save duplicated items in array of arrays.</li>
+							<li>NEW getDups: - Compare two arrays and get only the duplicate items in new array.</li>
+							<li>NEW rmArrDups: - Remove duplicate items in array.</li>
+						</ul>
+					</li>
+				</ul>
+				<p>range</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">const</span> numbers: <span class="hljs-built_in">number</span>[] = range(<span class="hljs-number">-5</span>, <span class="hljs-number">5</span>) <span class="hljs-keyword">as</span> <span class="hljs-built_in">number</span>[]; <span class="hljs-comment">// have to specify - bc multiple possibilities</span>
+<span class="hljs-keyword">const</span> strs: <span class="hljs-built_in">string</span>[] = range(<span class="hljs-string">"a"</span>, <span class="hljs-string">"b"</span>) <span class="hljs-keyword">as</span> <span class="hljs-built_in">string</span>[]; <span class="hljs-comment">// utf8 range</span>
+</code></pre>
+				<p>isEmpty</p>
+				<pre><code class="lang-typescript"><span class="hljs-built_in">console</span>.log(isEmpty([]) &amp;&amp; isEmpty({}) &amp;&amp; isEmpty(<span class="hljs-string">""</span>) &amp;&amp; isEmpty(<span class="hljs-literal">null</span>) &amp;&amp; isEmpty(<span class="hljs-literal">undefined</span>)); <span class="hljs-comment">// true</span>
+</code></pre>
+				<p>getDate - shown above</p>
+				<p>rmObjDups</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">const</span> list = <span class="hljs-built_in">any</span>[] = [
+    {a: <span class="hljs-string">"a"</span>}, {a: <span class="hljs-string">"a"</span>}, {a: <span class="hljs-string">"b"</span>}, {a: <span class="hljs-string">"c"</span>}, {a: <span class="hljs-string">"c"</span>}, {a: <span class="hljs-string">"b"</span>}
+];
+<span class="hljs-keyword">const</span> newList = rmObjDups(list, <span class="hljs-string">"a"</span>);
+<span class="hljs-built_in">console</span>.log(newList); <span class="hljs-comment">// [{a: "a"}, {a: "b"}, {a: "c"}]</span>
+</code></pre>
+				<p>getPath</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">const</span> obj = {nested: {value: {is: {here: <span class="hljs-number">3</span>}}}};
+<span class="hljs-built_in">console</span>.log(getPath(<span class="hljs-string">"nested.value.is.here"</span>)); <span class="hljs-comment">// 3</span>
+</code></pre>
+				<p>Base64 - recommend reading the source</p>
+				<p>compressObj</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">const</span> doc: <span class="hljs-built_in">any</span> = { example: {obj: [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>], is: <span class="hljs-string">"d"</span>}, great: <span class="hljs-number">9</span>};
+<span class="hljs-keyword">const</span> target: <span class="hljs-built_in">any</span> = {};
+compressObj(doc, target);
+<span class="hljs-built_in">console</span>.log(target); 
+<span class="hljs-comment">// output</span>
+<span class="hljs-comment">/*{
+  "example.obj.0": 1,
+  "example.obj.1": 2,
+  "example.is": "d",
+  "great": 9,
+}*/</span>
+</code></pre>
+				<p>expandObj</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">const</span> doc = {
+  <span class="hljs-string">"nested.reg.obj"</span>: <span class="hljs-number">5</span>,
+  <span class="hljs-string">"nested.dot.0"</span>: <span class="hljs-number">3</span>,
+  <span class="hljs-string">"nested.dot.1"</span>: <span class="hljs-number">4</span>,
+  <span class="hljs-string">"is"</span>: <span class="hljs-string">"nested"</span>,
+  <span class="hljs-string">"very.nested.obj.is.nested.far.in.obj"</span>: <span class="hljs-string">"hello"</span>;
+}
+<span class="hljs-keyword">const</span> expanded = expandObj(doc);
+<span class="hljs-built_in">console</span>.log(expanded);
+<span class="hljs-comment">// output</span>
+<span class="hljs-comment">/*{
+  nested: {
+      reg: {
+        obj: 5,
+      },
+      dot: [3, 4],
+  },
+  is: "nested",
+  very: {nested: {obj: {is: {nested: {far: {in: {
+    obj: "hello",
+  }}}}}}}
+}*/</span>
+</code></pre>
+				<p>flatten</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">const</span> hArray = [[<span class="hljs-number">1</span>,<span class="hljs-number">2</span>], <span class="hljs-number">3</span>, [[[[<span class="hljs-number">4</span>]],[<span class="hljs-number">5</span>]]],[<span class="hljs-number">6</span>,[[[<span class="hljs-number">7</span>]]]]];
+<span class="hljs-built_in">console</span>.log(flatten(hArray)); <span class="hljs-comment">// [1,2,3,4,5,6,7];</span>
+</code></pre>
+				<p>saveArrDups</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">const</span> dArray = [[<span class="hljs-number">1</span>,<span class="hljs-number">2</span>],[<span class="hljs-number">1</span>],[<span class="hljs-number">23</span>,<span class="hljs-number">4</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]];
+saveArrDups(dArray)
+    .then(<span class="hljs-function">(<span class="hljs-params">res</span>) =&gt;</span> {
+        <span class="hljs-built_in">console</span>.log(res); <span class="hljs-comment">// [1, 1, 1];</span>
+    });
+</code></pre>
+				<p>getDups</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">const</span> da = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>];
+<span class="hljs-keyword">const</span> db = [<span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>];
+<span class="hljs-built_in">console</span>.log(getDups(da, db)); <span class="hljs-comment">// [1, 2];</span>
+</code></pre>
+				<p>rmArrDups</p>
+				<pre><code class="lang-typescript"><span class="hljs-keyword">const</span> arrayD = [<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>];
+<span class="hljs-built_in">console</span>.log(rmArrDups(arrayD)); <span class="hljs-comment">// [1, 2, 3];</span>
+</code></pre>
 				<h2 id="license">License</h2>
 				<p>See <a href="LICENSE">License</a></p>
 			</div>
@@ -472,7 +520,7 @@ Users.remove(target)
 						<a href="modules/_utils_flatten_.html">"utils/flatten"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="modules/_utils_getdubs_.html">"utils/get<wbr>Dubs"</a>
+						<a href="modules/_utils_getdups_.html">"utils/get<wbr>Dups"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_utils_id_hasher_.html">"utils/id_<wbr>hasher"</a>
