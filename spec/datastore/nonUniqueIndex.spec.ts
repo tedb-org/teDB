@@ -44,7 +44,7 @@ describe("testing a non unique indexed datastore", () => {
             .then((indices) => {
                 const ind: Index = indices.get("name");
                 if (ind) {
-                    return ind.toJSON();
+                   return ind.toJSON();
                 }
             })
             .then((res) => {

@@ -139,16 +139,16 @@ describe("testing indices storage and fetching functionality", () => {
                     return ind.toJSON();
                 }
             })
-        .then((res) => {
-                const rezult: any = JSON.parse(res);
-                expect(rezult.length).toEqual(3);
-                expect(rezult[0].key).toEqual(1);
-                expect(rezult[0].value.length).toEqual(1);
-                expect(rezult[1].key).toEqual(2);
-                expect(rezult[1].value.length).toEqual(1);
-                expect(rezult[2].key).toEqual(0);
-                expect(rezult[2].value.length).toEqual(1);
-        });
+            .then((res) => {
+                    const rezult: any = JSON.parse(res);
+                    expect(rezult.length).toEqual(3);
+                    expect(rezult[0].key).toEqual(1);
+                    expect(rezult[0].value.length).toEqual(1);
+                    expect(rezult[1].key).toEqual(2);
+                    expect(rezult[1].value.length).toEqual(1);
+                    expect(rezult[2].key).toEqual(0);
+                    expect(rezult[2].value.length).toEqual(1);
+            });
     });
 
     test("clearing", () => {
