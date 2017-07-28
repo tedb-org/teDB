@@ -77,8 +77,8 @@ describe("testing indices storage and fetching functionality", () => {
                 objUIndexTests = res;
                 expect(res.length).toEqual(3);
                 expect(res[0].key).toEqual(1);
-                expect(res[1].key).toEqual(2);
-                expect(res[2].key).toEqual(0);
+                expect(res[1].key).toEqual(0);
+                expect(res[2].key).toEqual(2);
                 expect(res[0].value.length).toEqual(1);
                 expect(res[1].value.length).toEqual(1);
                 expect(res[2].value.length).toEqual(1);
@@ -144,9 +144,9 @@ describe("testing indices storage and fetching functionality", () => {
                     expect(rezult.length).toEqual(3);
                     expect(rezult[0].key).toEqual(1);
                     expect(rezult[0].value.length).toEqual(1);
-                    expect(rezult[1].key).toEqual(2);
+                    expect(rezult[1].key).toEqual(0);
                     expect(rezult[1].value.length).toEqual(1);
-                    expect(rezult[2].key).toEqual(0);
+                    expect(rezult[2].key).toEqual(2);
                     expect(rezult[2].value.length).toEqual(1);
             });
     });

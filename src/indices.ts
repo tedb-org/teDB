@@ -171,9 +171,7 @@ export default class Index implements IIndex {
      * @returns {Promise<string>}
      */
     public toJSON(): Promise<string> {
-        return new Promise<string>((resolve) => {
-            resolve(this.avl.tree.toJSON<AVLTree>());
-        });
+        return this.avl.tree.toJSON();
     }
 
     /**

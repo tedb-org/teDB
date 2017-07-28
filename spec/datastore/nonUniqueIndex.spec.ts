@@ -199,8 +199,8 @@ describe("testing a non unique indexed datastore", () => {
             .then((res) => {
                 const json = JSON.parse(res);
                 expect(json[0].key).toEqual("b");
-                expect(json[1].key).toEqual("d");
-                expect(json[2].key).toEqual("a");
+                expect(json[1].key).toEqual("a");
+                expect(json[2].key).toEqual("d");
                 expect(json[3].key).toEqual("f");
                 expect(json[4].key).toEqual("c");
             });

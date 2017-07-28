@@ -193,8 +193,8 @@ describe("creating new Datastore, most update testing", () => {
             const index = res;
             expect(index.length).toEqual(6);
             expect(index[0].key).toEqual("Oklahoma");
-            expect(index[1].key).toEqual("Texas");
-            expect(index[2].key).toEqual("Massachusetts");
+            expect(index[1].key).toEqual("Massachusetts");
+            expect(index[2].key).toEqual("Texas");
             expect(index[3].key).toEqual("Washington");
             expect(index[4].key).toEqual("South Carolina");
             expect(index[5].key).toEqual("California");
