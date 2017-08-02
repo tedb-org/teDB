@@ -427,7 +427,7 @@ getDups
 ```typescript
 const da = [1, 2, 3];
 const db = [2, 3, 5];
-console.log(getDups(da, db)); // [1, 2];
+console.log(getDups(da, db)); // [2];
 ```
 rmArrDups
 ```typescript
