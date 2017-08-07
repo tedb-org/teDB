@@ -11,6 +11,9 @@ export interface ICursor {
     exec(): Promise<any[] | number>;
 }
 
+/**
+ * Simply used for $anding default inputs.
+ */
 export interface I$and {
     $and: any[];
 }

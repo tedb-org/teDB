@@ -11,10 +11,12 @@ import { AVLTree, ASNDBS, SNDBSA } from "binary-type-tree";
  * Index interface used for the datastore indices
  * Inherits types from binary-type-tree
  *
+ * ~~~
  * Array String Number, Date, Boolean, -> symbol was redacted.
  * ASNDBS = Array<any[]|string|number|Date|boolean|null>|string|number|Date|boolean|null
  * -> redacted symbol, Number, Date, Boolean, String, Array
  * SNDBSA = Array<{}|any[]|string|number|Date|boolean|null>;
+ * ~~~
  */
 export interface IIndex {
     insert(doc: any): Promise<any>;

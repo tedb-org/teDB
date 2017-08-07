@@ -9,5 +9,6 @@ tslint.json
 *.DS_Store
 .idea/
 src/
+docs/
 coverage/
 .travis.yml

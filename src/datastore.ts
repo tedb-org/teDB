@@ -10,10 +10,12 @@ import * as BTT from "binary-type-tree";
 import { flatten } from "./utils/flatten";
 
 /**
+ * ~~~
  * Array String Number, Date, Boolean, -> symbol was redacted. : Used for keys
  * BTT.ASNDBS = Array<any[]|string|number|Date|boolean|null>|string|number|Date|boolean|null
  * -> redacted symbol, Number, Date, Boolean, String, Array : Used for values
  * BTT.SNDBSA = Array<{}|any[]|string|number|Date|boolean|null>;
+ * ~~~
  */
 
 export interface IDatastore {
