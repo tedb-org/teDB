@@ -302,6 +302,32 @@ describe("testing the datastore, testing loading in and querying persisted data"
         });
     });
 
+    test("finding with $created_at", () => {
+        expect.assertions(8);
+        return Users.find({})
+            .limit(3)
+            .sort({$created_at: -1})
+            .exec()
+            .then((res) => {
+                res = res as any[];
+                expect(res.length).toEqual(3);
+                expect(res[0].name).toEqual("Gavin");
+                expect(res[1].name).toEqual("Scott");
+                expect(res[2].name).toEqual("Marcus");
+                return Users.find({})
+                    .limit(3)
+                    .sort({$created_at: 1})
+                    .exec();
+            })
+            .then((res) => {
+                res = res as any[];
+                expect(res.length).toEqual(3);
+                expect(res[0].name).toEqual("Marcus");
+                expect(res[1].name).toEqual("Scott");
+                expect(res[2].name).toEqual("Gavin");
+            });
+    });
+
     test("the cursor with index", () => {
         expect.assertions(2);
         return Users.find({age: {$gt: 1}})

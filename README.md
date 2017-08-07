@@ -170,6 +170,10 @@ The find method actually will search through all the documents queried by either
 
 If you would rather not store memory for each _id inserted then use a storage driver that does not use the keys() method and you will not be able to search without a query.
 
+Find now supports a special sort field **$created_at** for sorting your documents by created at time. Each _id holds 
+the time of creation down to the millisecond. We would advise against creating your own created_at time or any `$` 
+fields in your documents. We might, in the future, add extra functionality to more `$` fields.
+
 * Find query options
     * $or - search an object query of one **or** multiple
     * $and - search an object with **and** results or multiple
@@ -187,7 +191,18 @@ Users.find({$and: [
     .then(resolve)
     .catch(reject);
 ``` 
-    
+
+```typescript
+// Using the $created_at sort - sorts by time doc was created.
+Users.find({})
+    .sort({$created_at: -1}) // descending
+    // or
+    .sort({$created_at: 1}) // ascending
+    .exec()
+    .then(resolve)
+    .catch(reject);
+```
+
 ```typescript
 // simple find
 Users.find({name: "xyz"})

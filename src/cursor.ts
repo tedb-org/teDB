@@ -121,13 +121,25 @@ export default class Cursor implements ICursor {
                     if (this.options.sort) {
                         try {
                             const sortKey = Object.keys(this.options.sort)[0];
+                            // at created at field for querying
+                            if (sortKey === "$created_at") {
+                                res.forEach((doc) => {
+                                    doc.$created_at = this.datastore.getIdDate(doc._id);
+                                });
+                            }
                             const sortValue = this.options.sort[sortKey];
                             const sortType = getSortType(res, sortKey);
                             if (sortType === "") {
                                 // can't sort null or undefined
                                 return res;
                             } else {
-                                return mergeSort(res, sortKey, sortValue, sortType);
+                                if (sortKey === "$created_at") {
+                                    const removeCreatedAtField = mergeSort(res, sortKey, sortValue, sortType);
+                                    removeCreatedAtField.forEach((doc: any) => delete doc.$created_at);
+                                    return removeCreatedAtField;
+                                } else {
+                                    return mergeSort(res, sortKey, sortValue, sortType);
+                                }
                             }
                         } catch (e) {
                             return reject(e);

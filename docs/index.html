@@ -63,13 +63,13 @@
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
 				<h1 id="-tedb-https-github-com-tsturzl-tedb-"><a href="https://github.com/tsturzl/teDB">TeDB</a></h1>
-				<p>A TypeScript Embedded Database.</p>
+				<p>A TypeScript Embedded Database. A structure sane embedded database with <a href="https://tedb-org.github.io/#writing-a-storage-driver-for-tedb">pluggable storage</a> and clean concise <a href="https://tedb-org.github.io/">documentation</a>.</p>
 				<h2 id="install">Install</h2>
 				<pre><code class="lang-bash">npm install --save tedb
 </code></pre>
 				<h2 id="resources-">Resources:</h2>
 				<ul>
-					<li><a href="">API Documentation</a></li>
+					<li><a href="https://tedb-org.github.io/">API Documentation</a></li>
 				</ul>
 				<h2 id="usage">Usage</h2>
 				<p>TeDB uses an AVL balanced binary tree <a href="https://github.com/marcusjwhelan/binary-type-tree">binary-type-tree</a> to save indexed fields of documents. TeDB does not save documents to memory or have a set way of saving data. It is hooked up to a storage driver that can either work to persists data to disk or save data to memory. The binary tree only saves the value and _id to memory allowing for larger data sets to be indexed. </p>
@@ -220,6 +220,9 @@ docs.forEach(<span class="hljs-function">(<span class="hljs-params">doc</span>) 
 				</ul>
 				<p>The find method actually will search through all the documents queried by either the index if indexed or by a collection search if not indexed. In the storage driver when documents are inserted, or removed their should be a keys array holding the keys of all the documents inserted just in case a field is searched without a query. If you search with an empty query the <strong>keys</strong> method of the storage driver is used that should return all the _ids of the datastore instead of having to retrieve all the keys from the storage driver memory/drive. </p>
 				<p>If you would rather not store memory for each _id inserted then use a storage driver that does not use the keys() method and you will not be able to search without a query.</p>
+				<p>Find now supports a special sort field <strong>$created_at</strong> for sorting your documents by created at time. Each _id holds
+					the time of creation down to the millisecond. We would advise against creating your own created_at time or any <code>$</code>
+				fields in your documents. We might, in the future, add extra functionality to more <code>$</code> fields.</p>
 				<ul>
 					<li>Find query options<ul>
 							<li>$or - search an object query of one <strong>or</strong> multiple</li>
@@ -235,6 +238,15 @@ Users.find({$and: [
     {age: {$ne: <span class="hljs-number">28</span>}},
     {age: {$lte: <span class="hljs-number">35</span>}},
     ]}).exec()
+    .then(resolve)
+    .catch(reject);
+</code></pre>
+				<pre><code class="lang-typescript"><span class="hljs-comment">// Using the $created_at sort - sorts by time doc was created.</span>
+Users.find({})
+    .sort({$created_at: <span class="hljs-number">-1</span>}) <span class="hljs-comment">// descending</span>
+    <span class="hljs-comment">// or</span>
+    .sort({$created_at: <span class="hljs-number">1</span>}) <span class="hljs-comment">// ascending</span>
+    .exec()
     .then(resolve)
     .catch(reject);
 </code></pre>
@@ -464,7 +476,7 @@ saveArrDups(dArray)
 				<p>getDups</p>
 				<pre><code class="lang-typescript"><span class="hljs-keyword">const</span> da = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>];
 <span class="hljs-keyword">const</span> db = [<span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>];
-<span class="hljs-built_in">console</span>.log(getDups(da, db)); <span class="hljs-comment">// [1, 2];</span>
+<span class="hljs-built_in">console</span>.log(getDups(da, db)); <span class="hljs-comment">// [2, 3];</span>
 </code></pre>
 				<p>rmArrDups</p>
 				<pre><code class="lang-typescript"><span class="hljs-keyword">const</span> arrayD = [<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>];
