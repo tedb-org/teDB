@@ -9,6 +9,7 @@ npm install --save tedb
 ## Resources:
 
  * [API Documentation](https://tedb-org.github.io/)
+ * [GitHub](https://github.com/tedb-org/teDB)
 
 ## Usage
 TeDB uses an AVL balanced binary tree [binary-type-tree](https://github.com/marcusjwhelan/binary-type-tree) to save indexed fields of documents. TeDB does not save documents to memory or have a set way of saving data. It is hooked up to a storage driver that can either work to persists data to disk or save data to memory. The binary tree only saves the value and _id to memory allowing for larger data sets to be indexed. 
