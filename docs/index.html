@@ -70,6 +70,7 @@
 				<h2 id="resources-">Resources:</h2>
 				<ul>
 					<li><a href="https://tedb-org.github.io/">API Documentation</a></li>
+					<li><a href="https://github.com/tedb-org/teDB">GitHub</a></li>
 				</ul>
 				<h2 id="usage">Usage</h2>
 				<p>TeDB uses an AVL balanced binary tree <a href="https://github.com/marcusjwhelan/binary-type-tree">binary-type-tree</a> to save indexed fields of documents. TeDB does not save documents to memory or have a set way of saving data. It is hooked up to a storage driver that can either work to persists data to disk or save data to memory. The binary tree only saves the value and _id to memory allowing for larger data sets to be indexed. </p>
@@ -119,8 +120,8 @@
 					<li>Index Options<ul>
 							<li>fieldName - The path as a string <code>&quot;path.to.index&quot;</code> to be indexed on the object</li>
 							<li>unique - Set value to have a unique restriction or not</li>
-							<li>checkKeyEquality - You can pass your own equality check method: <a href="https://github.com/marcusjwhelan/binary-type-tree/blob/master/src/bTreeUtils.ts#L92">Default</a></li>
-							<li>compareKeys - You can pass your own method to compare keys: <a href="https://github.com/marcusjwhelan/binary-type-tree/blob/master/src/bTreeUtils.ts#L44">Default</a><pre><code class="lang-typescript"><span class="hljs-comment">// Create Index</span>
+							<li>checkKeyEquality - You can pass your own equality check method: <a href="https://github.com/marcusjwhelan/binary-type-tree/blob/master/src/utils/bTreeUtils.ts#L92">Default</a></li>
+							<li>compareKeys - You can pass your own method to compare keys: <a href="https://github.com/marcusjwhelan/binary-type-tree/blob/master/src/utils/bTreeUtils.ts#L44">Default</a><pre><code class="lang-typescript"><span class="hljs-comment">// Create Index</span>
 <span class="hljs-comment">// Returns a promise of null</span>
 <span class="hljs-keyword">return</span> Users.ensureIndex({fieldName: <span class="hljs-string">"username"</span>, unique: <span class="hljs-literal">true</span>});
 </code></pre>

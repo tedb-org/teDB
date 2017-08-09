@@ -69,8 +69,8 @@ Indices are saved as a Map on the Datastore class for each property. When you cr
 * Index Options
     * fieldName - The path as a string `"path.to.index"` to be indexed on the object
     * unique - Set value to have a unique restriction or not
-    * checkKeyEquality - You can pass your own equality check method: [Default](https://github.com/marcusjwhelan/binary-type-tree/blob/master/src/bTreeUtils.ts#L92)
-    * compareKeys - You can pass your own method to compare keys: [Default](https://github.com/marcusjwhelan/binary-type-tree/blob/master/src/bTreeUtils.ts#L44)
+    * checkKeyEquality - You can pass your own equality check method: [Default](https://github.com/marcusjwhelan/binary-type-tree/blob/master/src/utils/bTreeUtils.ts#L92)
+    * compareKeys - You can pass your own method to compare keys: [Default](https://github.com/marcusjwhelan/binary-type-tree/blob/master/src/utils/bTreeUtils.ts#L44)
 ```typescript
 // Create Index
 // Returns a promise of null
