@@ -227,8 +227,36 @@ export class MockStorageDriver implements IStorageDriver {
      * Return all the keys = _ids of all documents.
      */
     public keys(): Promise<string[]> {
-        return new Promise<string[]>((resolve) => {
-            resolve(this.allKeys);
+        return new Promise<string[]>((resolve, reject) => {
+            if (this.allKeys.length === 0) {
+                const cwd = process.cwd();
+                fs.readdir(`${cwd}/spec/example/db/${this.filePath}`, (err: ErrnoException, files) => {
+                    if (err) {
+                        return reject(err);
+                    }
+                    if (files.length > 0) {
+                        const ids: string[] = [];
+                        files.forEach((v) => {
+                            try {
+                                const fileName = `${cwd}/spec/example/db/${this.filePath}/${v}`;
+                                const data = fs.readFileSync(fileName).toString();
+                                if (data) {
+                                    const doc = JSON.parse(data);
+                                    if (this.allKeys.indexOf(doc._id) === -1) {
+                                        this.allKeys.push(doc._id);
+                                        ids.push(doc._id);
+                                    }
+                                }
+                            } catch (e) {
+                                reject(e);
+                            }
+                        });
+                        resolve(ids);
+                    }
+                });
+            } else {
+                resolve(this.allKeys);
+            }
         });
     }
     /**

@@ -523,7 +523,7 @@ export default class Datastore implements IDatastore {
                     .then(resolve)
                     .catch(reject);
             } else if ((fieldName === undefined) && (value === undefined)) {
-               this.searchField()
+                this.searchField()
                     .then(resolve)
                     .catch(reject);
             } else {

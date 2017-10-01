@@ -81,7 +81,7 @@ export default class Index implements IIndex {
                     this.isArray = true;
                 }
             } else {
-                return reject(new Error("Key was not retrieved from document"));
+                return reject(new Error("Key was not retrieved from document, or key was set to null. No null key indices"));
             }
             try {
                 this.avl.insert(key, [doc._id]);
@@ -133,6 +133,8 @@ export default class Index implements IIndex {
      */
     public updateKey(key: ASNDBS, newKey: ASNDBS): Promise<null> {
         return new Promise<null>((resolve, reject) => {
+            console.log('hmm')
+            console.log(this.avl.tree.search(key));
             if (this.avl.tree.search(key).length === 0) {
                 return reject(new Error("This key does not exist"));
             }
