@@ -116,7 +116,7 @@ export class MockStorageDriver implements IStorageDriver {
         return new Promise<null>((resolve, reject) => {
             const cwd = process.cwd();
             const fileName = `${this.filePath}/index_${key}.db`;
-            if (index === index === '[{"key":null,"value":[null]}]' || index === '[{"key":null, "value":[]}]') {
+            if (index === '[{"key":null,"value":[null]}]' || index === '[{"key":null, "value":[]}]') {
                 if (fs.existsSync(`${cwd}/spec/example/db/${fileName}`)) {
                     fs.unlink(`${cwd}/spec/example/db/${fileName}`, (err: ErrnoException) => {
                         if (err) {
@@ -130,8 +130,8 @@ export class MockStorageDriver implements IStorageDriver {
                         resolve();
                     });
                 }
-                
-            } 
+
+            }
             fs.writeFile(`${cwd}/spec/example/db/${fileName}`, index, (err: ErrnoException) => {
                 if (err) {
                     reject(err);
