@@ -32,18 +32,22 @@ export class MockStorageDriver implements IStorageDriver {
     public getItem(key: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             const cwd = process.cwd();
-            fs.readFile(`${cwd}/spec/example/db/${this.filePath}/${key}.db`, "utf8", (err: ErrnoException, data: string) => {
-                if (err) {
-                    reject(err);
-                }
-                let a: any;
-                try {
-                    a = JSON.parse(data);
-                } catch (e) {
-                    reject(e);
-                }
-                resolve(a);
-            });
+            if (!fs.existsSync(`${cwd}/spec/example/db/${this.filePath}/${key}.db`)) {
+                reject(`No doc with key: ${key} found in ${cwd}/spec/example/db/${this.filePath}`);
+            } else {
+                fs.readFile(`${cwd}/spec/example/db/${this.filePath}/${key}.db`, "utf8", (err: ErrnoException, data: string) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    let a: any;
+                    try {
+                        a = JSON.parse(data);
+                    } catch (e) {
+                        reject(e);
+                    }
+                    resolve(a);
+                });
+            }
         });
     }
     /**
@@ -81,17 +85,21 @@ export class MockStorageDriver implements IStorageDriver {
     public removeItem(key: string): Promise<null> {
         return new Promise<null>((resolve, reject) => {
             const cwd = process.cwd();
-            fs.unlink(`${cwd}/spec/example/db/${this.filePath}/${key}.db`, (err: ErrnoException) => {
-                if (err) {
-                    reject(err);
-                }
-                try {
-                    this.allKeys = this.allKeys.filter((cur) => cur !== key);
-                } catch (e) {
-                    reject(e);
-                }
+            if (!fs.existsSync(`${cwd}/spec/example/db/${this.filePath}/${key}.db`)) {
                 resolve();
-            });
+            } else {
+                fs.unlink(`${cwd}/spec/example/db/${this.filePath}/${key}.db`, (err: ErrnoException) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    try {
+                        this.allKeys = this.allKeys.filter((cur) => cur !== key);
+                    } catch (e) {
+                        reject(e);
+                    }
+                    resolve();
+                });
+            }
         });
     }
 
@@ -108,26 +116,28 @@ export class MockStorageDriver implements IStorageDriver {
         return new Promise<null>((resolve, reject) => {
             const cwd = process.cwd();
             const fileName = `${this.filePath}/index_${key}.db`;
-            if (index === "[{\"key\":null,\"value\":[null]}]") {
-                fs.unlink(`${cwd}/spec/example/db/${fileName}`, (err: ErrnoException) => {
-                    if (err) {
-                        reject(err);
-                    }
-                    try {
-                        this.allKeys = [];
-                    } catch (e) {
-                        reject(e);
-                    }
-                    resolve();
-                });
-            } else {
-                fs.writeFile(`${cwd}/spec/example/db/${fileName}`, index, (err: ErrnoException) => {
-                    if (err) {
-                        reject(err);
-                    }
-                    resolve();
-                });
-            }
+            if (index === index === '[{"key":null,"value":[null]}]' || index === '[{"key":null, "value":[]}]') {
+                if (fs.existsSync(`${cwd}/spec/example/db/${fileName}`)) {
+                    fs.unlink(`${cwd}/spec/example/db/${fileName}`, (err: ErrnoException) => {
+                        if (err) {
+                            reject(err);
+                        }
+                        try {
+                            this.allKeys = [];
+                        } catch (e) {
+                            reject(e);
+                        }
+                        resolve();
+                    });
+                }
+                
+            } 
+            fs.writeFile(`${cwd}/spec/example/db/${fileName}`, index, (err: ErrnoException) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve();
+            });
         });
     }
     /**
