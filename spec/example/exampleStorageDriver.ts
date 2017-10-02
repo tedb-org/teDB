@@ -263,6 +263,7 @@ export class MockStorageDriver implements IStorageDriver {
                         });
                         resolve(ids);
                     }
+                    resolve([]);
                 });
             } else {
                 resolve(this.allKeys);
