@@ -133,8 +133,6 @@ export default class Index implements IIndex {
      */
     public updateKey(key: ASNDBS, newKey: ASNDBS): Promise<null> {
         return new Promise<null>((resolve, reject) => {
-            console.log('hmm')
-            console.log(this.avl.tree.search(key));
             if (this.avl.tree.search(key).length === 0) {
                 return reject(new Error("This key does not exist"));
             }
