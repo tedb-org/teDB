@@ -79,7 +79,7 @@ export class MockStorageDriver implements IStorageDriver {
     /**
      * This is only for testing
      * using the cwd the file path read in the file convert
-     * the file to an object remove he proposed obj and
+     * the file to an object remove the proposed obj and
      * rewrite the file.
      */
     public removeItem(key: string): Promise<null> {
@@ -131,13 +131,15 @@ export class MockStorageDriver implements IStorageDriver {
                     });
                 }
 
+            } else {
+                fs.writeFile(`${cwd}/spec/example/db/${fileName}`, index, (err: ErrnoException) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    resolve();
+                });
             }
-            fs.writeFile(`${cwd}/spec/example/db/${fileName}`, index, (err: ErrnoException) => {
-                if (err) {
-                    reject(err);
-                }
-                resolve();
-            });
+
         });
     }
     /**
@@ -270,6 +272,30 @@ export class MockStorageDriver implements IStorageDriver {
             }
         });
     }
+
+    /**
+     * Check for existing file and make sure its contents are readable
+     * here is a simple example of just making sure it exists.
+     * @param {string} key
+     * @param index
+     * @param {string} fieldName
+     * @returns {Promise<any>}
+     */
+    public exists(key: string, index: any, fieldName: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            const cwd = process.cwd();
+            try {
+                if (fs.existsSync(`${cwd}/spec/example/db/${this.filePath}/${key}.db`)) {
+                    resolve({key, doesExist: true, index, fieldName});
+                } else {
+                    resolve({key, doesExist: false, index, fieldName});
+                }
+            } catch (e) {
+                return reject(e);
+            }
+        });
+    }
+
     /**
      * Clear collection
      */

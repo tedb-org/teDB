@@ -25,6 +25,8 @@ export interface IDatastore {
     update(query: any, operation: any, options: IupdateOptions): Promise<any>;
     remove(query: any): Promise<number>;
     ensureIndex(options: IindexOptions): Promise<null>;
+    san(obj: any): Promise<any>;
+    sanitize(): Promise<any>;
     removeIndex(fieldName: string): Promise<null>;
     saveIndex(fieldName: string): Promise<null>;
     insertIndex(key: string, index: any[]): Promise<null>;
@@ -81,7 +83,12 @@ export default class Datastore implements IDatastore {
                 return reject(new Error("Cannot insert empty document"));
             }
 
-            doc._id = this.createId();
+            // doc._id = this.createId();
+            if (!doc.hasOwnProperty("_id")) {
+                doc._id = this.createId();
+            } else if (doc._id.length !== 64) {
+                doc._id = this.createId();
+            }
 
             const indexPromises: Array<Promise<any>> = [];
 
@@ -282,6 +289,46 @@ export default class Datastore implements IDatastore {
         });
     }
 
+    public san(obj: any): Promise<any> {
+        return new Promise((resolve, reject) => {
+            let parsed;
+            let values: string[] = [];
+            return this.getIndices()
+                .then((indices) => indices.get(obj.fieldName).toJSON())
+                .then((json) => {
+                    parsed = JSON.parse(json);
+                    parsed.forEach((ind: any) => values = [...values, ...ind.value]);
+                    return Promise.all(values.map((value) => {
+                        return this.storage.exists(value, obj.index, obj.fieldName);
+                    }));
+                })
+                .then((data: any[]) => {
+                    return Promise.all(data.map((d: any) => {
+                        if (d.doesExist) {
+                            return new Promise((res) => res());
+                        } else {
+                            return d.index.removeByPair(d.fieldName, d.key);
+                        }
+                    }));
+                })
+                .then(resolve)
+                .catch(reject);
+        });
+    }
+
+    public sanitize(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            const fieldNames: any = [];
+            this.indices.forEach((i, fieldName) => {
+                fieldNames.push({fieldName, index: i});
+            });
+            return Promise.all(fieldNames.map((obj: any) => this.san(obj)))
+                .then(resolve)
+                .catch(reject);
+
+        });
+    }
+
     /**
      * Removes document/s by query - uses find method to retrieve ids. multi always
      * @param query
@@ -301,7 +348,6 @@ export default class Datastore implements IDatastore {
                                 promises.push(i.remove(document));
                             });
                         });
-
                         return Promise.all(promises);
                     } else {
                         return docs;

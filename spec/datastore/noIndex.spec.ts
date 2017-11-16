@@ -203,16 +203,26 @@ describe("testing datastore without indices", () => {
 
     test("removing 2 item isSynced false", () => {
         expect.assertions(1);
+        let response;
         return DB.remove({isSynced: false})
             .then((res) => {
-                expect(res).toEqual(2);
+                response = res;
+                return DB.sanitize();
+            })
+            .then(() => {
+                expect(response).toEqual(2);
             });
     });
 
     test("removing 1 item time null", () => {
+        let response;
         return DB.remove({time: null})
             .then((res) => {
-                expect(res).toEqual(1);
+                response = res;
+                return DB.sanitize();
+            })
+            .then(() => {
+                expect(response).toEqual(1);
             });
     });
 

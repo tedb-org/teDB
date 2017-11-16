@@ -23,6 +23,7 @@ export interface IIndex {
     insertMany(key: ASNDBS, indices: any[]): Promise<null>;
     updateKey(key: ASNDBS, newKey: ASNDBS): Promise<any>;
     remove(doc: any): Promise<any>;
+    removeByPair(key: any, value: string): Promise<any>;
     toJSON(): Promise<string>;
     search(key: ASNDBS): Promise<SNDBSA>;
     searchRange(range: IRange): Promise<SNDBSA>;
@@ -165,6 +166,24 @@ export default class Index implements IIndex {
             }
 
             resolve(doc);
+        });
+    }
+
+    /**
+     * Made to remove an indexed item just by the key value pair itself instead
+     * of the full object.
+     * @param key
+     * @param {string} value
+     * @returns {Promise<any>}
+     */
+    public removeByPair(key: any, value: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            try {
+                this.avl.Delete(key, [value]);
+            } catch (e) {
+                return reject(e);
+            }
+            resolve();
         });
     }
 

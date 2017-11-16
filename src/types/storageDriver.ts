@@ -49,6 +49,24 @@ export interface IStorageDriver {
      * Retrieve all keys - _ids of all documents for this
      */
     keys(): Promise<string[]>;
+
+    /**
+     * Sends back an object depending on if the file exists or not
+     * -> USED IN THE SANITIZE METHOD
+     * _ this helps with removing items from the index if their persistence is not found
+     * or if they are not found in general.
+     * @param {string} key
+     * @param index
+     * @param {string} fieldName
+     * @returns {Promise<any>}
+     * {
+     *  key: string;
+     *  doesExist: boolean;
+     *  index: IIndex;
+     *  fieldName: string;
+     * }
+     */
+    exists(key: string, index: any, fieldName: string): Promise<any>;
     /**
      * Clear the entire datastore
      */

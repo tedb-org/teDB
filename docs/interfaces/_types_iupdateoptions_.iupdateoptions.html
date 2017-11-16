@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Ioptions | tedb</title>
+	<title>IupdateOptions | tedb</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,24 +54,31 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_cursor_.html">&quot;cursor&quot;</a>
+					<a href="../modules/_types_iupdateoptions_.html">&quot;types/IupdateOptions&quot;</a>
 				</li>
 				<li>
-					<a href="_cursor_.ioptions.html">Ioptions</a>
+					<a href="_types_iupdateoptions_.iupdateoptions.html">IupdateOptions</a>
 				</li>
 			</ul>
-			<h1>Interface Ioptions</h1>
+			<h1>Interface IupdateOptions</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Update Options</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Ioptions</span>
+						<span class="target">IupdateOptions</span>
 					</li>
 				</ul>
 			</section>
@@ -82,9 +89,10 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_cursor_.ioptions.html#limit" class="tsd-kind-icon">limit</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_cursor_.ioptions.html#skip" class="tsd-kind-icon">skip</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_cursor_.ioptions.html#sort" class="tsd-kind-icon">sort</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_types_iupdateoptions_.iupdateoptions.html#exactobjectfind" class="tsd-kind-icon">exact<wbr>Object<wbr>Find</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_types_iupdateoptions_.iupdateoptions.html#multi" class="tsd-kind-icon">multi</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_types_iupdateoptions_.iupdateoptions.html#returnupdateddocs" class="tsd-kind-icon">return<wbr>Updated<wbr>Docs</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_types_iupdateoptions_.iupdateoptions.html#upsert" class="tsd-kind-icon">upsert</a></li>
 							</ul>
 						</section>
 					</div>
@@ -93,34 +101,70 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="limit" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> limit</h3>
-					<div class="tsd-signature tsd-kind-icon">limit<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<a name="exactobjectfind" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> exact<wbr>Object<wbr>Find</h3>
+					<div class="tsd-signature tsd-kind-icon">exact<wbr>Object<wbr>Find<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tedb-org/teDB/blob/6ff7d01/src/cursor.ts#L24">cursor.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/tedb-org/teDB/blob/6ff7d01/src/types/IupdateOptions.ts#L26">types/IupdateOptions.ts:26</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>used when you want to find a document exactly by the objects
+								contents and if not found insert. different than upsert.
+								With upsert you have to use &quot;dot.notated&quot; and can use $gt queries.
+								with this you can only send and object that you expect to find or
+								insert if not found but only if upsert is set as well. This
+								does not upsert. It just allows you to not use &quot;dot.notated&quot;
+							keys.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="skip" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> skip</h3>
-					<div class="tsd-signature tsd-kind-icon">skip<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<a name="multi" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> multi</h3>
+					<div class="tsd-signature tsd-kind-icon">multi<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tedb-org/teDB/blob/6ff7d01/src/cursor.ts#L23">cursor.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/tedb-org/teDB/blob/6ff7d01/src/types/IupdateOptions.ts#L8">types/IupdateOptions.ts:8</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>default false, if true update many documents</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="sort" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> sort</h3>
-					<div class="tsd-signature tsd-kind-icon">sort<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<a name="returnupdateddocs" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> return<wbr>Updated<wbr>Docs</h3>
+					<div class="tsd-signature tsd-kind-icon">return<wbr>Updated<wbr>Docs<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tedb-org/teDB/blob/6ff7d01/src/cursor.ts#L22">cursor.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/tedb-org/teDB/blob/6ff7d01/src/types/IupdateOptions.ts#L16">types/IupdateOptions.ts:16</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>default false, if true return all updated documents</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="upsert" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> upsert</h3>
+					<div class="tsd-signature tsd-kind-icon">upsert<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/tedb-org/teDB/blob/6ff7d01/src/types/IupdateOptions.ts#L12">types/IupdateOptions.ts:12</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>default false, if true insert the new document</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -130,7 +174,7 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_cursor_.html">"cursor"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -145,7 +189,7 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_types_iindexoptions_.html">"types/<wbr>Iindex<wbr>Options"</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class="current tsd-kind-external-module">
 						<a href="../modules/_types_iupdateoptions_.html">"types/<wbr>Iupdate<wbr>Options"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -191,28 +235,22 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/_cursor_.cursor.html" class="tsd-kind-icon">Cursor</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_cursor_.i_and.html" class="tsd-kind-icon">I$and</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_cursor_.icursor.html" class="tsd-kind-icon">ICursor</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_cursor_.ioptions.html" class="tsd-kind-icon">Ioptions</a>
+						<a href="_types_iupdateoptions_.iupdateoptions.html" class="tsd-kind-icon">Iupdate<wbr>Options</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_cursor_.ioptions.html#limit" class="tsd-kind-icon">limit</a>
+								<a href="_types_iupdateoptions_.iupdateoptions.html#exactobjectfind" class="tsd-kind-icon">exact<wbr>Object<wbr>Find</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_cursor_.ioptions.html#skip" class="tsd-kind-icon">skip</a>
+								<a href="_types_iupdateoptions_.iupdateoptions.html#multi" class="tsd-kind-icon">multi</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_cursor_.ioptions.html#sort" class="tsd-kind-icon">sort</a>
+								<a href="_types_iupdateoptions_.iupdateoptions.html#returnupdateddocs" class="tsd-kind-icon">return<wbr>Updated<wbr>Docs</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_types_iupdateoptions_.iupdateoptions.html#upsert" class="tsd-kind-icon">upsert</a>
 							</li>
 						</ul>
 					</li>

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Ioptions | tedb</title>
+	<title>IRange | tedb</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,24 +54,36 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_cursor_.html">&quot;cursor&quot;</a>
+					<a href="../modules/_types_irange_.html">&quot;types/IRange&quot;</a>
 				</li>
 				<li>
-					<a href="_cursor_.ioptions.html">Ioptions</a>
+					<a href="_types_irange_.irange.html">IRange</a>
 				</li>
 			</ul>
-			<h1>Interface Ioptions</h1>
+			<h1>Interface IRange</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Boundaries for lookup</p>
+					</div>
+					<pre><code><span class="hljs-built_in">Array</span> <span class="hljs-built_in">String</span> <span class="hljs-built_in">Number</span>, <span class="hljs-built_in">Date</span>, <span class="hljs-built_in">Boolean</span>, -&gt; symbol was redacted. : Used <span class="hljs-keyword">for</span> keys
+BTT.ASNDBS = <span class="hljs-built_in">Array</span>&lt;<span class="hljs-built_in">any</span>[]|<span class="hljs-built_in">string</span>|<span class="hljs-built_in">number</span>|<span class="hljs-built_in">Date</span>|<span class="hljs-built_in">boolean</span>|<span class="hljs-literal">null</span>&gt;|<span class="hljs-built_in">string</span>|<span class="hljs-built_in">number</span>|<span class="hljs-built_in">Date</span>|<span class="hljs-built_in">boolean</span>|<span class="hljs-literal">null</span>
+-&gt; redacted symbol, <span class="hljs-built_in">Number</span>, <span class="hljs-built_in">Date</span>, <span class="hljs-built_in">Boolean</span>, <span class="hljs-built_in">String</span>, <span class="hljs-built_in">Array</span> : Used <span class="hljs-keyword">for</span> values
+BTT.SNDBSA = <span class="hljs-built_in">Array</span>&lt;{}|<span class="hljs-built_in">any</span>[]|<span class="hljs-built_in">string</span>|<span class="hljs-built_in">number</span>|<span class="hljs-built_in">Date</span>|<span class="hljs-built_in">boolean</span>|<span class="hljs-literal">null</span>&gt;;
+</code></pre>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Ioptions</span>
+						<span class="target">IRange</span>
 					</li>
 				</ul>
 			</section>
@@ -82,9 +94,11 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_cursor_.ioptions.html#limit" class="tsd-kind-icon">limit</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_cursor_.ioptions.html#skip" class="tsd-kind-icon">skip</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_cursor_.ioptions.html#sort" class="tsd-kind-icon">sort</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_types_irange_.irange.html#_gt" class="tsd-kind-icon">$gt</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_types_irange_.irange.html#_gte" class="tsd-kind-icon">$gte</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_types_irange_.irange.html#_lt" class="tsd-kind-icon">$lt</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_types_irange_.irange.html#_lte" class="tsd-kind-icon">$lte</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_types_irange_.irange.html#_ne" class="tsd-kind-icon">$ne</a></li>
 							</ul>
 						</section>
 					</div>
@@ -93,34 +107,79 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="limit" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> limit</h3>
-					<div class="tsd-signature tsd-kind-icon">limit<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<a name="_gt" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> $gt</h3>
+					<div class="tsd-signature tsd-kind-icon">$gt<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">BTT.ASNDBS</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tedb-org/teDB/blob/6ff7d01/src/cursor.ts#L24">cursor.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/tedb-org/teDB/blob/6ff7d01/src/types/IRange.ts#L16">types/IRange.ts:16</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Greater Than</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="skip" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> skip</h3>
-					<div class="tsd-signature tsd-kind-icon">skip<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<a name="_gte" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> $gte</h3>
+					<div class="tsd-signature tsd-kind-icon">$gte<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">BTT.ASNDBS</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tedb-org/teDB/blob/6ff7d01/src/cursor.ts#L23">cursor.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/tedb-org/teDB/blob/6ff7d01/src/types/IRange.ts#L20">types/IRange.ts:20</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Greater Than or Equal</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="sort" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> sort</h3>
-					<div class="tsd-signature tsd-kind-icon">sort<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<a name="_lt" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> $lt</h3>
+					<div class="tsd-signature tsd-kind-icon">$lt<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">BTT.ASNDBS</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/tedb-org/teDB/blob/6ff7d01/src/cursor.ts#L22">cursor.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/tedb-org/teDB/blob/6ff7d01/src/types/IRange.ts#L24">types/IRange.ts:24</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Less Than</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="_lte" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> $lte</h3>
+					<div class="tsd-signature tsd-kind-icon">$lte<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">BTT.ASNDBS</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/tedb-org/teDB/blob/6ff7d01/src/types/IRange.ts#L28">types/IRange.ts:28</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Less Than or Equal</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="_ne" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> $ne</h3>
+					<div class="tsd-signature tsd-kind-icon">$ne<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/tedb-org/teDB/blob/6ff7d01/src/types/IRange.ts#L32">types/IRange.ts:32</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Not Equal to</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -130,7 +189,7 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_cursor_.html">"cursor"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -139,7 +198,7 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_indices_.html">"indices"</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class="current tsd-kind-external-module">
 						<a href="../modules/_types_irange_.html">"types/IRange"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -191,28 +250,25 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/_cursor_.cursor.html" class="tsd-kind-icon">Cursor</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_cursor_.i_and.html" class="tsd-kind-icon">I$and</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_cursor_.icursor.html" class="tsd-kind-icon">ICursor</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_cursor_.ioptions.html" class="tsd-kind-icon">Ioptions</a>
+						<a href="_types_irange_.irange.html" class="tsd-kind-icon">IRange</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_cursor_.ioptions.html#limit" class="tsd-kind-icon">limit</a>
+								<a href="_types_irange_.irange.html#_gt" class="tsd-kind-icon">$gt</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_cursor_.ioptions.html#skip" class="tsd-kind-icon">skip</a>
+								<a href="_types_irange_.irange.html#_gte" class="tsd-kind-icon">$gte</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_cursor_.ioptions.html#sort" class="tsd-kind-icon">sort</a>
+								<a href="_types_irange_.irange.html#_lt" class="tsd-kind-icon">$lt</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_types_irange_.irange.html#_lte" class="tsd-kind-icon">$lte</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_types_irange_.irange.html#_ne" class="tsd-kind-icon">$ne</a>
 							</li>
 						</ul>
 					</li>

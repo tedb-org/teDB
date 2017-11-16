@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Ioptions | tedb</title>
+	<title>&quot;utils/flatten&quot; | tedb</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,73 +54,65 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_cursor_.html">&quot;cursor&quot;</a>
-				</li>
-				<li>
-					<a href="_cursor_.ioptions.html">Ioptions</a>
+					<a href="_utils_flatten_.html">&quot;utils/flatten&quot;</a>
 				</li>
 			</ul>
-			<h1>Interface Ioptions</h1>
+			<h1>External module &quot;utils/flatten&quot;</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-hierarchy">
-				<h3>Hierarchy</h3>
-				<ul class="tsd-hierarchy">
-					<li>
-						<span class="target">Ioptions</span>
-					</li>
-				</ul>
-			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Properties</h3>
+							<h3>Functions</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_cursor_.ioptions.html#limit" class="tsd-kind-icon">limit</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_cursor_.ioptions.html#skip" class="tsd-kind-icon">skip</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_cursor_.ioptions.html#sort" class="tsd-kind-icon">sort</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_utils_flatten_.html#flatten" class="tsd-kind-icon">flatten</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="limit" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> limit</h3>
-					<div class="tsd-signature tsd-kind-icon">limit<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/tedb-org/teDB/blob/6ff7d01/src/cursor.ts#L24">cursor.ts:24</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="skip" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> skip</h3>
-					<div class="tsd-signature tsd-kind-icon">skip<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/tedb-org/teDB/blob/6ff7d01/src/cursor.ts#L23">cursor.ts:23</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="sort" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> sort</h3>
-					<div class="tsd-signature tsd-kind-icon">sort<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/tedb-org/teDB/blob/6ff7d01/src/cursor.ts#L22">cursor.ts:22</a></li>
-						</ul>
-					</aside>
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module">
+					<a name="flatten" class="tsd-anchor"></a>
+					<h3>flatten</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
+						<li class="tsd-signature tsd-kind-icon">flatten<span class="tsd-signature-symbol">(</span>arr<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/tedb-org/teDB/blob/6ff7d01/src/utils/flatten.ts#L15">utils/flatten.ts:15</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>un-nest nested arrays</p>
+								</div>
+								<p>Examples</p>
+								<pre><code>const arr = <span class="hljs-string">[[1], [2]]</span>;
+console.<span class="hljs-built_in">log</span>(flatten(arr)); // [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>];
+
+const arr2 = [<span class="hljs-number">1</span>, [<span class="hljs-number">2</span>], [<span class="hljs-number">3</span>, <span class="hljs-number">4</span>, [<span class="hljs-number">5</span>]], <span class="hljs-string">[[6,[7]]</span>];
+console.<span class="hljs-built_in">log</span>(flatten(arr2); // [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-number">6</span>, <span class="hljs-number">7</span>];
+</code></pre>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>arr: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -130,94 +122,70 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_cursor_.html">"cursor"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_datastore_.html">"datastore"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_indices_.html">"indices"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_types_irange_.html">"types/IRange"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_types_iindexoptions_.html">"types/<wbr>Iindex<wbr>Options"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_types_iupdateoptions_.html">"types/<wbr>Iupdate<wbr>Options"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_types_storagedriver_.html">"types/storage<wbr>Driver"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_updateoperators_.html">"update<wbr>Operators"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_utils_base64_.html">"utils/base64"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_utils_comparearray_.html">"utils/compare<wbr>Array"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_utils_compressobj_.html">"utils/compress<wbr>Obj"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_utils_expandobj_.html">"utils/expand<wbr>Obj"</a>
+					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="../modules/_cursor_.html">"cursor"</a>
+						<a href="_utils_flatten_.html">"utils/flatten"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_datastore_.html">"datastore"</a>
+						<a href="_utils_getdups_.html">"utils/get<wbr>Dups"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_indices_.html">"indices"</a>
+						<a href="_utils_id_hasher_.html">"utils/id_<wbr>hasher"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_types_irange_.html">"types/IRange"</a>
+						<a href="_utils_misc_.html">"utils/misc"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_types_iindexoptions_.html">"types/<wbr>Iindex<wbr>Options"</a>
+						<a href="_utils_range_.html">"utils/range"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_types_iupdateoptions_.html">"types/<wbr>Iupdate<wbr>Options"</a>
+						<a href="_utils_rmarrdups_.html">"utils/rm<wbr>Arr<wbr>Dups"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_types_storagedriver_.html">"types/storage<wbr>Driver"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_updateoperators_.html">"update<wbr>Operators"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_utils_base64_.html">"utils/base64"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_utils_comparearray_.html">"utils/compare<wbr>Array"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_utils_compressobj_.html">"utils/compress<wbr>Obj"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_utils_expandobj_.html">"utils/expand<wbr>Obj"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_utils_flatten_.html">"utils/flatten"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_utils_getdups_.html">"utils/get<wbr>Dups"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_utils_id_hasher_.html">"utils/id_<wbr>hasher"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_utils_misc_.html">"utils/misc"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_utils_range_.html">"utils/range"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_utils_rmarrdups_.html">"utils/rm<wbr>Arr<wbr>Dups"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_utils_savearrdups_.html">"utils/save<wbr>Arr<wbr>Dups"</a>
+						<a href="_utils_savearrdups_.html">"utils/save<wbr>Arr<wbr>Dups"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/_cursor_.cursor.html" class="tsd-kind-icon">Cursor</a>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="_utils_flatten_.html#flatten" class="tsd-kind-icon">flatten</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_cursor_.i_and.html" class="tsd-kind-icon">I$and</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_cursor_.icursor.html" class="tsd-kind-icon">ICursor</a>
-					</li>
-				</ul>
-				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_cursor_.ioptions.html" class="tsd-kind-icon">Ioptions</a>
-						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_cursor_.ioptions.html#limit" class="tsd-kind-icon">limit</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_cursor_.ioptions.html#skip" class="tsd-kind-icon">skip</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_cursor_.ioptions.html#sort" class="tsd-kind-icon">sort</a>
-							</li>
-						</ul>
-					</li>
-				</ul>
-				<ul class="after-current">
 				</ul>
 			</nav>
 		</div>

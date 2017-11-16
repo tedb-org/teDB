@@ -210,8 +210,9 @@ describe("testing the datastore, testing loading in and querying persisted data"
         return Users.remove({name: "Joshua"})
         .then((res) => {
             expect(res).toBe(1);
-            return Users.getIndices();
+            return Users.sanitize();
         })
+        .then(() => Users.getIndices())
         .then((indices) => {
             const promises: Array<Promise<null>> = [];
             indices.forEach((v: Index, k: string) => {
