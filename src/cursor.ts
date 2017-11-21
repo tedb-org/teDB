@@ -121,7 +121,9 @@ export default class Cursor implements ICursor {
                     }
                 })
                 .then((res: any[]) => {
-                    res = res.filter((r) => r !== undefined);
+                    if (typeof res !== "number") {
+                        res = res.filter((r) => r !== undefined);
+                    }
                     if (this.options.sort) {
                         try {
                             const sortKey = Object.keys(this.options.sort)[0];

@@ -307,7 +307,11 @@ export default class Datastore implements IDatastore {
                         if (d.doesExist) {
                             return new Promise((res) => res());
                         } else {
-                            return d.index.removeByPair(d.fieldName, d.key);
+                            if (d.key === null) {
+                                return new Promise((res) => res());
+                            } else {
+                                return d.index.removeByPair(d.fieldName, d.key);
+                            }
                         }
                     }));
                 })
