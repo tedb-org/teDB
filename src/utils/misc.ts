@@ -23,7 +23,11 @@ export const getPath = (obj: any, path: string) => {
  * @returns {any[]}
  */
 export const rmObjDups = (arr: any[], field: string): any[] => {
-    return arr.filter((obj, pos, ray) => ray.map((mapObj) => mapObj[field]).indexOf(obj[field]) === pos);
+    return arr.filter((obj, pos, ray) => {
+        return (pos === ray.findIndex((t) => {
+            return t[field] === obj[field];
+        }));
+    });
 };
 
 /**

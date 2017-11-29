@@ -26,6 +26,7 @@ export interface IIndex {
     removeByPair(key: any, value: string): Promise<any>;
     toJSON(): Promise<string>;
     search(key: ASNDBS): Promise<SNDBSA>;
+    traverse(fn: any): Promise<any>;
     searchRange(range: IRange): Promise<SNDBSA>;
 }
 
@@ -58,6 +59,12 @@ export default class Index implements IIndex {
 
         this.fieldName = options.fieldName;
         this.datastore = datastore;
+    }
+
+    public traverse(fn: any): Promise<any> {
+        return new Promise((resolve, reject) => {
+            resolve(this.avl.tree.executeOnEveryNode(fn));
+        });
     }
 
     /**

@@ -291,13 +291,11 @@ export default class Datastore implements IDatastore {
 
     public san(obj: any): Promise<any> {
         return new Promise((resolve, reject) => {
-            let parsed;
-            let values: string[] = [];
+            const values: any[] = [];
             return this.getIndices()
-                .then((indices) => indices.get(obj.fieldName).toJSON())
-                .then((json) => {
-                    parsed = JSON.parse(json);
-                    parsed.forEach((ind: any) => values = [...values, ...ind.value]);
+                .then((indices) => indices.get(obj.fieldName))
+                .then((index) => index.traverse((ind: BTT.AVLNode) => values.push(...ind.value)))
+                .then(() => {
                     return Promise.all(values.map((value) => {
                         return this.storage.exists(value, obj.index, obj.fieldName);
                     }));
@@ -320,6 +318,14 @@ export default class Datastore implements IDatastore {
         });
     }
 
+    /**
+     * Method used after a remove depending on the want of the user
+     * to make sure that if an _id exists in the index that it should
+     * exist in the storage driver saved location. If not then the
+     * indexed item is removed from the index as to not cause lookup
+     * errors.
+     * @returns {Promise<any>}
+     */
     public sanitize(): Promise<any> {
         return new Promise((resolve, reject) => {
             const fieldNames: any = [];
@@ -336,7 +342,7 @@ export default class Datastore implements IDatastore {
     /**
      * Removes document/s by query - uses find method to retrieve ids. multi always
      * @param query
-     * @returns {Promise<T>}
+     * @returns {Promise<number>}
      */
     public remove(query: any = {}): Promise<number> {
         return new Promise((resolve, reject) => {
@@ -365,7 +371,6 @@ export default class Datastore implements IDatastore {
                             uniqueIds.push(document._id);
                         }
                     });
-
                     uniqueIds.forEach((id) => {
                         if (id && (Object.prototype.toString.call(id) === "[object String]")) {
                             promises.push(this.storage.removeItem(id));

@@ -1,6 +1,19 @@
-import { isEmpty, getSortType, mergeSort, getPath } from "../../src/utils";
+import { isEmpty, getSortType, mergeSort, getPath , rmObjDups} from "../../src/utils";
 
 describe("testing miscellaneous methods", () => {
+
+    test("rmObjDups", () => {
+        // length 20 docs
+        const docs = [
+            {a: 1, b: 2}, {a: 1, b: 2}, {a: 1, b: 2}, {a: 1, b: 2}, {a: 1, b: 2}, {a: 1, b: 2}, {a: 1, b: 2}, {a: 1, b: 2}, {a: 2, b: 3}, {a: 2, b: 3}, {a: 2, b: 3}, {a: 2, b: 3}, {a: 2, b: 3}, {a: 2, b: 3}, {a: 2, b: 3}, {a: 2, b: 3}, {a: 2, b: 3}, {a: 2, b: 3}, {a: 2, b: 3}, {a: 2, b: 3},
+        ];
+        let docs2 = [];
+        for (let i = 0; i <= 10000; i++) {
+            docs2 = [...docs2, ...docs];
+        }
+        expect(rmObjDups(docs, "a").length).toEqual(2);
+        expect(rmObjDups(docs2, "a").length).toEqual(2);
+    });
 
     test("isEmpty", () => {
         // empty
