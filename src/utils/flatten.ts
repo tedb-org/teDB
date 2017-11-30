@@ -12,7 +12,28 @@
  * @param {any[]} arr
  * @returns {any[]}
  */
-export const flatten = (arr: any[]): any[] => {
-    const flat = [].concat(...arr);
-    return flat.some(Array.isArray) ? flatten(flat) : flat;
-};
+export function flatten(arr: any) {
+    const toString = Object.prototype.toString;
+    const arrayTypeStr = "[object Array]";
+
+    const result: any = [];
+    const nodes = arr.slice();
+    let node;
+
+    if (!arr.length) {
+        return result;
+    }
+
+    node = nodes.pop();
+
+    do {
+        if (toString.call(node) === arrayTypeStr) {
+            nodes.push.apply(nodes, node);
+        } else {
+            result.push(node);
+        }
+    } while (nodes.length && (node = nodes.pop()) !== undefined);
+
+    result.reverse(); // we reverse result to restore the original order
+    return result;
+}

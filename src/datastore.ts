@@ -25,7 +25,7 @@ export interface IDatastore {
     update(query: any, operation: any, options: IupdateOptions): Promise<any>;
     remove(query: any): Promise<number>;
     ensureIndex(options: IindexOptions): Promise<null>;
-    san(obj: any): Promise<any>;
+    san(fieldName: string, index: Index): Promise<any>;
     sanitize(): Promise<any>;
     removeIndex(fieldName: string): Promise<null>;
     saveIndex(fieldName: string): Promise<null>;
@@ -289,15 +289,26 @@ export default class Datastore implements IDatastore {
         });
     }
 
-    public san(obj: any): Promise<any> {
+    // public san(obj: any): Promise<any> {
+    public san(fieldName: string, index: Index): Promise<any> {
         return new Promise((resolve, reject) => {
-            const values: any[] = [];
+            // const values: any[] = [];
             return this.getIndices()
-                .then((indices) => indices.get(obj.fieldName))
-                .then((index) => index.traverse((ind: BTT.AVLNode) => values.push(...ind.value)))
-                .then(() => {
-                    return Promise.all(values.map((value) => {
-                        return this.storage.exists(value, obj.index, obj.fieldName);
+                .then((indices) => indices.get(fieldName))
+                .then((INDEX) => {
+                    const values: any[] = [];
+                    INDEX.traverse((ind: BTT.AVLNode) => {
+                        values.push(...ind.value.filter((i) => {
+                            if (i !== undefined && i !== null && i !== false) {
+                                return i;
+                            }
+                        }));
+                    });
+                    return values;
+                })
+                .then((values) => {
+                    return Promise.all(values.map((value: any) => {
+                        return this.storage.exists(value, index, fieldName);
                     }));
                 })
                 .then((data: any[]) => {
@@ -330,12 +341,11 @@ export default class Datastore implements IDatastore {
         return new Promise((resolve, reject) => {
             const fieldNames: any = [];
             this.indices.forEach((i, fieldName) => {
-                fieldNames.push({fieldName, index: i});
+                fieldNames.push(this.san(fieldName, i));
             });
-            return Promise.all(fieldNames.map((obj: any) => this.san(obj)))
+            return Promise.all(fieldNames)
                 .then(resolve)
                 .catch(reject);
-
         });
     }
 
@@ -365,19 +375,18 @@ export default class Datastore implements IDatastore {
                 })
                 .then((docs: any[]) => rmObjDups(docs, "_id"))
                 .then((docs: any[]) => {
-                    const promises: Array<Promise<null>> = [];
                     docs.forEach((document) => {
                         if (uniqueIds.indexOf(document._id) === -1) {
                             uniqueIds.push(document._id);
                         }
                     });
-                    uniqueIds.forEach((id) => {
+                    return Promise.all(uniqueIds.map((id) => {
                         if (id && (Object.prototype.toString.call(id) === "[object String]")) {
-                            promises.push(this.storage.removeItem(id));
+                            return this.storage.removeItem(id);
+                        } else {
+                            return new Promise((res) => res());
                         }
-                    });
-
-                    return Promise.all(promises);
+                    }));
                 })
                 .then((): any => {
                     resolve(uniqueIds.length);
@@ -510,22 +519,14 @@ export default class Datastore implements IDatastore {
     public getDocs(options: Ioptions, ids: string | string[]): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             let idsArr: string[] = (typeof ids === "string") ? [ids] : ids;
-
-            const promises: Array<Promise<any>> = [];
-            if (isEmpty(options)) {
-                this.createIdsArray(promises, idsArr);
-            } else if (options.skip && options.limit) {
+            if (options.skip && options.limit) {
                 idsArr = idsArr.splice(options.skip, options.limit);
-                this.createIdsArray(promises, idsArr);
             } else if (options.skip && !options.limit) {
                 idsArr.splice(0, options.skip);
-                this.createIdsArray(promises, idsArr);
             } else if (options.limit && !options.skip) {
                 idsArr = idsArr.splice(0, options.limit);
-                this.createIdsArray(promises, idsArr);
             }
-
-            Promise.all(promises)
+            return this.createIdsArray(idsArr)
                 .then(resolve)
                 .catch(reject);
         });
@@ -824,9 +825,13 @@ export default class Datastore implements IDatastore {
      * @param promises
      * @param ids
      */
-    private createIdsArray(promises: Array<Promise<any>>, ids: string[]): void {
-        ids.forEach((id) => {
-            promises.push(this.storage.getItem(id));
+    private createIdsArray(ids: string[]): Promise<any[]> {
+        return new Promise((resolve, reject) => {
+            return Promise.all(ids.map((id) => {
+                    return this.storage.getItem(id);
+                }))
+                .then(resolve)
+                .catch(reject);
         });
     }
 

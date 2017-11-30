@@ -62,9 +62,7 @@ export default class Index implements IIndex {
     }
 
     public traverse(fn: any): Promise<any> {
-        return new Promise((resolve, reject) => {
-            resolve(this.avl.tree.executeOnEveryNode(fn));
-        });
+        return this.avl.tree.executeOnEveryNode(fn);
     }
 
     /**
