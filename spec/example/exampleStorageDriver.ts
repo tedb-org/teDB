@@ -297,6 +297,46 @@ export class MockStorageDriver implements IStorageDriver {
     }
 
     /**
+     * An extra sanitizer for the storage side as an extra check.
+     * NOT used in tedb but is available if need be. It is recommended to
+     * have one available for testing and for assurance.
+     * @param {string[]} keys
+     * @returns {Promise<any>}
+     */
+    public collectionSanitize(keys: string[]): Promise<null> {
+        return new Promise((resolve, reject) => {
+            const cwd = process.cwd();
+            if (!fs.existsSync(`${cwd}/spec/example/db/${this.filePath}`)) {
+                resolve();
+            } else {
+                fs.readdir(`${cwd}/spec/example/db/${this.filePath}`, (err: ErrnoException, files) => {
+                    if (err) {
+                        return reject(err);
+                    }
+                    const reg = new RegExp("index_");
+                    const filteredKeys = files.reduce((acc: string[], file: string) => {
+                        if (!reg.test(file)) {
+                            const key = String(file).substr(0, String(file).indexOf("."));
+                            return acc.concat(key);
+                        } else {
+                            return acc;
+                        }
+                    }, []);
+                    filteredKeys.forEach((key) => {
+                        if (keys.indexOf(key) === -1) {
+                            if (fs.existsSync(`${cwd}/spec/example/db/${this.filePath}/${key}.db`)) {
+                                this.allKeys = this.allKeys.filter((cur) => cur !== key);
+                                fs.unlinkSync(`${cwd}/spec/example/db/${this.filePath}/${key}.db`);
+                            }
+                        }
+                    });
+                    resolve();
+                });
+            }
+        });
+    }
+
+    /**
      * Clear collection
      */
     public clear(): Promise<null> {

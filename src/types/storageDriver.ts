@@ -67,6 +67,17 @@ export interface IStorageDriver {
      * }
      */
     exists(key: string, index: any, fieldName: string): Promise<any>;
+
+    /**
+     * Should send all keys for this collection of the index.
+     * read in all keys of the storage driver and if the key in the storage
+     * is not in the list then remove it from storage.
+     * a collection without an index will result in a no-op since there
+     * is nothing to cross reference.
+     * @param {string[]} keys
+     * @returns {Promise<any>}
+     */
+    collectionSanitize(keys: string[]): Promise<null>;
     /**
      * Clear the entire datastore
      */

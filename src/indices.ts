@@ -73,6 +73,9 @@ export default class Index implements IIndex {
     public insert(doc: any): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             // TODO: need to make Error types
+            if (doc === undefined) {
+                return reject(new Error("No document ot insert index"));
+            }
             if (!doc.hasOwnProperty("_id")) {
                 return reject(new Error("Document is missing _id field"));
             }
@@ -158,6 +161,9 @@ export default class Index implements IIndex {
      */
     public remove(doc: any): Promise<any> {
         return new Promise<any>((resolve, reject) => {
+            if (doc === undefined) {
+                return reject(new Error("There is no document to remove"));
+            }
             if (!doc.hasOwnProperty("_id")) {
                 return reject(new Error("There is no _id to reference this document"));
             }

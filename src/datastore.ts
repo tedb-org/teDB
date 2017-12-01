@@ -27,6 +27,8 @@ export interface IDatastore {
     ensureIndex(options: IindexOptions): Promise<null>;
     san(fieldName: string, index: Index): Promise<any>;
     sanitize(): Promise<any>;
+    storageSan(fieldName: string): Promise<null>;
+    storageSanitize(): any;
     removeIndex(fieldName: string): Promise<null>;
     saveIndex(fieldName: string): Promise<null>;
     insertIndex(key: string, index: any[]): Promise<null>;
@@ -297,6 +299,9 @@ export default class Datastore implements IDatastore {
                 .then((indices) => indices.get(fieldName))
                 .then((INDEX) => {
                     const values: any[] = [];
+                    // Upgrade here if you ever get an error from a user
+                    // about there being a crash or slow down when they have an
+                    // extremely large index. millions. thousands of levels
                     INDEX.traverse((ind: BTT.AVLNode) => {
                         values.push(...ind.value.filter((i) => {
                             if (i !== undefined && i !== null && i !== false) {
@@ -326,6 +331,47 @@ export default class Datastore implements IDatastore {
                 })
                 .then(resolve)
                 .catch(reject);
+        });
+    }
+
+    public storageSan(fieldName: string): Promise<null> {
+        return new Promise((resolve, reject) => {
+            return this.getIndices()
+            .then((indices) => indices.get(fieldName))
+            .then((INDEX) => {
+                const values: any[] = [];
+                // upgrade here as well
+                INDEX.traverse((ind: BTT.AVLNode) => {
+                    values.push(...ind.value.filter((i) => {
+                        if (i !== undefined && i !== null && i !== false) {
+                            return i;
+                        }
+                    }));
+                });
+                return values;
+            })
+            .then((values) => {
+                return this.storage.collectionSanitize(values);
+            })
+            .then(resolve)
+            .catch(reject);
+        });
+    }
+
+    public storageSanitize(): any {
+        return new Promise((resolve, reject) => {
+            if (this.indices.size !== 0) {
+                const fieldNames: Array<Promise<null>> = [];
+                this.indices.forEach((i, fieldName) => {
+                    fieldNames.push(this.storageSan(fieldName));
+                });
+                return Promise.all(fieldNames)
+                    .then(resolve)
+                    .catch(reject);
+            } else {
+                // resolve, you have nothing to check against.
+                return resolve();
+            }
         });
     }
 
@@ -361,19 +407,20 @@ export default class Datastore implements IDatastore {
                 .exec()
                 .then((docs: any[]): Promise<any[][]> | any[] => {
                     // Array of promises for index remove
-                    const promises: Array<Promise<any[]>> = [];
                     if (this.indices.size !== 0) {
-                        docs.forEach((document) => {
-                            this.indices.forEach((i: Index, fieldName: string) => {
-                                promises.push(i.remove(document));
-                            });
-                        });
-                        return Promise.all(promises);
+                        return Promise.all(docs.map((document) => {
+                            return Promise.all(Array.from(this.indices).map(([key, value]) => {
+                                return value.remove(document);
+                            }));
+                        }));
                     } else {
                         return docs;
                     }
                 })
-                .then((docs: any[]) => rmObjDups(docs, "_id"))
+                .then((docs: any[]) => {
+                    docs = flatten(docs);
+                    return rmObjDups(docs, "_id");
+                })
                 .then((docs: any[]) => {
                     docs.forEach((document) => {
                         if (uniqueIds.indexOf(document._id) === -1) {
@@ -830,7 +877,10 @@ export default class Datastore implements IDatastore {
             return Promise.all(ids.map((id) => {
                     return this.storage.getItem(id);
                 }))
-                .then(resolve)
+                .then((docs) => {
+                    docs = docs.filter((doc) => !isEmpty(doc));
+                    resolve(docs);
+                })
                 .catch(reject);
         });
     }

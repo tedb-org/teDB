@@ -10,6 +10,16 @@
  * @param {any[]} arr
  * @returns {any[]}
  */
-export const rmArrDups = (arr: any[]): any[] => {
-    return  arr.filter((v, i) => arr.indexOf(v) === i);
-};
+
+export function rmArrDups(arr: any[]) {
+    const seen: any = {};
+    const ret: any = [];
+    for (let i = 0; i < arr.length; i++) {
+        if (!(arr[i] in seen)) {
+            ret.push(arr[i]);
+            seen[arr[i]] = true;
+        }
+    }
+    return ret;
+
+}

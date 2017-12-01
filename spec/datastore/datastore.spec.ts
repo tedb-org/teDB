@@ -207,8 +207,7 @@ describe("testing the datastore, testing loading in and querying persisted data"
 
     test("removing a user", () => {
         expect.assertions(2);
-        return Users.sanitize()
-        .then(() => Users.remove({name: "Joshua"}))
+        return Users.remove({name: "Joshua"})
         .then((res) => {
             expect(res).toBe(1);
             return Users.sanitize();
