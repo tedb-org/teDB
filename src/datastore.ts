@@ -27,7 +27,7 @@ export interface IDatastore {
     ensureIndex(options: IindexOptions): Promise<null>;
     san(fieldName: string, index: Index): Promise<any>;
     sanitize(): Promise<any>;
-    storageSan(fieldName: string): Promise<null>;
+    storageSan(fieldName: string): Promise<any>;
     storageSanitize(): any;
     removeIndex(fieldName: string): Promise<null>;
     saveIndex(fieldName: string): Promise<null>;
@@ -334,7 +334,7 @@ export default class Datastore implements IDatastore {
         });
     }
 
-    public storageSan(fieldName: string): Promise<null> {
+    public storageSan(fieldName: string): Promise<any> {
         return new Promise((resolve, reject) => {
             return this.getIndices()
             .then((indices) => indices.get(fieldName))
@@ -350,7 +350,7 @@ export default class Datastore implements IDatastore {
                 });
                 return values;
             })
-            .then((values) => {
+            .then((values): Promise<any> => {
                 return this.storage.collectionSanitize(values);
             })
             .then(resolve)
