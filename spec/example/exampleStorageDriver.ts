@@ -7,7 +7,7 @@
  *  Check the /teDB/spec/example/exampleStorageDriver.ts file for
  *  full explanation.
  */
-import { IStorageDriver } from "../../src";
+import { IStorageDriver, Isanitize, Iexist} from "../../src";
 import * as fs from "fs";
 import ErrnoException = NodeJS.ErrnoException;
 
@@ -276,19 +276,19 @@ export class MockStorageDriver implements IStorageDriver {
     /**
      * Check for existing file and make sure its contents are readable
      * here is a simple example of just making sure it exists.
-     * @param {string} key
+     * @param {Isanitize} obj
      * @param index
      * @param {string} fieldName
      * @returns {Promise<any>}
      */
-    public exists(key: string, index: any, fieldName: string): Promise<any> {
+    public exists(obj: Isanitize, index: any, fieldName: string): Promise<Iexist> {
         return new Promise((resolve, reject) => {
             const cwd = process.cwd();
             try {
-                if (fs.existsSync(`${cwd}/spec/example/db/${this.filePath}/${key}.db`)) {
-                    resolve({key, doesExist: true, index, fieldName});
+                if (fs.existsSync(`${cwd}/spec/example/db/${this.filePath}/${obj.value}.db`)) {
+                    resolve({key: obj.key, value: obj.value, doesExist: true, index, fieldName});
                 } else {
-                    resolve({key, doesExist: false, index, fieldName});
+                    resolve({key: obj.key, value: obj.value, doesExist: false, index, fieldName});
                 }
             } catch (e) {
                 return reject(e);

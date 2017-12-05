@@ -55,18 +55,12 @@ export interface IStorageDriver {
      * -> USED IN THE SANITIZE METHOD
      * _ this helps with removing items from the index if their persistence is not found
      * or if they are not found in general.
-     * @param {string} key
+     * @param {Isanitize} obj
      * @param index
      * @param {string} fieldName
-     * @returns {Promise<any>}
-     * {
-     *  key: string;
-     *  doesExist: boolean;
-     *  index: IIndex;
-     *  fieldName: string;
-     * }
+     * @returns {Promise<Iexist>}
      */
-    exists(key: string, index: any, fieldName: string): Promise<any>;
+    exists(obj: Isanitize, index: any, fieldName: string): Promise<Iexist>;
 
     /**
      * Should send all keys for this collection of the index.
@@ -82,4 +76,24 @@ export interface IStorageDriver {
      * Clear the entire datastore
      */
     clear(): Promise<null>;
+}
+
+/**
+ * Used to insert object into exists -> Key needs to be the search term and value needs t be the values of that
+ * search term
+ */
+export interface Isanitize {
+    key: any; // -> search term
+    value: any; // actual key
+}
+
+/**
+ * Return object interface for the exists method of the storage driver.
+ */
+export interface Iexist {
+    key: any;
+    value: string;
+    doesExist: boolean;
+    index: any;
+    fieldName: string;
 }

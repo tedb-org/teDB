@@ -2,7 +2,7 @@
  * Created by tsturzl on 4/11/17.
  */
 import Index from "./indices";
-import { IindexOptions, IStorageDriver, IRange, IupdateOptions } from "./types";
+import { IindexOptions, IStorageDriver, IRange, IupdateOptions, Isanitize, Iexist } from "./types";
 import { Cursor, Ioptions} from "./index";
 import { $set, $inc, $mul, $unset, $rename } from "./updateOperators";
 import { isEmpty, getPath, getUUID, getDate, rmObjDups, compressObj, expandObj, saveArrDups } from "./utils";
@@ -298,22 +298,23 @@ export default class Datastore implements IDatastore {
             return this.getIndices()
                 .then((indices) => indices.get(fieldName))
                 .then((INDEX) => {
-                    const values: any[] = [];
+                    const values: Isanitize[] = [];
                     // Upgrade here if you ever get an error from a user
                     // about there being a crash or slow down when they have an
                     // extremely large index. millions. thousands of levels
                     INDEX.traverse((ind: BTT.AVLNode) => {
-                        values.push(...ind.value.filter((i) => {
+                        // values.push({key: ind.key, value: ind.value});
+                        ind.value.forEach((i) => {
                             if (i !== undefined && i !== null && i !== false) {
-                                return i;
+                                values.push({key: ind.key, value: i});
                             }
-                        }));
+                        });
                     });
                     return values;
                 })
                 .then((values) => {
-                    return Promise.all(values.map((value: any) => {
-                        return this.storage.exists(value, index, fieldName);
+                    return Promise.all(values.map((obj: Isanitize) => {
+                        return this.storage.exists(obj, index, fieldName);
                     }));
                 })
                 .then((data: any[]) => {
@@ -324,7 +325,7 @@ export default class Datastore implements IDatastore {
                             if (d.key === null) {
                                 return new Promise((res) => res());
                             } else {
-                                return d.index.removeByPair(d.fieldName, d.key);
+                                return d.index.removeByPair(d.key, d.value);
                             }
                         }
                     }));
