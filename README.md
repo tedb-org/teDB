@@ -38,7 +38,7 @@ Memory only storage drivers could utilize other in memory databases such as inde
 
 ## Storage drivers
 
- * [Example Link ]()
+ * [tedb-electron-storage](https://github.com/tedb-org/tedb-electron-storage) - Based on the example storage driver in this package
 
 
 ## Table of Contents
