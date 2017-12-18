@@ -16,6 +16,7 @@ If you would like to support the development of this project. This project is on
 
 * Bitcoin Address: 1Hn3HZUgkwaLcm5go18FJco6dH92nbxLn2
 * Ethereum Address: 0x13E6e0D78901ce97d4115EA05DF1D32d363F8E51
+* Litecoin Address: LVLMPsN6W1i8DddJa8MiQWPMU246QmZpq4
 
 ## Usage
 TeDB uses an AVL balanced binary tree [binary-type-tree](https://github.com/marcusjwhelan/binary-type-tree) to save indexed fields of documents. TeDB does not save documents to memory or have a set way of saving data. It is hooked up to a storage driver that can either work to persists data to disk or save data to memory. The binary tree only saves the value and _id to memory allowing for larger data sets to be indexed. 
