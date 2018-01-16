@@ -1,41 +1,6 @@
-import { isEmpty, getSortType, mergeSort, getPath , rmObjDups} from "../../src/utils";
+import { getSortType, mergeSort} from "../../src/utils";
 
 describe("testing miscellaneous methods", () => {
-
-    test("rmObjDups", () => {
-        // length 20 docs
-        const docs = [
-            {a: 1, b: 2}, {a: 1, b: 2}, {a: 1, b: 2}, {a: 1, b: 2}, {a: 1, b: 2}, {a: 1, b: 2}, {a: 1, b: 2}, {a: 1, b: 2}, {a: 2, b: 3}, {a: 2, b: 3}, {a: 2, b: 3}, {a: 2, b: 3}, {a: 2, b: 3}, {a: 2, b: 3}, {a: 2, b: 3}, {a: 2, b: 3}, {a: 2, b: 3}, {a: 2, b: 3}, {a: 2, b: 3}, {a: 2, b: 3},
-        ];
-        let docs2 = [];
-        for (let i = 0; i <= 10000; i++) {
-            docs2 = [...docs2, ...docs];
-        }
-        expect(rmObjDups(docs, "a").length).toEqual(2);
-        expect(rmObjDups(docs2, "a").length).toEqual(2);
-    });
-
-    test("isEmpty", () => {
-        // empty
-        const array: any[] = [];
-        const obj: {} = {};
-        const str: string = "";
-        const nul: null = null;
-        const und: undefined = undefined;
-        expect(isEmpty(array)).toBe(true);
-        expect(isEmpty(obj)).toBe(true);
-        expect(isEmpty(str)).toBe(true);
-        expect(isEmpty(nul)).toBe(true);
-        expect(isEmpty(und)).toBe(true);
-
-        // not empty
-        const ar: string[] = ["a"];
-        const object: any = {a : "a"};
-        const st: string = "abc";
-        expect(isEmpty(ar)).toBe(false);
-        expect(isEmpty(object)).toBe(false);
-        expect(isEmpty(st)).toBe(false);
-    });
 
     test("sortObj", () => {
         const test1 = { sort: { name: -1 }};
@@ -82,33 +47,4 @@ describe("testing miscellaneous methods", () => {
         { name: "b", age: 5, date: new Date("1/4/2017") },
         { name: "c", age: 6, date: new Date("1/1/2017") } ]));
     });
-
-    test("getPath", () => {
-        const doc = {
-            name: "Charles Xavier",
-            age: 78,
-            occupation: "Professor",
-            students: [
-                "Wolverine",
-                "Blue Falcon",
-                "Chad",
-            ],
-            nested: {
-                name: "sneaky",
-            },
-        };
-
-        const key: string = getPath(doc, "name");
-        const numKey: number = getPath(doc, "age");
-        const missingKey: any = getPath(doc, "lost");
-        const students: string[] = getPath(doc, "students");
-        const nested: string = getPath(doc, "nested.name");
-
-        expect(key).toBe("Charles Xavier");
-        expect(numKey).toBe(78);
-        expect(missingKey).toBe(undefined);
-        expect(students).toEqual(expect.arrayContaining(["Wolverine", "Blue Falcon", "Chad"]));
-        expect(nested).toBe("sneaky");
-    });
-
 });

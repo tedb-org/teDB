@@ -1,11 +1,11 @@
 /**
  * Created by tsturzl on 4/11/17.
  */
-import { getPath } from "./utils";
 import Datastore from "./datastore";
 import { IRange, IindexOptions } from "./types";
 import { compareArray } from "./utils";
 import { AVLTree, ASNDBS, SNDBSA } from "binary-type-tree";
+import {getObjValue, rmArrDups} from "tedb-utils";
 
 /**
  * Index interface used for the datastore indices
@@ -83,7 +83,7 @@ export default class Index implements IIndex {
                 return reject(new Error("_id field needs to be type `string`"));
             }
 
-            const key: ASNDBS = getPath(doc, this.fieldName);
+            const key: ASNDBS = getObjValue(doc, this.fieldName);
             if (key !== undefined && key !== null) {
                 if (Object.prototype.toString.call(key) === "[object Array]" && !this.isArray) {
                     this.avl.compareKeys = compareArray;
@@ -121,7 +121,7 @@ export default class Index implements IIndex {
 
             try {
                 for (const item of indices) {
-                    this.avl.insert(item.key, item.value);
+                    this.avl.insert(item.key, rmArrDups(item.value));
                 }
             } catch (e) {
                 return reject(e);
@@ -168,7 +168,7 @@ export default class Index implements IIndex {
                 return reject(new Error("There is no _id to reference this document"));
             }
 
-            const key: ASNDBS = getPath(doc, this.fieldName);
+            const key: ASNDBS = getObjValue(doc, this.fieldName);
 
             try {
                 this.avl.Delete(key, [doc._id]);

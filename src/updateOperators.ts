@@ -1,5 +1,5 @@
 // All update operators
-import { isEmpty } from "./utils";
+import {isEmpty} from "tedb-utils";
 
 /**
  * Method used by all update operators except $rename

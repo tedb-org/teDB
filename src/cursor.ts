@@ -2,7 +2,8 @@
  * Created by tsturzl on 4/11/17.
  */
 import Datastore from "./datastore";
-import { isEmpty, mergeSort, getSortType, flatten, rmArrDups} from "./utils";
+import { mergeSort, getSortType} from "./utils";
+import {isEmpty, flattenArr, rmArrDups} from "tedb-utils";
 
 export interface ICursor {
     sort(sort: any): this;
@@ -112,7 +113,7 @@ export default class Cursor implements ICursor {
 
             joined
                 .then((idsArr: string[][]): number | Promise<any[]>  => {
-                    idsArr = flatten(idsArr);
+                    idsArr = flattenArr(idsArr);
                     const ids = rmArrDups(idsArr);
                     if (this.count) {
                         return ids.length;

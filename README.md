@@ -1,4 +1,4 @@
-# [TeDB](https://github.com/tsturzl/teDB)
+# [TeDB](https://github.com/tedb-org/teDB)
 A TypeScript Embedded Database. A structure sane embedded database with [pluggable storage](https://tedb-org.github.io/#writing-a-storage-driver-for-tedb) and clean concise [documentation](https://tedb-org.github.io/).
 
 ## Install

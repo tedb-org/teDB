@@ -5,9 +5,9 @@ import Index from "./indices";
 import { IindexOptions, IStorageDriver, IRange, IupdateOptions, Isanitize, Iexist } from "./types";
 import { Cursor, Ioptions} from "./index";
 import { $set, $inc, $mul, $unset, $rename } from "./updateOperators";
-import { isEmpty, getPath, getUUID, getDate, rmObjDups, compressObj, expandObj, saveArrDups } from "./utils";
+import { getUUID, getDate} from "./utils";
 import * as BTT from "binary-type-tree";
-import { flatten } from "./utils/flatten";
+import { isEmpty, compressObj, expandObj, rmArrObjDups, flattenArr, saveArrDups, getObjValue } from "tedb-utils";
 
 /**
  * ~~~
@@ -224,7 +224,7 @@ export default class Datastore implements IDatastore {
                     .then(() => {
                         return Promise.all(promises);
                     })
-                    .then((docs: any[]) => rmObjDups(docs, "_id"))
+                    .then((docs: any[]) => rmArrObjDups(docs, "_id"))
                     .then((docs: any[]) => {
                         const docPromises: Array<Promise<any[]>> = [];
                         // save new docs to storage driver.
@@ -269,7 +269,7 @@ export default class Datastore implements IDatastore {
                         return Promise.all(promises);
                     })
                     .then((docs: any[]) => {
-                        return rmObjDups(docs, "_id");
+                        return rmArrObjDups(docs, "_id");
                     })
                     .then((docs: any[]) => {
                         const docPromises: Array<Promise<any[]>> = [];
@@ -419,8 +419,8 @@ export default class Datastore implements IDatastore {
                     }
                 })
                 .then((docs: any[]) => {
-                    docs = flatten(docs);
-                    return rmObjDups(docs, "_id");
+                    docs = flattenArr(docs);
+                    return rmArrObjDups(docs, "_id");
                 })
                 .then((docs: any[]) => {
                     docs.forEach((document) => {
@@ -602,7 +602,7 @@ export default class Datastore implements IDatastore {
                 });
 
                 Promise.all(promises)
-                    .then((idsArr: string[][]) => flatten(idsArr))
+                    .then((idsArr: string[][]) => flattenArr(idsArr))
                     .then(resolve)
                     .catch(reject);
 
@@ -726,7 +726,7 @@ export default class Datastore implements IDatastore {
                 }
 
                 this.storage.iterate((v, k) => {
-                    const field: any = getPath(v, fieldName);
+                    const field: any = getObjValue(v, fieldName);
                     if (field !== undefined) {
                         if (lt === null && lte === null && gt === null &&
                             gte === null && ne === null && (k === value || field === value)) {
@@ -788,7 +788,7 @@ export default class Datastore implements IDatastore {
                                         // update the index value with the new
                                         // value if the index fieldname =
                                         // the $set obj key.
-                                        indexPromises.push(index.updateKey(getPath(doc, field), operation[k][sk]));
+                                        indexPromises.push(index.updateKey(getObjValue(doc, field), operation[k][sk]));
                                     }
                                 });
                                 break;
@@ -799,9 +799,9 @@ export default class Datastore implements IDatastore {
                                             preMath = mathed;
                                             mathed = mathed * operation[k][mk];
                                         } else {
-                                            mathed = getPath(doc, field) * operation[k][mk];
+                                            mathed = getObjValue(doc, field) * operation[k][mk];
                                         }
-                                        const indexed = preMath ? preMath : getPath(doc, field);
+                                        const indexed = preMath ? preMath : getObjValue(doc, field);
                                         indexPromises.push(index.updateKey(indexed, mathed));
                                     }
                                 });
@@ -813,9 +813,9 @@ export default class Datastore implements IDatastore {
                                             preMath = mathed;
                                             mathed = mathed + operation[k][ik];
                                         } else {
-                                            mathed = getPath(doc, field) + operation[k][ik];
+                                            mathed = getObjValue(doc, field) + operation[k][ik];
                                         }
-                                        const indexed = preMath ? preMath : getPath(doc, field);
+                                        const indexed = preMath ? preMath : getObjValue(doc, field);
                                         indexPromises.push(index.updateKey(indexed, mathed));
                                     }
                                 });
