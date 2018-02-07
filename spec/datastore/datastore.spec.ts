@@ -60,13 +60,13 @@ describe("testing the datastore, testing loading in and querying persisted data"
         .then(() => {
             return Users.getIndices();
         })
-        .then((indices) => {
+        .then((indices: any): any => {
             const ind: Index = indices.get("name");
             if (ind) {
                 return ind.toJSON();
             }
         })
-        .then((res) => {
+        .then((res: any) => {
             const nameJSON: string = JSON.parse(res);
             expect(nameJSON).toEqual(expect.arrayContaining([{ key: "Marcus", value: ["T2VUQVJWd0JBQUE9VTNrcTlIMSt4Qjg9R0RvWVl2SkhXMmc9TkUzZlF6a2ZxaDA9"]}, { key: "Scott", value: ["UGVUQVJWd0JBQUE9R2JkWG9UUlErcDg9cUdSOU5CMnNwR0U9ZmpkUzVuZmhIWE09"]}, { key: "Gavin", value: ["UHVUQVJWd0JBQUE9TVJpdzRYUUtZMGc9Wk1tM0Rla0hvem89UXBXaTRETjgxVHc9"]}, { key: "Smith", value: ["UCtUQVJWd0JBQUE9cHE1SmpnSE44eDQ9Rko2RmlJeHJrR1E9ZkN4cjROblB1WEU9"]}, { key: "Kevin", value: ["UHVUQVJWd0JBQUE9QVlxckkraExMWUU9VkxGZjUyZi9OMmc9S0NFVy85bHlnMHM9"]}, { key: "Mark", value: ["UHVUQVJWd0JBQUE9ZkZTNFRzQ0YwRVE9QTBRaUpUWjFJQ0U9UlRsNVg3MHNPcFE9"]}, { key: "Francis", value: ["UE9UQVJWd0JBQUE9cmZ4Y2MxVzNlOFk9TXV4dmJ0WU5JUFk9d0FkMW1oSHY2SWs9"]}, { key: "Luke", value: ["UCtUQVJWd0JBQUE9TVMrYjRpWVUrTEk9cWpON01RWGlQWjA9c1NWQzBacFNqakE9"]}, { key: "Morgan", value: ["UCtUQVJWd0JBQUE9dnVrRm1xWmJDVTQ9aGR2VjN0Z1gvK009dVpUVzMrY3N4eDg9"]}]));
         });
@@ -131,7 +131,7 @@ describe("testing the datastore, testing loading in and querying persisted data"
         expect.assertions(2);
         return Users.find({ name: "Francis"})
         .exec()
-        .then((res) => {
+        .then((res: any[]) => {
             const idDate = getDate(res[0]._id);
             expect(idDate).toBeInstanceOf(Date);
             expect(idDate).toEqual(new Date("2017-05-26T17:14:48.252Z"));
@@ -198,7 +198,7 @@ describe("testing the datastore, testing loading in and querying persisted data"
         expect.assertions(2);
         return Users.find({name: "Joshua"})
         .exec()
-        .then((res) => {
+        .then((res: any[]) => {
             const joshua = res[0];
             expect(joshua.name).toEqual("Joshua");
             expect(joshua.age).toEqual(49);

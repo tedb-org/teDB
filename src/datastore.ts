@@ -706,10 +706,11 @@ export default class Datastore implements IDatastore {
         return new Promise((resolve, reject): any => {
             const ids: string[] = [];
             if (fieldName && (value !== undefined)) {
-                let lt: BTT.ASNDBS;
-                let lte: BTT.ASNDBS;
-                let gt: BTT.ASNDBS;
-                let gte: BTT.ASNDBS;
+                const queryObj: any = {};
+                let lt: any;
+                let lte: any;
+                let gt: any;
+                let gte: any;
                 let ne: any;
                 if (value !== null && Object.prototype.toString.call(value) === "[object Object]") {
                     lt = (value.hasOwnProperty("$lt") && value.$lt !== undefined) ? value.$lt : null;
@@ -724,7 +725,26 @@ export default class Datastore implements IDatastore {
                     gte = null;
                     ne = null;
                 }
-
+                const queryArray = [{name: "lt", value: lt},
+                    {name: "lte", value: lte},
+                    {name: "gt", value: gt},
+                    {name: "gte", value: gte},
+                    {name: "ne", value: ne}];
+                queryArray.forEach((q) => {
+                    if (q.value !== null) {
+                        queryObj[q.name] = {value: q.value, flag: false};
+                    }
+                });
+                const allTrue = (obj: any) => {
+                    for (const o in obj) {
+                        if (obj.hasOwnProperty(o)) {
+                            if (!obj[o].flag) {
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+                };
                 this.storage.iterate((v, k) => {
                     const field: any = getObjValue(v, fieldName);
                     if (field !== undefined) {
@@ -732,15 +752,38 @@ export default class Datastore implements IDatastore {
                             gte === null && ne === null && (k === value || field === value)) {
                             ids.push(k);
                         } else {
-                            const flag: boolean =
-                                (
-                                    ((lt && field < lt) !== null) ||
-                                    ((lte && field <= lte) !== null) ||
-                                    ((gt && field > gt) !== null) ||
-                                    ((gte && field >= gte) !== null) ||
-                                    ((ne && field !== ne) !== null)
-                                ) ||
-                                (value && field === value);
+                            let flag;
+                            if (Object.prototype.toString.call(value) === "[object Object]") {
+                                for (const item in queryObj) {
+                                    if (queryObj.hasOwnProperty(item)) {
+                                        switch (item) {
+                                            case "gt":
+                                                queryObj[item].flag = ((field > gt) && (gt !== null));
+                                                break;
+                                            case "gte":
+                                                queryObj[item].flag = ((field >= gte) && (gte !== null));
+                                                break;
+                                            case "lt":
+                                                queryObj[item].flag = ((field < lt) && (lt !== null));
+                                                break;
+                                            case "lte":
+                                                queryObj[item].flag = ((field <= lte) && (lte !== null));
+                                                break;
+                                            case "ne":
+                                                queryObj[item].flag = ((field !== ne) && (ne !== null));
+                                                break;
+                                        }
+                                    }
+                                }
+                                flag = allTrue(queryObj);
+                            } else {
+                                flag = (((field < lt) && (lt !== null)) ||
+                                    ((field <= lte) && (lte !== null)) ||
+                                    ((field > gt) && (gt !== null)) ||
+                                    ((field >= gte) && (gte !== null)) ||
+                                    ((field !== ne) && (ne !== null)) ||
+                                    (field === value));
+                            }
                             if (flag) {
                                 ids.push(k);
                             }

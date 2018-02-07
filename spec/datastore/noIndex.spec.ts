@@ -53,7 +53,7 @@ describe("testing datastore without indices", () => {
                 .then((res) => {
                     res = res as any[];
                     expect(res.length).toEqual(2);
-                    res.forEach((r) => {
+                    res.forEach((r: any) => {
                         expect(r.isSynced).toEqual(false);
                         expect(r.manipulate).toEqual(2);
                     });
@@ -68,7 +68,7 @@ describe("testing datastore without indices", () => {
                 .then((res) => {
                     res = res as any[];
                     expect(res.length).toEqual(2);
-                    res.forEach((r) => {
+                    res.forEach((r: any) => {
                         expect(r.isSynced).toEqual(false);
                         expect(r.manipulate).toEqual(1);
                     });
@@ -203,7 +203,7 @@ describe("testing datastore without indices", () => {
 
     test("removing 2 item isSynced false", () => {
         expect.assertions(1);
-        let response;
+        let response: any;
         return DB.remove({isSynced: false})
             .then((res) => {
                 response = res;
@@ -215,7 +215,7 @@ describe("testing datastore without indices", () => {
     });
 
     test("removing 1 item time null", () => {
-        let response;
+        let response: any;
         return DB.remove({time: null})
             .then((res) => {
                 response = res;
