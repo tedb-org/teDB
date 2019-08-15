@@ -58,7 +58,7 @@ Each database will consist of however many datastores you would like to create. 
 import * as tedb from "tedb";
 // For example, I want to make Users
 const UserStorage = new yourStorageDriverClass("users");
-const Users = new tedb.DataStore({storage: UserStorage});
+const Users = new tedb.Datastore({storage: UserStorage});
 ```
 For the storage driver it should have the methods found on the storage driver interface found [here](https://github.com/tsturzl/teDB/blob/master/src/types/storageDriver.ts). Now that you have the datastore created you can insert and query on those inserted items. Each item inserted has an automatic `_id` generated for them. This `_id` also saves the created on Date. The `_id`s are not indexed automatically but can be if you decide to.
  
